@@ -11,10 +11,37 @@
   "sections": {
     "main": {
       "type": "product",
+      "blocks": {
+        "fresh": { "type": "promise", "settings": { "icon": "✓", "text": "Arranged fresh by local florists" } },
+        "message": { "type": "promise", "settings": { "icon": "♡", "text": "A personal message included" } },
+        "delivery": { "type": "promise", "settings": { "icon": "→", "text": "Carefully packed for local delivery" } }
+      },
+      "block_order": ["fresh", "message", "delivery"],
       "settings": {}
+    },
+    "related": {
+      "type": "db-related-products",
+      "settings": {
+        "eyebrow": "Keep the delight going",
+        "heading": "You may also <em>love.</em>",
+        "copy": "<p>More florist-made favourites, chosen to keep the delight going.</p>",
+        "products_to_show": 4,
+        "background": "#f7f0e7"
+      }
+    },
+    "newsletter": {
+      "type": "db-newsletter",
+      "settings": {
+        "eyebrow": "Stay in bloom",
+        "heading": "A little delight, <em>straight to your inbox.</em>",
+        "background": "#efc9c5",
+        "text_color": "#193e36"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "related",
+    "newsletter"
   ]
 }

@@ -1,77 +1,93 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+{%- if section.settings.announcement != blank -%}
+  <div class="db-announcement full-width">{{ section.settings.announcement }}</div>
+{%- endif -%}
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+<header class="db-header full-width">
+  <div class="db-page db-header__main">
+    <div class="db-header__utility">
+      {%- if section.settings.phone != blank -%}<a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone_label | escape }}</a>{%- elsif section.settings.contact_link != blank -%}<a href="{{ section.settings.contact_link }}">{{ section.settings.phone_label | escape }}</a>{%- endif -%}
+      {%- if section.settings.utility_link_label != blank and section.settings.utility_link != blank -%}<a href="{{ section.settings.utility_link }}">{{ section.settings.utility_link_label | escape }}</a>{%- endif -%}
+    </div>
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
+    <button class="db-icon-button db-mobile-toggle" type="button" aria-label="Open menu" aria-controls="db-mobile-menu" data-dialog-trigger>
+      {% render 'icon', name: 'menu', class: 'db-header__icon' %}
+    </button>
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
-
-      {{ 'icon-cart.svg' | inline_asset_content }}
+    <a class="db-header__logo" href="{{ routes.root_url }}">
+      {%- if settings.logo -%}
+        {%- assign logo_style = 'width:' | append: settings.logo_width | append: 'px' -%}
+        {{ settings.logo | image_url: width: settings.logo_width | image_tag: widths: '120, 180, 240, 320', alt: shop.name, style: logo_style }}
+      {%- else -%}
+        {{ shop.name }}
+      {%- endif -%}
     </a>
+
+    <div class="db-header__actions">
+      <button class="db-icon-button db-header-action" type="button" aria-label="Search" aria-controls="db-search" data-dialog-trigger>{% render 'icon', name: 'search', class: 'db-header__icon' %}<span>Search</span></button>
+      {%- if shop.customer_accounts_enabled -%}<a class="db-account-link db-header-action" href="{{ routes.account_url }}" aria-label="Account">{% render 'icon', name: 'account', class: 'db-header__icon' %}<span>Account</span></a>{%- endif -%}
+      <button class="db-icon-button db-header-action" type="button" aria-label="Cart with {{ cart.item_count }} items" aria-controls="db-cart-drawer" data-dialog-trigger>
+        {% render 'icon', name: 'bag', class: 'db-header__icon' %}
+        <span>Cart</span><span class="db-cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+      </button>
+    </div>
   </div>
+
+  {%- if section.blocks.size > 0 or section.settings.menu != blank -%}
+    <nav class="db-header__nav" aria-label="Main navigation">
+      <ul class="db-nav db-page" role="list">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}<li {{ block.shopify_attributes }}><a href="{{ block.settings.link | default: routes.all_products_collection_url }}">{{ block.settings.label | escape }}</a></li>{%- endfor -%}
+        {%- else -%}
+          {%- for link in section.settings.menu.links -%}<li><a href="{{ link.url }}">{{ link.title | escape }}</a>{%- if link.links != blank -%}<div class="db-nav__panel">{%- for child in link.links -%}<a href="{{ child.url }}">{{ child.title | escape }}</a>{%- endfor -%}</div>{%- endif -%}</li>{%- endfor -%}
+        {%- endif -%}
+      </ul>
+    </nav>
+  {%- endif -%}
+
+  {%- if section.settings.delivery_text != blank -%}<div class="db-delivery-bar">{{ section.settings.delivery_text }}</div>{%- endif -%}
 </header>
 
-{% stylesheet %}
-  header {
-    height: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header a {
-    position: relative;
-    text-decoration: none;
-    color: var(--color-foreground);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
-  }
-  header svg {
-    width: 2rem;
-  }
-  header .header__menu,
-  header .header__icons {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
+<dialog id="db-mobile-menu" class="db-mobile-menu" aria-label="Mobile navigation">
+  <div class="db-overlay__head"><a class="db-mobile-menu__brand" href="{{ routes.root_url }}">{%- if settings.logo != blank -%}{{ settings.logo | image_url: width: 260 | image_tag: width: 220, alt: shop.name }}{%- else -%}<strong>{{ shop.name }}</strong>{%- endif -%}</a><button class="db-close" type="button" data-dialog-close aria-label="Close menu">&times;</button></div>
+  <ul role="list">
+    {%- if section.blocks.size > 0 -%}{%- for block in section.blocks -%}<li><a href="{{ block.settings.link | default: routes.all_products_collection_url }}">{{ block.settings.label | escape }}</a></li>{%- endfor -%}{%- else -%}{%- for link in section.settings.menu.links -%}<li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>{%- endfor -%}{%- endif -%}
+  </ul>
+  {%- if section.settings.phone != blank -%}<a class="db-text-link" href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a>{%- endif -%}
+</dialog>
+
+<dialog id="db-search" class="db-overlay db-search-dialog" aria-label="Search">
+  <div class="db-search-panel">
+    <div class="db-search-panel__heading"><div><p class="db-kicker">Find the right flowers</p><h2>Search our blooms</h2></div><button class="db-close" type="button" data-dialog-close aria-label="Close search">&times;</button></div>
+    <form class="db-search-form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="visually-hidden" for="db-search-input">Search</label>
+      <input id="db-search-input" name="q" type="search" placeholder="Search blooms, gifts and occasions" autocomplete="off">
+      <button type="submit" aria-label="Submit search">{% render 'icon', name: 'search', class: 'db-header__icon' %}</button>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="db-cart-drawer" class="db-overlay db-cart-dialog" aria-label="Cart drawer">
+  <aside class="db-overlay__panel">
+    <div class="db-cart-drawer__head"><div><p class="db-kicker">Your delivery</p><h2>Your cart</h2></div><button class="db-close" type="button" data-dialog-close aria-label="Close cart">&times;</button></div>
+    <div data-cart-drawer-content>
+      {%- if cart.item_count == 0 -%}<div class="db-cart-drawer__empty"><h3>Ready to brighten their day?</h3><p>Your cart is currently empty. Choose something beautiful and we’ll take care of the rest.</p><a class="db-button" href="{{ routes.all_products_collection_url }}">Shop blooms</a></div>{%- else -%}<div class="db-cart-drawer__items">{%- for item in cart.items -%}<div class="db-drawer-item">{%- if item.image -%}{{ item.image | image_url: width: 180 | image_tag: alt: item.product.title }}{%- endif -%}<div><a href="{{ item.url }}">{{ item.product.title }}</a><p>{{ item.quantity }} &times; {{ item.final_price | money }}</p><button class="db-text-link" type="button" data-cart-remove="{{ item.key }}">Remove</button></div></div>{%- endfor -%}</div><div class="db-cart-drawer__footer"><p class="db-cart-drawer__total"><span>Subtotal</span><span>{{ cart.total_price | money }}</span></p><p class="db-cart-drawer__note">Delivery and your personal message are confirmed in the next step.</p><a class="db-button" href="{{ routes.cart_url }}">Continue to delivery</a><button class="db-cart-drawer__continue" type="button" data-dialog-close>Continue shopping</button></div>{%- endif -%}
+    </div>
+  </aside>
+</dialog>
 
 {% schema %}
 {
-  "name": "t:general.header",
+  "name": "Editorial header",
   "settings": [
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    },
-    {
-      "type": "link_list",
-      "id": "customer_account_menu",
-      "label": "t:labels.customer_account_menu",
-      "default": "customer-account-main-menu"
-    }
-  ]
+    { "type": "inline_richtext", "id": "announcement", "label": "Announcement", "default": "Fresh flowers, arranged daily and delivered with care" },
+    { "type": "link_list", "id": "menu", "label": "Main menu" },
+    { "type": "text", "id": "phone_label", "label": "Phone link label", "default": "Contact us" },
+    { "type": "text", "id": "phone", "label": "Phone number" },
+    { "type": "url", "id": "contact_link", "label": "Contact link when phone is empty" },
+    { "type": "text", "id": "utility_link_label", "label": "Utility link label", "default": "Flower rewards" },
+    { "type": "url", "id": "utility_link", "label": "Utility link" },
+    { "type": "inline_richtext", "id": "delivery_text", "label": "Delivery bar", "default": "Same-day local delivery when you order before 2pm" }
+  ],
+  "blocks": [{ "type": "navigation_link", "name": "Navigation link", "settings": [{ "type": "text", "id": "label", "label": "Label", "default": "Shop flowers" }, { "type": "url", "id": "link", "label": "Link" }] }]
 }
 {% endschema %}

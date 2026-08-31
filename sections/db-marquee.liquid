@@ -1,0 +1,35 @@
+<section class="db-marquee full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}" aria-label="{{ section.settings.accessibility_label | escape }}">
+  <div class="db-marquee__track" style="--db-marquee-speed:{{ section.settings.speed }}s">
+    {%- for repeat in (1..2) -%}
+      <div class="db-marquee__group"{% if repeat == 2 %} aria-hidden="true"{% endif %}>
+        {%- for block in section.blocks -%}
+          {%- assign marquee_image_style = '--db-marquee-image-width:' | append: block.settings.image_width | append: 'px' -%}
+          {%- assign marquee_image_sizes = block.settings.image_width | append: 'px' -%}
+          <span {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 240 | image_tag: widths: '60,90,120,180,240', sizes: marquee_image_sizes, loading: 'lazy', alt: block.settings.image.alt, style: marquee_image_style }}{%- endif -%}
+            {%- if block.settings.text != blank -%}<em>{{ block.settings.text }}</em>{%- endif -%}
+            <b aria-hidden="true">{{ section.settings.separator }}</b>
+          </span>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Bloom marquee",
+  "settings": [
+    { "type": "text", "id": "accessibility_label", "label": "Accessibility label", "default": "Why shop with us" },
+    { "type": "text", "id": "separator", "label": "Separator", "default": "✦" },
+    { "type": "range", "id": "speed", "label": "Animation duration", "min": 12, "max": 50, "step": 2, "unit": "s", "default": 24 },
+    { "type": "color", "id": "background", "label": "Background", "default": "#efc9c5" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#123f37" }
+  ],
+  "blocks": [{ "type": "message", "name": "Message", "settings": [
+    { "type": "image_picker", "id": "image", "label": "Optional image" },
+    { "type": "range", "id": "image_width", "label": "Image width", "min": 24, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "text", "id": "text", "label": "Text", "default": "Handmade by local florists" }
+  ] }],
+  "presets": [{ "name": "Bloom marquee", "blocks": [{ "type": "message" }, { "type": "message" }, { "type": "message" }, { "type": "message" }] }]
+}
+{% endschema %}

@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "hero": { "type": "db-hero", "settings": { "eyebrow": "Kind words", "heading": "Notes from our <em>happy flower people.</em>", "copy": "<p>Real stories from Christchurch customers who trusted us with meaningful moments.</p>", "button_label": "Send some flowers", "button_link": "shopify://collections/all", "badge": "Made and delivered locally", "background": "#f7f0e7", "text_color": "#193e36" } },
+    "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Customer stories" } },
+    "promises": { "type": "db-value-strip", "blocks": { "one": { "type": "promise", "settings": { "heading": "Florist made", "text": "Arranged with care" } }, "two": { "type": "promise", "settings": { "heading": "Local delivery", "text": "Across Christchurch" } }, "three": { "type": "promise", "settings": { "heading": "Thoughtful service", "text": "People who listen" } }, "four": { "type": "promise", "settings": { "heading": "Freshness first", "text": "Season-led flowers" } } }, "block_order": ["one", "two", "three", "four"], "settings": {} },
+    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "A little delight, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+  },
+  "order": ["hero", "content", "promises", "newsletter"]
+}

@@ -14,7 +14,13 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
+        "about": "Thoughtfully curated bouquets and gifts designed to brighten the daily.",
+        "phone": "",
+        "menu_one_heading": "Customer care",
+        "menu_one": "footer",
+        "menu_two_heading": "Discover",
+        "menu_two": "main-menu",
+        "newsletter_heading": "Blooms to brighten the daily. Emails to delight your inbox.",
         "show_payment_icons": true
       }
     }

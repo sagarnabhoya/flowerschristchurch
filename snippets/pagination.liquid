@@ -1,0 +1,23 @@
+{%- if paginate.pages > 1 -%}
+  <nav class="db-pagination" aria-label="Pagination">
+    {%- if paginate.previous -%}
+      <a class="db-pagination__direction db-pagination__previous" href="{{ paginate.previous.url }}" aria-label="Previous page">{% render 'icon', name: 'arrow', class: 'db-pagination__icon' %}</a>
+    {%- else -%}
+      <span class="db-pagination__direction db-pagination__previous is-disabled" aria-hidden="true">{% render 'icon', name: 'arrow', class: 'db-pagination__icon' %}</span>
+    {%- endif -%}
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a href="{{ part.url }}" aria-label="Page {{ part.title }}">{{ part.title }}</a>
+      {%- elsif part.title == paginate.current_page -%}
+        <span class="is-current" aria-current="page">{{ part.title }}</span>
+      {%- else -%}
+        <span class="db-pagination__ellipsis">{{ part.title }}</span>
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if paginate.next -%}
+      <a class="db-pagination__direction db-pagination__next" href="{{ paginate.next.url }}" aria-label="Next page">{% render 'icon', name: 'arrow', class: 'db-pagination__icon' %}</a>
+    {%- else -%}
+      <span class="db-pagination__direction db-pagination__next is-disabled" aria-hidden="true">{% render 'icon', name: 'arrow', class: 'db-pagination__icon' %}</span>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

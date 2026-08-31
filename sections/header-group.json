@@ -13,10 +13,29 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "blocks": {
+        "blooms": { "type": "navigation_link", "settings": { "label": "Blooms", "link": "shopify://collections/view-all" } },
+        "bouquets": { "type": "navigation_link", "settings": { "label": "Bouquets", "link": "shopify://collections/bouquets" } },
+        "occasions": { "type": "navigation_link", "settings": { "label": "Occasions", "link": "shopify://collections/birthday-collection" } },
+        "roses": { "type": "navigation_link", "settings": { "label": "Roses", "link": "shopify://collections/rose-collection" } },
+        "plants": { "type": "navigation_link", "settings": { "label": "Plants & gifts", "link": "shopify://collections/plants-others" } },
+        "about": { "type": "navigation_link", "settings": { "label": "About", "link": "shopify://pages/about-us" } },
+        "delivery": { "type": "navigation_link", "settings": { "label": "Delivery", "link": "shopify://pages/delivery-information" } }
+      },
+      "block_order": ["blooms", "bouquets", "occasions", "roses", "plants", "about", "delivery"],
+      "settings": {
+        "announcement": "Fresh flowers, arranged daily and delivered with care",
+        "menu": "main-menu",
+        "phone_label": "Contact us",
+        "phone": "",
+        "contact_link": "shopify://pages/contact",
+        "utility_link_label": "Delivery info",
+        "utility_link": "shopify://pages/delivery-information",
+        "delivery_text": "Same-day local delivery when you order before 2pm"
+      }
     }
   },
   "order": [
     "header"
-  ],
+  ]
 }

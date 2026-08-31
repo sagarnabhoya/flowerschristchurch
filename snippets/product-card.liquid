@@ -1,0 +1,60 @@
+{%- liquid
+  assign card_product = product
+  assign card_is_placeholder = false
+  if card_product == blank or card_product.id == blank
+    assign card_is_placeholder = true
+  endif
+  unless card_is_placeholder
+    assign card_image = card_product.featured_media.preview_image
+    assign secondary_image = card_product.media[1].preview_image
+  endunless
+  assign card_badge_text = blank
+  if show_badges and card_is_placeholder == false
+    assign card_badge_text = card_product.metafields.custom.card_badge.value | default: card_product.metafields.custom.card_badge
+    if card_badge_text == blank
+      for product_tag in card_product.tags
+        assign normalized_tag = product_tag | downcase
+        if normalized_tag contains 'badge:'
+          assign card_badge_text = product_tag | split: ':' | last | strip
+          break
+        endif
+      endfor
+    endif
+    if card_badge_text == blank and show_auto_new
+      assign product_created = card_product.created_at | date: '%s' | plus: 0
+      assign new_window_seconds = new_product_days | default: 60 | times: 86400
+      assign new_product_cutoff = 'now' | date: '%s' | minus: new_window_seconds
+      if product_created >= new_product_cutoff
+        assign card_badge_text = new_badge_label | default: 'New!'
+      endif
+    endif
+  endif
+-%}
+<article class="db-product-card">
+  <a class="db-product-card__media" href="{% if card_is_placeholder %}{{ routes.all_products_collection_url }}{% else %}{{ card_product.url }}{% endif %}">
+    {%- if card_image != blank and card_image.width != blank -%}
+      {{ card_image | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', sizes: '(min-width: 990px) 25vw, 50vw', loading: 'lazy', alt: card_image.alt | default: card_product.title }}
+      {%- if show_secondary_image and secondary_image != blank -%}{{ secondary_image | image_url: width: 900 | image_tag: widths: '300,450,600,900', sizes: '(min-width: 1200px) 20vw, (min-width:750px) 25vw, 50vw', loading: 'lazy', alt: secondary_image.alt | default: card_product.title, class: 'db-product-card__secondary-image' }}{%- endif -%}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag }}
+    {%- endif -%}
+    {%- unless card_is_placeholder or card_product.available -%}<span class="db-product-card__badge">Sold out</span>{%- endunless -%}
+    {%- if card_badge_text != blank -%}<span class="db-product-card__flower-badge" style="--db-card-badge:{{ badge_color | default: '#ef5a59' }}"><span>{{ card_badge_text }}</span></span>{%- endif -%}
+  </a>
+  <div class="db-product-card__content">
+    <h3 class="db-product-card__title"><a href="{% if card_is_placeholder %}{{ routes.all_products_collection_url }}{% else %}{{ card_product.url }}{% endif %}">{% if card_is_placeholder %}Fresh flowers{% else %}{{ card_product.title | escape }}{% endif %}</a></h3>
+    {%- if card_is_placeholder -%}
+      <div class="db-product-card__description">Choose a collection in the theme editor to feature products here.</div>
+    {%- elsif show_description and card_product.description != blank -%}<div class="db-product-card__description">{{ card_product.description | strip_html }}</div>{%- endif -%}
+    {%- unless card_is_placeholder -%}<p class="db-product-card__price">{% if card_product.price_varies %}From {% endif %}{{ card_product.price | money }}</p>{%- endunless -%}
+    {%- if card_product.metafields.reviews.rating.value != blank -%}<div class="db-product-card__rating" aria-label="Rated {{ card_product.metafields.reviews.rating.value }} out of 5"><span aria-hidden="true">★★★★★</span>{%- if card_product.metafields.reviews.rating_count.value != blank -%}<small>{{ card_product.metafields.reviews.rating_count.value }} reviews</small>{%- endif -%}</div>{%- endif -%}
+    {%- if show_quick_add and card_is_placeholder == false -%}
+      {%- form 'product', card_product, data-ajax-product-form: '' -%}
+        <input type="hidden" name="id" value="{{ card_product.selected_or_first_available_variant.id }}">
+        <button class="db-button" type="submit" {% unless card_product.available %}disabled{% endunless %}>
+          {% if card_product.available %}Order now{% else %}Sold out{% endif %}
+        </button>
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+</article>

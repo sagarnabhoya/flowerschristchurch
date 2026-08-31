@@ -1,0 +1,31 @@
+{%- assign source_collection = product.collections.first -%}
+{%- if source_collection != blank -%}
+  <section class="db-section full-width" style="background:{{ section.settings.background }}">
+    <div class="db-page">
+      <div class="db-section-head"><div><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2></div><div class="db-section-head__aside db-copy">{{ section.settings.copy }}</div></div>
+      <ul class="db-product-grid" role="list">
+        {%- assign shown = 0 -%}
+        {%- for related_product in source_collection.products -%}
+          {%- unless related_product.id == product.id -%}
+            <li>{% render 'product-card', product: related_product, show_description: false, show_quick_add: true %}</li>
+            {%- assign shown = shown | plus: 1 -%}
+            {%- if shown >= section.settings.products_to_show -%}{%- break -%}{%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+{% schema %}
+{
+  "name": "Related blooms",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Keep the delight going" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "You may also <em>love.</em>" },
+    { "type": "richtext", "id": "copy", "label": "Text", "default": "<p>A few more florist-made favourites worth sending.</p>" },
+    { "type": "range", "id": "products_to_show", "label": "Products", "min": 2, "max": 4, "step": 1, "default": 4 },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f7f0e7" }
+  ],
+  "presets": [{ "name": "Related blooms" }]
+}
+{% endschema %}

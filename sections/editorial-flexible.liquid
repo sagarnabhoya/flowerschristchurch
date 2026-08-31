@@ -1,0 +1,26 @@
+<section class="db-section full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
+  <div class="db-page db-flexible db-flexible--{{ section.settings.layout }}" style="--db-flex-gap:{{ section.settings.gap }}px;--db-flex-align:{{ section.settings.alignment }}">
+    {% content_for 'blocks' %}
+  </div>
+</section>
+{% stylesheet %}
+  .db-flexible { align-items: var(--db-flex-align); display: flex; gap: var(--db-flex-gap); }
+  .db-flexible--vertical { flex-direction: column; }
+  .db-flexible--horizontal { flex-direction: row; }
+  .db-flexible > * { flex: 1; }
+  @media (max-width: 749px) { .db-flexible--horizontal { align-items: stretch; flex-direction: column; } }
+{% endstylesheet %}
+{% schema %}
+{
+  "name": "Editorial flexible",
+  "blocks": [{ "type": "@theme" }],
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Layout", "default": "vertical", "options": [{ "value": "vertical", "label": "Vertical" }, { "value": "horizontal", "label": "Horizontal" }] },
+    { "type": "select", "id": "alignment", "label": "Alignment", "default": "center", "options": [{ "value": "flex-start", "label": "Start" }, { "value": "center", "label": "Centre" }, { "value": "flex-end", "label": "End" }] },
+    { "type": "range", "id": "gap", "label": "Gap", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 24 },
+    { "type": "color", "id": "background", "label": "Background", "default": "#fffaf3" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#193e36" }
+  ],
+  "presets": [{ "name": "Editorial flexible", "blocks": [{ "type": "db-heading" }, { "type": "db-text" }, { "type": "db-button" }] }]
+}
+{% endschema %}

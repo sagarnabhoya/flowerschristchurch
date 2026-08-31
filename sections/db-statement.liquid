@@ -1,0 +1,9 @@
+<section class="db-statement full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}"><div class="db-page"><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2><div class="db-counter-row">{%- for block in section.blocks -%}<span {{ block.shopify_attributes }}>{{ block.settings.number }} {{ block.settings.message }}</span>{%- endfor -%}</div></div></section>
+{% schema %}
+{
+  "name": "Blooming statement",
+  "settings": [{ "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "A little joy goes a long way" }, { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Let every day <em>bloom.</em>" }, { "type": "color", "id": "background", "label": "Background", "default": "#da8f96" }, { "type": "color", "id": "text_color", "label": "Text", "default": "#193e36" }],
+  "blocks": [{ "type": "counter", "name": "Counter message", "settings": [{ "type": "text", "id": "number", "label": "Number", "default": "25,000+" }, { "type": "text", "id": "message", "label": "Message", "default": "thank-yous delivered" }] }],
+  "presets": [{ "name": "Blooming statement", "blocks": [{ "type": "counter" }, { "type": "counter" }, { "type": "counter" }] }]
+}
+{% endschema %}

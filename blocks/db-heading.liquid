@@ -1,0 +1,12 @@
+<{{ block.settings.level }} class="db-title" style="text-align:{{ block.settings.alignment }}" {{ block.shopify_attributes }}>{{ block.settings.heading }}</{{ block.settings.level }}>
+{% schema %}
+{
+  "name": "Editorial heading",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Let every day <em>bloom.</em>" },
+    { "type": "select", "id": "level", "label": "Heading level", "default": "h2", "options": [{ "value": "h1", "label": "H1" }, { "value": "h2", "label": "H2" }, { "value": "h3", "label": "H3" }] },
+    { "type": "text_alignment", "id": "alignment", "label": "Alignment", "default": "left" }
+  ],
+  "presets": [{ "name": "Editorial heading" }]
+}
+{% endschema %}

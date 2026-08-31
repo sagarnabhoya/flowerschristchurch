@@ -1,0 +1,33 @@
+{%- liquid
+  assign location_name = metaobject.title.value | default: metaobject.system.handle | remove: ' Flowers'
+  assign hero_image = section.settings.image | default: collections.all.products.first.featured_image
+  assign featured_collection = section.settings.collection | default: collections['view-all'] | default: collections.all
+-%}
+<article class="db-location-page full-width">
+  <header class="db-location-hero">
+    <div class="db-page db-location-hero__grid">
+      <div class="db-location-hero__content"><p class="db-kicker">Local delivery, made personal</p><h1 class="db-title">Flower delivery to <em>{{ location_name }}.</em></h1>{%- if metaobject.subtitle != blank -%}<div class="db-copy">{{ metaobject.subtitle | metafield_tag }}</div>{%- else -%}<p class="db-copy">Fresh, thoughtful flowers arranged locally in Christchurch and delivered with care.</p>{%- endif -%}<a class="db-button" href="{{ featured_collection.url }}">Shop flowers {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</a></div>
+      <div class="db-location-hero__media">{%- if hero_image -%}{{ hero_image | image_url: width: 1800 | image_tag: widths: '700,1000,1400,1800', sizes: '(min-width:750px) 50vw, 100vw', loading: 'eager', alt: location_name | prepend: 'Flower delivery to ' }}{%- else -%}{{ 'lifestyle-1' | placeholder_svg_tag }}{%- endif -%}<span>Made locally in Christchurch</span></div>
+    </div>
+  </header>
+
+  {%- if metaobject.map != blank -%}<section class="db-page db-location-map db-section"><div><p class="db-kicker">Your local delivery area</p><h2 class="db-title">Delivering across <em>{{ location_name }}.</em></h2><p class="db-copy">Thoughtfully arranged in Christchurch and delivered throughout {{ location_name }} and nearby suburbs.</p></div><div class="db-location-map__embed">{{ metaobject.map.value }}</div></section>{%- endif -%}
+
+  <section class="db-page db-section"><div class="db-section-head"><div><p class="db-kicker">The florist’s edit</p><h2 class="db-title">Most-loved flowers in <em>{{ location_name }}.</em></h2></div><div class="db-section-head__aside"><p class="db-copy">Freshly arranged favourites selected for thoughtful local delivery.</p></div></div><ul class="db-product-grid" role="list">{%- for product in featured_collection.products limit: 4 -%}<li>{% render 'product-card', product: product, show_description: false, show_quick_add: true %}</li>{%- endfor -%}</ul></section>
+
+  {%- if metaobject.multiline_content_one != blank or metaobject.multiline_content_two != blank or metaobject.multiline_content_three != blank -%}<section class="db-location-stories full-width"><div class="db-page"><p class="db-kicker">Flowers for every moment</p><h2 class="db-title">Made with care, <em>delivered with feeling.</em></h2><div class="db-location-stories__grid">{%- if metaobject.multiline_content_one != blank -%}<div class="db-rte">{{ metaobject.multiline_content_one | metafield_tag }}</div>{%- endif -%}{%- if metaobject.multiline_content_two != blank -%}<div class="db-rte">{{ metaobject.multiline_content_two | metafield_tag }}</div>{%- endif -%}{%- if metaobject.multiline_content_three != blank -%}<div class="db-rte">{{ metaobject.multiline_content_three | metafield_tag }}</div>{%- endif -%}</div></div></section>{%- endif -%}
+
+  {%- if metaobject.faq_title_1 != blank -%}<section class="db-page db-location-faq db-section"><div><p class="db-kicker">Good to know</p><h2 class="db-title">Delivery questions for <em>{{ location_name }}.</em></h2></div><div>{%- if metaobject.faq_title_1 != blank -%}<details open><summary>{{ metaobject.faq_title_1.value }}</summary><div class="db-rte">{{ metaobject.faq_content_1 | metafield_tag }}</div></details>{%- endif -%}{%- if metaobject.faq_title_2 != blank -%}<details><summary>{{ metaobject.faq_title_2.value }}</summary><div class="db-rte">{{ metaobject.faq_content_2 | metafield_tag }}</div></details>{%- endif -%}{%- if metaobject.faq_title_3 != blank -%}<details><summary>{{ metaobject.faq_title_3.value }}</summary><div class="db-rte">{{ metaobject.faq_content_3 | metafield_tag }}</div></details>{%- endif -%}{%- if metaobject.faq_title_4 != blank -%}<details><summary>{{ metaobject.faq_title_4.value }}</summary><div class="db-rte">{{ metaobject.faq_content_4 | metafield_tag }}</div></details>{%- endif -%}{%- if metaobject.faq_title_5 != blank -%}<details><summary>{{ metaobject.faq_title_5.value }}</summary><div class="db-rte">{{ metaobject.faq_content_5 | metafield_tag }}</div></details>{%- endif -%}{%- if metaobject.faq_title_6 != blank -%}<details><summary>{{ metaobject.faq_title_6.value }}</summary><div class="db-rte">{{ metaobject.faq_content_6 | metafield_tag }}</div></details>{%- endif -%}{%- if metaobject.faq_title_7 != blank -%}<details><summary>{{ metaobject.faq_title_7.value }}</summary><div class="db-rte">{{ metaobject.faq_content_7 | metafield_tag }}</div></details>{%- endif -%}{%- if metaobject.faq_title_8 != blank -%}<details><summary>{{ metaobject.faq_title_8.value }}</summary><div class="db-rte">{{ metaobject.faq_content_8 | metafield_tag }}</div></details>{%- endif -%}</div></section>{%- endif -%}
+
+  {%- assign nearby_areas = shop.metaobjects.flower_delivery_page.values -%}
+  {%- if nearby_areas.count > 1 -%}<section class="db-location-directory full-width"><div class="db-page"><p class="db-kicker">Local flowers, delivered</p><h2 class="db-title">Flower delivery near <em>{{ location_name }}.</em></h2><div class="db-location-directory__grid">{%- for area in nearby_areas limit: 24 -%}{%- unless area.system.handle == metaobject.system.handle -%}{%- assign area_title = area.title.value | remove: ' Flowers' -%}<a href="{{ area.system.url }}">{{ area_title }} <span>→</span></a>{%- endunless -%}{%- endfor -%}</div></div></section>{%- endif -%}
+</article>
+{% schema %}
+{
+  "name": "Location delivery page",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Hero image" },
+    { "type": "collection", "id": "collection", "label": "Featured flowers" }
+  ]
+}
+{% endschema %}

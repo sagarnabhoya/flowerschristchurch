@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main": {
+      "type": "db-location-page",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "db-newsletter",
+      "settings": {
+        "eyebrow": "Christchurch, in bloom",
+        "heading": "Local flowers and thoughtful notes, <em>straight to your inbox.</em>",
+        "background": "#efc9c5",
+        "text_color": "#193e36"
+      }
+    }
+  },
+  "order": ["main", "newsletter"]
+}

@@ -1,52 +1,57 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
-
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
-
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
-
-    <input type="text" name="quantity" min="1" value="1">
-
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
-
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign subtitle = product.metafields.custom.subtitle.value | default: section.settings.subtitle
+  assign badge = product.metafields.custom.card_badge.value
+  if badge == blank
+    for tag in product.tags
+      if tag contains 'badge:'
+        assign badge = tag | remove: 'badge:' | strip
+        break
+      endif
+    endfor
+  endif
+-%}
+<section class="db-page db-product" data-product-section>
+  <div class="db-product__gallery-wrap">
+    {%- if badge != blank -%}<span class="db-product__badge">{{ badge }}</span>{%- endif -%}
+    <div class="db-product__gallery" data-product-gallery>
+      {%- for image in product.images -%}
+        <div class="db-product__media" data-media-id="{{ image.id }}">{{ image | image_url: width: 1800 | image_tag: widths: '500,800,1100,1500,1800', sizes: '(min-width: 990px) 52vw, 92vw', loading: 'lazy', alt: image.alt | default: product.title }}</div>
+      {%- else -%}<div class="db-product__media">{{ 'product-1' | placeholder_svg_tag }}</div>{%- endfor -%}
+    </div>
+    {%- if product.images.size > 1 -%}<div class="db-product__gallery-controls"><button type="button" data-gallery-previous aria-label="Previous product image">&larr;</button><span><b data-gallery-current>1</b> / {{ product.images.size }}</span><button type="button" data-gallery-next aria-label="Next product image">&rarr;</button></div>{%- endif -%}
+  </div>
+  <div class="db-product__info">
+    <header class="db-product__header">
+      {%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <div class="db-product__title-row"><h1>{{ product.title }}</h1><p class="db-product__price" data-product-price>{{ current_variant.price | money }}</p></div>
+      {%- if subtitle != blank -%}<p class="db-product__subtitle">{{ subtitle }}</p>{%- endif -%}
+      {%- if section.settings.show_vendor and product.vendor != blank -%}<p class="db-product__vendor">Made by {{ product.vendor }}</p>{%- endif -%}
+      {%- if product.description != blank -%}<div class="db-copy db-product__description">{{ product.description }}</div>{%- endif -%}
+    </header>
+    <div class="db-product-form">
+      {%- form 'product', product, data-product-builder-form: '' -%}
+        {%- assign step_number = 1 -%}
+        {%- unless product.has_only_default_variant -%}
+          <fieldset class="db-product-step"><legend><span>{{ step_number }}</span>{{ section.settings.option_heading }}</legend><label class="db-visually-hidden" for="Variant-{{ section.id }}">Choose an option</label><select id="Variant-{{ section.id }}" name="id" data-variant-select>{%- for variant in product.variants -%}<option value="{{ variant.id }}" data-price="{{ variant.price | money | escape }}" data-available="{{ variant.available }}" data-image-id="{{ variant.featured_image.id }}" {% if variant == current_variant %}selected{% endif %}>{{ variant.title }} — {{ variant.price | money }}{% unless variant.available %} — Sold out{% endunless %}</option>{%- endfor -%}</select></fieldset>
+          {%- assign step_number = step_number | plus: 1 -%}
+        {%- else -%}<input type="hidden" name="id" value="{{ current_variant.id }}">{%- endunless -%}
+        {%- if section.settings.show_delivery_fields -%}
+          <fieldset class="db-product-step db-product-delivery"><legend><span>{{ step_number }}</span>{{ section.settings.delivery_step_heading }}</legend><div class="db-product-delivery__grid"><div><label for="DeliverySuburb-{{ section.id }}">Recipient suburb</label><input id="DeliverySuburb-{{ section.id }}" type="text" name="properties[Recipient suburb]" placeholder="e.g. Riccarton" required></div><div><label for="DeliveryDate-{{ section.id }}">Preferred delivery date</label><input id="DeliveryDate-{{ section.id }}" type="date" name="properties[Delivery date]" data-delivery-date required></div></div>{%- if section.settings.delivery_note != blank -%}<p class="db-product-step__note">{{ section.settings.delivery_note }}</p>{%- endif -%}</fieldset>
+          {%- assign step_number = step_number | plus: 1 -%}
+        {%- endif -%}
+        {%- if section.settings.vase_collection != blank -%}{%- render 'product-addon-picker', collection: section.settings.vase_collection, step: step_number, heading: section.settings.vase_heading -%}{%- assign step_number = step_number | plus: 1 -%}{%- endif -%}
+        {%- assign gift_addons = section.settings.gift_collection | default: collections['plants-others'] -%}
+        {%- render 'product-addon-picker', collection: gift_addons, step: step_number, heading: section.settings.gift_heading -%}
+        <div class="db-product__purchase"><div><label for="Quantity-{{ section.id }}">Quantity</label><div class="db-quantity" data-quantity><button type="button" data-quantity-change="-1" aria-label="Decrease quantity">−</button><input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1"><button type="button" data-quantity-change="1" aria-label="Increase quantity">+</button></div></div><button class="db-button" type="submit" data-product-submit {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}{{ section.settings.add_to_cart_label }}{% else %}Sold out{% endif %}</button></div>
+        <p class="db-form-error" data-product-error hidden></p>{%- if section.settings.show_dynamic_checkout -%}{{ form | payment_button }}{%- endif -%}
+      {%- endform -%}
+    </div>
+    {%- if section.blocks.size > 0 -%}<div class="db-product__promises">{%- for block in section.blocks -%}<p {{ block.shopify_attributes }}><span>{{ block.settings.icon }}</span>{{ block.settings.text }}</p>{%- endfor -%}</div>{%- endif -%}
+    {%- if section.settings.delivery_content != blank -%}<details class="db-accordion"><summary>{{ section.settings.delivery_heading }}</summary><div class="db-accordion__content db-rte">{{ section.settings.delivery_content }}</div></details>{%- endif -%}
+    {%- if section.settings.care_content != blank -%}<details class="db-accordion"><summary>{{ section.settings.care_heading }}</summary><div class="db-accordion__content db-rte">{{ section.settings.care_content }}</div></details>{%- endif -%}
+  </div>
+</section>
 {% schema %}
-{
-  "name": "t:general.product",
-  "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
-}
+{"name":"Editorial product","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Made fresh to order"},{"type":"text","id":"subtitle","label":"Fallback subtitle","default":"A florist-made arrangement for meaningful moments"},{"type":"checkbox","id":"show_vendor","label":"Show product vendor","default":false},{"type":"checkbox","id":"show_dynamic_checkout","label":"Show dynamic checkout","default":false},{"type":"text","id":"option_heading","label":"Option heading","default":"Choose your bouquet"},{"type":"checkbox","id":"show_delivery_fields","label":"Collect suburb and delivery date","default":true},{"type":"text","id":"delivery_step_heading","label":"Delivery step heading","default":"Delivery details"},{"type":"text","id":"delivery_note","label":"Delivery note","default":"We will confirm availability for your selected area and date."},{"type":"collection","id":"vase_collection","label":"Vase add-ons"},{"type":"text","id":"vase_heading","label":"Vase heading","default":"Add a vase"},{"type":"collection","id":"gift_collection","label":"Gift add-ons"},{"type":"text","id":"gift_heading","label":"Gift heading","default":"Make it extra special"},{"type":"text","id":"add_to_cart_label","label":"Add to cart label","default":"Add to cart"},{"type":"text","id":"delivery_heading","label":"Delivery heading","default":"Delivery information"},{"type":"richtext","id":"delivery_content","label":"Delivery content","default":"<p>Choose your preferred delivery date during checkout. Cut-off times and availability vary by delivery area.</p>"},{"type":"text","id":"care_heading","label":"Care heading","default":"Flower care"},{"type":"richtext","id":"care_content","label":"Care content","default":"<p>Trim the stems, refresh the water regularly and keep your flowers away from direct heat.</p>"}],"blocks":[{"type":"promise","name":"Service promise","settings":[{"type":"text","id":"icon","label":"Icon or symbol","default":"✓"},{"type":"text","id":"text","label":"Text","default":"Arranged fresh by local florists"}]}],"presets":[{"name":"Editorial product","blocks":[{"type":"promise"},{"type":"promise"},{"type":"promise"}]}]}
 {% endschema %}

@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "hero": { "type": "db-hero", "settings": { "eyebrow": "Our story", "heading": "We find beauty in <em>the daily.</em>", "copy": "<p>What began with a simple bunch of flowers has grown into a community of florists, makers and thoughtful senders.</p>", "button_label": "Shop blooms", "button_link": "shopify://collections/all", "badge": "Made with heart", "background": "#efc9c5", "text_color": "#193e36" } },
+    "story_one": { "type": "db-editorial-story", "settings": { "eyebrow": "How it started", "heading": "A daily ritual, <em>made to share.</em>", "copy": "<p>We started with the belief that flowers should feel spontaneous, personal and full of character. Today, that still guides every stem we choose and every bouquet we wrap.</p>", "button_label": "Meet our blooms", "button_link": "shopify://collections/all", "image_position": "left", "background": "#123f37", "text_color": "#ffffff" } },
+    "promises": {
+      "type": "db-value-strip",
+      "blocks": {
+        "one": { "type": "promise", "settings": { "heading": "Florist made", "text": "Never mass produced" } },
+        "two": { "type": "promise", "settings": { "heading": "Season led", "text": "Freshness comes first" } },
+        "three": { "type": "promise", "settings": { "heading": "Locally minded", "text": "People and makers" } },
+        "four": { "type": "promise", "settings": { "heading": "Always personal", "text": "Care in every detail" } }
+      },
+      "block_order": ["one", "two", "three", "four"], "settings": {}
+    },
+    "story_two": { "type": "db-editorial-story", "settings": { "eyebrow": "Our promise", "heading": "Beautiful for longer, <em>or we'll make it right.</em>", "copy": "<p>From our studio to their doorstep, we care about every part of the experience. If it does not delight, our team is here to help.</p>", "button_label": "Get in touch", "button_link": "shopify://pages/contact", "image_position": "right", "background": "#bb3f4b", "text_color": "#ffffff" } },
+    "page_content": { "type": "page", "settings": { "show_header": false, "eyebrow": "More about our studio" } }
+  },
+  "order": ["hero", "story_one", "promises", "story_two", "page_content"]
+}

@@ -1,20 +1,42 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
+    "hero": { "type": "db-hero", "settings": { "layout": "campaign", "desktop_height": 720, "overlay_opacity": 10, "show_content": false, "eyebrow": "Made fresh every day", "heading": "Flowers to make <em>the daily delightful.</em>", "copy": "<p>Thoughtful seasonal blooms, handcrafted by local florists and delivered with care.</p>", "button_label": "Shop blooms", "button_link": "shopify://collections/all", "badge": "", "background": "#efc9c5", "text_color": "#193e36" } },
+    "marquee": { "type": "db-marquee", "blocks": { "fresh": { "type": "message", "settings": { "image": "shopify://shop_images/Flowers_Across_Christchurch_logo.png", "image_width": 36, "text": "Handmade by local florists" } }, "delivery": { "type": "message", "settings": { "image_width": 44, "text": "Same-day Christchurch delivery" } }, "seasonal": { "type": "message", "settings": { "image_width": 44, "text": "Fresh seasonal flowers" } }, "thoughtful": { "type": "message", "settings": { "image_width": 44, "text": "Thoughtful gifts for every moment" } } }, "block_order": ["fresh", "delivery", "seasonal", "thoughtful"], "settings": { "accessibility_label": "Why shop with us", "separator": "✦", "speed": 26, "background": "#efc9c5", "text_color": "#123f37" } },
+    "categories": {
+      "type": "db-category-grid",
+      "blocks": {
+        "blooms": { "type": "category", "settings": { "title": "Fresh blooms", "label": "Shop blooms" } },
+        "hampers": { "type": "category", "settings": { "title": "Flower & gift hampers", "label": "Shop hampers" } },
+        "gifts": { "type": "category", "settings": { "title": "Thoughtful gifts", "label": "Shop gifts" } }
+      },
+      "block_order": ["blooms", "hampers", "gifts"],
+      "settings": { "eyebrow": "Find their favourite", "heading": "Something lovely, <em>for every moment.</em>", "copy": "<p>Fresh flowers, thoughtful hampers and locally made gifts for every kind of day.</p>", "background": "#fffaf3" }
+    },
+    "promises": {
+      "type": "db-value-strip",
+      "blocks": {
+        "fresh": { "type": "promise", "settings": { "heading": "Handmade daily", "text": "By local florists" } },
+        "delivery": { "type": "promise", "settings": { "heading": "Delivered with care", "text": "Fresh and on time" } },
+        "packaging": { "type": "promise", "settings": { "heading": "Beautifully packed", "text": "Lower-impact materials" } },
+        "makers": { "type": "promise", "settings": { "heading": "Thoughtful extras", "text": "From local makers" } }
+      },
+      "block_order": ["fresh", "delivery", "packaging", "makers"],
       "settings": {}
-    }
+    },
+    "products": { "type": "db-featured-products", "settings": { "collection": "shopify://collections/all", "eyebrow": "Made today, loved today", "heading": "Today's most-loved <em>blooms.</em>", "copy": "<p>Our freshest favourites, arranged by hand and ready to make someone's day.</p>", "link_label": "Shop all blooms", "products_to_show": 4, "show_description": true, "background": "#fffaf3" } },
+    "statement": {
+      "type": "db-statement",
+      "blocks": {
+        "thanks": { "type": "counter", "settings": { "number": "25,000+", "message": "thank-yous delivered" } },
+        "love": { "type": "counter", "settings": { "number": "25,000+", "message": "I-love-yous delivered" } },
+        "birthday": { "type": "counter", "settings": { "number": "25,000+", "message": "birthdays brightened" } }
+      },
+      "block_order": ["thanks", "love", "birthday"],
+      "settings": { "eyebrow": "A little joy goes a long way", "heading": "Let every day <em>bloom.</em>", "background": "#da8f96", "text_color": "#193e36" }
+    },
+    "story": { "type": "db-editorial-story", "settings": { "eyebrow": "Made differently", "heading": "Handmade by florists, <em>different daily.</em>", "copy": "<p>We let the season lead, selecting the freshest stems and arranging every bouquet with its own personality.</p>", "button_label": "Our story", "button_link": "shopify://pages/about-us", "image_position": "left", "background": "#123f37", "text_color": "#ffffff" } },
+    "content": { "type": "db-rich-content", "settings": { "eyebrow": "Daily delight, guaranteed", "heading": "Beauty in <em>the everyday.</em>", "content": "<p>We believe thoughtful flowers can transform an ordinary day. Every arrangement is made fresh, packed responsibly and delivered with care.</p><p>Ordering flowers online should feel easy and personal. Our team is here to help from choosing the right bouquet to making sure it reaches the right doorstep.</p><p>If something is not quite right, our friendly team will always do everything we can to make it right.</p>", "background": "#f7f0e7" } },
+    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "A little delight, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["hero", "marquee", "categories", "promises", "products", "statement", "story", "content", "newsletter"]
 }

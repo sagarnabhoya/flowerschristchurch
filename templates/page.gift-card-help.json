@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "hero": { "type": "db-hero", "settings": { "eyebrow": "Let them choose", "heading": "A thoughtful gift, <em>beautifully flexible.</em>", "copy": "<p>Everything customers need to know about buying, receiving and using a flower gift card.</p>", "button_label": "Shop gift cards", "button_link": "shopify://collections/all", "badge": "A lovely last-minute gift", "background": "#efc9c5", "text_color": "#193e36" } },
+    "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Gift card help" } },
+    "story": { "type": "db-editorial-story", "settings": { "eyebrow": "Need a hand?", "heading": "Our local team is <em>happy to help.</em>", "copy": "<p>Contact us with the purchaser email and gift-card details, without sharing the full private code.</p>", "button_label": "Contact us", "button_link": "shopify://pages/contact", "image_position": "right", "background": "#123f37", "text_color": "#ffffff" } },
+    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "Gift ideas worth <em>sending.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+  },
+  "order": ["hero", "content", "story", "newsletter"]
+}

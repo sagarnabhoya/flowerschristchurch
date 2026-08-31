@@ -1,57 +1,45 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
-
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
-
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+<footer class="db-footer full-width">
+  <div class="db-page">
+    <div class="db-footer__top">
+      <div class="db-footer__brand">
+        <a class="db-footer__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+          {%- if settings.logo != blank -%}
+            {{ settings.logo | image_url: width: 640 | image_tag: widths: '220,320,440,640', sizes: '(min-width: 750px) 320px, 220px', loading: 'lazy', alt: shop.name }}
+          {%- else -%}<span>{{ shop.name }}</span>{%- endif -%}
+        </a>
+        <p>{{ section.settings.about | default: settings.brand_tagline }}</p>
+        {%- if section.settings.phone != blank -%}<p><a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a></p>{%- endif -%}
+      </div>
+      <nav><h3>{{ section.settings.menu_one_heading }}</h3><ul>{%- for link in section.settings.menu_one.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul></nav>
+      <nav><h3>{{ section.settings.menu_two_heading }}</h3><ul>{%- for link in section.settings.menu_two.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul></nav>
+      <div class="db-footer__newsletter">
+        <h3>Stay in bloom</h3><p>{{ section.settings.newsletter_heading }}</p>
+        {%- form 'customer', class: 'db-newsletter-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <label class="visually-hidden" for="footer-email">Email address</label>
+          <input id="footer-email" type="email" name="contact[email]" placeholder="Email address" required>
+          <button type="submit" aria-label="Subscribe">→</button>
+        {%- endform -%}
+      </div>
+    </div>
+    <div class="db-footer__bottom">
+      <p>© {{ 'now' | date: '%Y' }} {{ shop.name }} · {{ powered_by_link }}</p>
+      {%- if section.settings.show_payment_icons -%}<div class="db-payment-icons">{%- for type in shop.enabled_payment_types -%}{{ type | payment_type_svg_tag }}{%- endfor -%}</div>{%- endif -%}
+    </div>
   </div>
 </footer>
-
-{% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
-
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "Editorial footer",
   "settings": [
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
-    }
+    { "type": "textarea", "id": "about", "label": "Brand introduction", "default": "Thoughtfully curated bouquets and gifts designed to brighten the daily." },
+    { "type": "text", "id": "phone", "label": "Phone number" },
+    { "type": "text", "id": "menu_one_heading", "label": "First menu heading", "default": "Customer care" },
+    { "type": "link_list", "id": "menu_one", "label": "First menu" },
+    { "type": "text", "id": "menu_two_heading", "label": "Second menu heading", "default": "Discover" },
+    { "type": "link_list", "id": "menu_two", "label": "Second menu" },
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "Blooms to brighten the daily. Emails to delight your inbox." },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true }
   ]
 }
 {% endschema %}

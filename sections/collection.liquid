@@ -1,47 +1,46 @@
-{% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
-
-<h1>{{ collection.title }}</h1>
-
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
-        </div>
-      </div>
-    {% endfor %}
-
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
-</div>
-
-{% stylesheet %}
-  .collection-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  }
-{% endstylesheet %}
-
+<section class="full-width">
+  {%- liquid
+    assign collection_hero_image = collection.image
+    if collection_hero_image == blank and collection.products.first.featured_image
+      assign collection_hero_image = collection.products.first.featured_image
+    endif
+  -%}
+  <header class="db-collection-hero{% unless section.settings.show_image and collection_hero_image %} db-collection-hero--text-only{% endunless %}">
+    <div class="db-page db-collection-hero__grid">
+      <div class="db-collection-hero__content"><p class="db-kicker">{{ section.settings.eyebrow }}</p><h1 class="db-title">{{ collection.title }}</h1>{%- if section.settings.show_collection_description and collection.description != blank -%}<div class="db-copy db-collection-hero__description"><p>{{ collection.description | strip_html | truncatewords: section.settings.description_words }}</p></div>{%- endif -%}</div>
+      {%- if section.settings.show_image and collection_hero_image -%}<div class="db-collection-hero__media">{{ collection_hero_image | image_url: width: 1600 | image_tag: widths: '600,900,1200,1600', sizes: '(min-width:750px) 48vw, 100vw', loading: 'eager', alt: collection.title }}</div>{%- endif -%}
+    </div>
+  </header>
+  {%- if section.settings.show_promises and section.blocks.size > 0 -%}<div class="db-collection-promises"><div class="db-page db-collection-promises__grid">{%- for block in section.blocks -%}<div class="db-collection-promise" {{ block.shopify_attributes }}>{%- if block.settings.icon != blank -%}<div class="db-collection-promise__icon">{{ block.settings.icon }}</div>{%- endif -%}<p>{{ block.settings.text }}</p></div>{%- endfor -%}</div></div>{%- endif -%}
+  <div class="db-page db-section">
+    {%- if section.settings.show_toolbar -%}<form class="db-toolbar" method="get"><span>{{ collection.products_count }} products</span><label>Sort by <select name="sort_by" onchange="this.form.submit()">{%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}{%- for option in collection.sort_options -%}<option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>{%- endfor -%}</select></label></form>{%- endif -%}
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      <ul class="db-product-grid db-product-grid--collection db-product-grid--{{ section.settings.desktop_columns }}" role="list">{%- for product in collection.products -%}<li>{% render 'product-card', product: product, show_description: section.settings.show_description, show_quick_add: section.settings.show_quick_add, show_secondary_image: section.settings.show_secondary_image, show_badges: section.settings.show_badges, show_auto_new: section.settings.show_auto_new, new_product_days: section.settings.new_product_days, new_badge_label: section.settings.new_badge_label, badge_color: section.settings.badge_color %}</li>{%- else -%}<li class="db-empty">No products found.</li>{%- endfor -%}</ul>
+      {%- render 'pagination', paginate: paginate -%}
+    {%- endpaginate -%}
+  </div>
+</section>
 {% schema %}
 {
-  "name": "t:general.collection",
-  "settings": []
+  "name": "Editorial collection",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Freshly curated" },
+    { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": true },
+    { "type": "checkbox", "id": "show_collection_description", "label": "Show collection description", "default": true },
+    { "type": "range", "id": "description_words", "label": "Description word limit", "min": 20, "max": 100, "step": 10, "default": 50 },
+    { "type": "checkbox", "id": "show_promises", "label": "Show service promises", "default": true },
+    { "type": "checkbox", "id": "show_toolbar", "label": "Show product count and sorting", "default": false },
+    { "type": "select", "id": "desktop_columns", "label": "Desktop columns", "default": "5", "options": [{ "value": "4", "label": "4" }, { "value": "5", "label": "5" }] },
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 10, "max": 40, "step": 5, "default": 20 },
+    { "type": "checkbox", "id": "show_description", "label": "Show product descriptions", "default": true },
+    { "type": "checkbox", "id": "show_quick_add", "label": "Show quick-add buttons", "default": false },
+    { "type": "checkbox", "id": "show_secondary_image", "label": "Show second image on hover", "default": true },
+    { "type": "checkbox", "id": "show_badges", "label": "Show product badges", "default": true, "info": "Set custom.card_badge on a product, or add a product tag such as badge:DB Loves." },
+    { "type": "checkbox", "id": "show_auto_new", "label": "Automatically label recent products", "default": true },
+    { "type": "range", "id": "new_product_days", "label": "Product remains new for", "min": 15, "max": 365, "step": 10, "unit": "day", "default": 185 },
+    { "type": "text", "id": "new_badge_label", "label": "New badge text", "default": "New!" },
+    { "type": "color", "id": "badge_color", "label": "Badge colour", "default": "#ef5a59" }
+  ],
+  "blocks": [{ "type": "promise", "name": "Service promise", "limit": 4, "settings": [{ "type": "text", "id": "icon", "label": "Icon or symbol", "default": "✿" }, { "type": "text", "id": "text", "label": "Text", "default": "Handmade by local florists" }] }]
 }
 {% endschema %}

@@ -1,37 +1,16 @@
-{% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
-{% endcomment %}
-
-<h1>{{ 'cart.title' | t }}</h1>
-
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
-
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
-
-{% schema %}
-{
-  "name": "t:general.cart",
-  "settings": []
-}
-{% endschema %}
+<section class="db-page db-cart"><p class="db-kicker">A little joy, almost on its way</p><h1>Your cart</h1>
+  {%- if cart.item_count == 0 -%}<div class="db-empty"><p class="db-copy">Your cart is currently empty.</p><a class="db-button" href="{{ routes.all_products_collection_url }}">Shop blooms</a></div>{%- else -%}
+    <ol class="db-cart-steps" aria-label="Checkout steps"><li><span>1</span>Review</li><li><span>2</span>Make it special</li><li><span>3</span>Add a message</li><li><span>4</span>Checkout</li></ol>
+    <form action="{{ routes.cart_url }}" method="post" class="db-cart__layout">
+      <div class="db-cart__main">
+        {%- for item in cart.items -%}<div class="db-cart-item">{%- if item.image -%}{{ item.image | image_url: width: 300 | image_tag: alt: item.product.title }}{%- endif -%}<div><h2><a href="{{ item.url }}">{{ item.product.title }}</a></h2>{%- unless item.product.has_only_default_variant -%}<p>{{ item.variant.title }}</p>{%- endunless -%}{%- for property in item.properties -%}{%- assign first_character = property.first | slice: 0 -%}{%- if property.last != blank and first_character != '_' -%}<p class="db-cart-item__property"><span>{{ property.first }}:</span> {{ property.last }}</p>{%- endif -%}{%- endfor -%}<span class="db-cart-item__quantity-label">Quantity</span><div class="db-cart-quantity" data-quantity><button type="button" data-quantity-change="-1" aria-label="Decrease {{ item.product.title }} quantity">−</button><input class="db-field" type="number" name="updates[]" value="{{ item.quantity }}" min="0" aria-label="{{ item.product.title }} quantity"><button type="button" data-quantity-change="1" aria-label="Increase {{ item.product.title }} quantity">+</button></div><a class="db-text-link" href="{{ item.url_to_remove }}">Remove</a></div><strong class="db-cart-item__price">{{ item.final_line_price | money }}</strong></div>{%- endfor -%}
+        <button class="db-button db-button--outline" type="submit" name="update">Update cart</button>
+        {%- if section.settings.show_message_fields -%}<div class="db-gift-message"><p class="db-kicker">Add a personal message</p><h2>Words make it <em>theirs.</em></h2><div class="db-gift-message__names"><div class="db-field-row"><label for="CartRecipient">To</label><input id="CartRecipient" type="text" name="attributes[Recipient]" value="{{ cart.attributes.Recipient }}"></div><div class="db-field-row"><label for="CartSender">From</label><input id="CartSender" type="text" name="attributes[Sender]" value="{{ cart.attributes.Sender }}"></div></div><div class="db-field-row"><label for="CartMessage">Gift message <span>Maximum 180 characters</span></label><textarea id="CartMessage" name="attributes[Gift message]" maxlength="180" rows="4">{{ cart.attributes['Gift message'] }}</textarea></div><div class="db-field-row"><label for="CartNotes">Delivery instructions <span>Optional</span></label><textarea id="CartNotes" name="attributes[Delivery instructions]" rows="3">{{ cart.attributes['Delivery instructions'] }}</textarea></div></div>{%- endif -%}
+      </div>
+      <aside class="db-cart__summary"><p class="db-cart__total"><span>Subtotal</span><span>{{ cart.total_price | money }}</span></p><p>Taxes and delivery calculated at checkout.</p><button class="db-button" type="submit" name="checkout">Checkout</button></aside>
+    </form>
+    {%- assign cart_gifts = section.settings.gift_collection | default: collections['plants-others'] -%}
+    {%- if section.settings.show_gift_addons and cart_gifts != blank and cart_gifts.products_count > 0 -%}<div class="db-cart-gifts"><div class="db-section-head"><div><p class="db-kicker">One more thoughtful touch</p><h2 class="db-title">Add an extra <em>gift.</em></h2></div></div><div class="db-cart-gifts__grid">{%- for gift in cart_gifts.products limit: 4 -%}{%- assign gift_variant = gift.selected_or_first_available_variant -%}<article class="db-cart-gift"><div class="db-cart-gift__media">{%- if gift.featured_image -%}{{ gift.featured_image | image_url: width: 600 | image_tag: widths: '240,400,600', loading: 'lazy', alt: gift.title }}{%- endif -%}</div><h3>{{ gift.title }}</h3><p>{{ gift_variant.price | money }}</p><button class="db-button db-button--outline" type="button" data-cart-addon="{{ gift_variant.id }}" {% unless gift_variant.available %}disabled{% endunless %}>{% if gift_variant.available %}Add gift{% else %}Sold out{% endif %}</button></article>{%- endfor -%}</div></div>{%- endif -%}
+  {%- endif -%}
+</section>
+{% schema %}{ "name": "Editorial cart", "settings": [{ "type": "checkbox", "id": "show_message_fields", "label": "Show gift message fields", "default": true }, { "type": "checkbox", "id": "show_gift_addons", "label": "Show extra gifts", "default": true }, { "type": "collection", "id": "gift_collection", "label": "Extra gift collection" }] }{% endschema %}

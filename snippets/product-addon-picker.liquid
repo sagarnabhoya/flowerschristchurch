@@ -1,0 +1,15 @@
+{%- if collection != blank and collection.products_count > 0 -%}
+  <fieldset class="db-addon-picker">
+    <legend><span>{{ step }}</span>{{ heading }}</legend>
+    <div class="db-addon-picker__grid">
+      {%- for addon_product in collection.products limit: 4 -%}
+        {%- assign addon_variant = addon_product.selected_or_first_available_variant -%}
+        <label class="db-addon-option{% unless addon_variant.available %} is-unavailable{% endunless %}">
+          <input type="checkbox" value="{{ addon_variant.id }}" data-addon-variant {% unless addon_variant.available %}disabled{% endunless %}>
+          <span class="db-addon-option__media">{%- if addon_product.featured_image -%}{{ addon_product.featured_image | image_url: width: 360 | image_tag: widths: '180,280,360', loading: 'lazy', alt: addon_product.title }}{%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}</span>
+          <span class="db-addon-option__copy"><strong>{{ addon_product.title }}</strong><small>{{ addon_variant.price | money }}</small></span>
+        </label>
+      {%- endfor -%}
+    </div>
+  </fieldset>
+{%- endif -%}

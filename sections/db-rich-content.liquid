@@ -1,0 +1,8 @@
+<section class="db-section db-rich-content full-width" style="background:{{ section.settings.background }}"><div class="db-page db-rich-content__grid"><div><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2></div><div class="db-rich-content__body db-rte">{{ section.settings.content }}</div></div></section>
+{% schema %}
+{
+  "name": "Editorial rich content",
+  "settings": [{ "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Daily delight, guaranteed" }, { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Beauty in <em>the everyday.</em>" }, { "type": "richtext", "id": "content", "label": "Content", "default": "<p>We believe thoughtful flowers can transform an ordinary day. Every arrangement is made fresh, packed responsibly and delivered with care.</p><p>If something is not quite right, our friendly team will always do everything we can to make it right.</p>" }, { "type": "color", "id": "background", "label": "Background", "default": "#f7f0e7" }],
+  "presets": [{ "name": "Editorial rich content" }]
+}
+{% endschema %}

@@ -19,6 +19,7 @@
 
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
@@ -26,11 +27,14 @@
     {{ content_for_header }}
   </head>
 
-  <body>
+  <body class="template-{{ request.page_type | handle }}">
+    <script>window.Shopify = window.Shopify || {}; window.Shopify.routes = { root: {{ routes.root_url | json }} };</script>
+    <a class="visually-hidden" href="#MainContent">Skip to content</a>
     {% sections 'header-group' %}
 
-    {{ content_for_layout }}
+    <main id="MainContent" tabindex="-1">{{ content_for_layout }}</main>
 
     {% sections 'footer-group' %}
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
   </body>
 </html>

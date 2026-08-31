@@ -1,23 +1,2 @@
-{% comment %}
-  This section is used in the 404 template to render page shown when customers
-  enter an invalid store URL.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/404
-{% endcomment %}
-
-<h1>{{ '404.title' | t }}</h1>
-
-<p>
-  {{ '404.not_found' | t }}
-</p>
-
-<a href="{{ routes.all_products_collection_url }}">
-  {{ '404.back_to_shopping' | t }}
-</a>
-
-{% schema %}
-{
-  "name": "t:general.404",
-  "settings": []
-}
-{% endschema %}
+<section class="db-page-hero full-width"><div class="db-page"><p class="db-kicker">404 · Petals out of place</p><h1 class="db-title">This page has <em>wilted away.</em></h1><p class="db-copy">The page you were looking for could not be found, but there is still plenty blooming nearby.</p><a class="db-button" href="{{ routes.all_products_collection_url }}">Continue shopping</a></div></section>
+{% schema %}{ "name": "Editorial 404", "settings": [] }{% endschema %}

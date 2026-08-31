@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "hero": { "type": "db-hero", "settings": { "eyebrow": "Christchurch flower delivery", "heading": "Fresh flowers, <em>right across the city.</em>", "copy": "<p>Explore delivery areas, ordering cut-offs and the details that help flowers arrive beautifully.</p>", "button_label": "Shop flowers", "button_link": "shopify://collections/all", "badge": "Local delivery", "background": "#efc9c5", "text_color": "#193e36" } },
+    "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Delivery information" } },
+    "promises": { "type": "db-value-strip", "blocks": { "one": { "type": "promise", "settings": { "heading": "Christchurch wide", "text": "Local delivery areas" } }, "two": { "type": "promise", "settings": { "heading": "Date selection", "text": "Choose on product pages" } }, "three": { "type": "promise", "settings": { "heading": "Safe placement", "text": "Careful handover" } }, "four": { "type": "promise", "settings": { "heading": "Delivery help", "text": "A local team" } } }, "block_order": ["one", "two", "three", "four"], "settings": {} },
+    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "Fresh flowers and local notes, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+  },
+  "order": ["hero", "content", "promises", "newsletter"]
+}

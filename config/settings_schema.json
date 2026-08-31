@@ -1,11 +1,19 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Skeleton",
-    "theme_version": "0.1.0",
-    "theme_author": "Shopify",
+    "theme_name": "Bloom Atelier",
+    "theme_version": "1.0.0",
+    "theme_author": "Custom Skeleton Studio",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
     "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      { "type": "image_picker", "id": "logo", "label": "Logo" },
+      { "type": "range", "id": "logo_width", "label": "Logo width", "min": 80, "max": 320, "step": 10, "unit": "px", "default": 190 },
+      { "type": "text", "id": "brand_tagline", "label": "Brand tagline", "default": "Flowers made daily, for life's little moments." }
+    ]
   },
   {
     "name": "t:general.typography",
@@ -59,25 +67,35 @@
       {
         "type": "color",
         "id": "background_color",
-        "default": "#FFFFFF",
+        "default": "#FFFAF3",
         "label": "t:labels.background"
       },
       {
         "type": "color",
         "id": "foreground_color",
-        "default": "#333333",
+        "default": "#193E36",
         "label": "t:labels.foreground"
       },
       {
         "type": "range",
         "id": "input_corner_radius",
         "min": 0,
-        "max": 10,
+        "max": 30,
         "step": 1,
         "unit": "px",
         "label": "t:labels.input_corner_radius",
-        "default": 4
+        "default": 18
       }
+    ]
+  },
+  {
+    "name": "Editorial palette",
+    "settings": [
+      { "type": "color", "id": "color_cream", "label": "Cream", "default": "#F7F0E7" },
+      { "type": "color", "id": "color_blush", "label": "Blush", "default": "#EFC9C5" },
+      { "type": "color", "id": "color_pink", "label": "Pink", "default": "#DA8F96" },
+      { "type": "color", "id": "color_red", "label": "Accent red", "default": "#BB3F4B" },
+      { "type": "color", "id": "color_green", "label": "Deep green", "default": "#123F37" }
     ]
   }
 ]

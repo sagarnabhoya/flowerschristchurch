@@ -11,10 +11,44 @@
   "sections": {
     "main": {
       "type": "collection",
-      "settings": {}
+      "blocks": {
+        "handmade": { "type": "promise", "settings": { "icon": "✿", "text": "Handmade by local florists, different daily" } },
+        "delivery": { "type": "promise", "settings": { "icon": "◎", "text": "Same-day Christchurch delivery" } },
+        "packaging": { "type": "promise", "settings": { "icon": "◇", "text": "Premium blooms, thoughtfully packaged" } },
+        "gifts": { "type": "promise", "settings": { "icon": "♡", "text": "Thoughtful treats from local makers" } }
+      },
+      "block_order": ["handmade", "delivery", "packaging", "gifts"],
+      "settings": {
+        "eyebrow": "Freshly curated",
+        "show_image": true,
+        "show_collection_description": true,
+        "description_words": 50,
+        "show_promises": true,
+        "show_toolbar": false,
+        "desktop_columns": "5",
+        "products_per_page": 20,
+        "show_description": true,
+        "show_quick_add": false,
+        "show_secondary_image": true,
+        "show_badges": true,
+        "show_auto_new": true,
+        "new_product_days": 185,
+        "new_badge_label": "New!",
+        "badge_color": "#ef5a59"
+      }
+    },
+    "newsletter": {
+      "type": "db-newsletter",
+      "settings": {
+        "eyebrow": "Stay in bloom",
+        "heading": "A little delight, <em>straight to your inbox.</em>",
+        "background": "#efc9c5",
+        "text_color": "#193e36"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "newsletter"
   ]
 }

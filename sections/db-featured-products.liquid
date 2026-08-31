@@ -1,0 +1,23 @@
+<section class="db-section full-width" style="background:{{ section.settings.background }}">
+  {%- assign featured_collection = section.settings.collection | default: collections.all -%}
+  <div class="db-page">
+    <div class="db-section-head"><div><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2></div><div class="db-section-head__aside">{%- if section.settings.copy != blank -%}<div class="db-copy">{{ section.settings.copy }}</div>{%- endif -%}<a class="db-text-link" href="{{ section.settings.collection.url | default: routes.all_products_collection_url }}">{{ section.settings.link_label }} →</a></div></div>
+    <ul class="db-product-grid" role="list">{%- for product in featured_collection.products limit: section.settings.products_to_show -%}<li>{% render 'product-card', product: product, show_description: section.settings.show_description, show_quick_add: true %}</li>{%- else -%}{%- for i in (1..4) -%}<li>{% render 'product-card', product: all_products[blank], show_description: true, show_quick_add: false %}</li>{%- endfor -%}{%- endfor -%}</ul>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Featured blooms",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Made today, loved today" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Today's most-loved <em>blooms.</em>" },
+    { "type": "richtext", "id": "copy", "label": "Text", "default": "<p>Our freshest favourites, arranged by hand and ready to make someone's day.</p>" },
+    { "type": "text", "id": "link_label", "label": "Collection link label", "default": "Shop all blooms" },
+    { "type": "range", "id": "products_to_show", "label": "Products", "min": 2, "max": 8, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_description", "label": "Show short description", "default": true },
+    { "type": "color", "id": "background", "label": "Background", "default": "#fffaf3" }
+  ],
+  "presets": [{ "name": "Featured blooms" }]
+}
+{% endschema %}

@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "hero": { "type": "db-hero", "settings": { "eyebrow": "Flower rewards", "heading": "More reasons to keep life <em>in bloom.</em>", "copy": "<p>Explain how customers join, earn and enjoy merchant-approved flower rewards.</p>", "button_label": "Ask about rewards", "button_link": "shopify://pages/contact", "badge": "For flower people", "background": "#efc9c5", "text_color": "#193e36" } },
+    "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Rewards" } },
+    "promises": { "type": "db-value-strip", "blocks": { "one": { "type": "promise", "settings": { "heading": "Join", "text": "Create an account" } }, "two": { "type": "promise", "settings": { "heading": "Earn", "text": "Shop and participate" } }, "three": { "type": "promise", "settings": { "heading": "Enjoy", "text": "Use eligible rewards" } }, "four": { "type": "promise", "settings": { "heading": "Stay delighted", "text": "Hear what is blooming" } } }, "block_order": ["one", "two", "three", "four"], "settings": {} },
+    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Members first", "heading": "Flower news and rewards, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+  },
+  "order": ["hero", "content", "promises", "newsletter"]
+}
