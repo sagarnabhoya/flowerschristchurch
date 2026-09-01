@@ -36,10 +36,10 @@
       "block_order": ["fresh", "delivery", "packaging", "makers"],
       "settings": { "background": "#fff5f6", "text_color": "#ef3d32", "content_width": "contained", "padding_top": 44, "padding_bottom": 40 }
     },
-    "products": { "type": "db-featured-products", "settings": { "collection": "shopify://collections/all", "products_to_show": 8, "show_description": true, "button_label": "Order Now", "badge_label": "DB LOVES!", "autoplay": true, "interval": 5, "background": "#fffbf6", "text_color": "#41511d", "content_width": "full", "padding_top": 0, "padding_bottom": 0 } },
-    "occasion": { "type": "db-occasion-banner", "settings": { "height": 640, "overlay": 5, "heading": "What to Send,", "subheading": "WHEN IT MATTERS.", "button_label": "SHOP OCCASIONS", "button_link": "shopify://collections/all", "background": "#fffaf3", "text_color": "#ffffff", "content_width": "full", "padding_top": 0, "padding_bottom": 0 } },
+    "products": { "type": "os-featured-products", "settings": { "collection": "shopify://collections/all", "products_to_show": 8, "show_description": true, "button_label": "Order Now", "badge_label": "DB LOVES!", "initial_slide": 1, "autoplay": false, "interval": 6, "background": "#fffbf6", "text_color": "#41511d", "content_width": "full", "padding_top": 0, "padding_bottom": 0 } },
+    "occasion": { "type": "os-occasion-banner", "settings": { "link": "shopify://collections/all", "accessibility_label": "Shop occasions", "desktop_height": 640, "mobile_height": 260, "desktop_position": "center center", "mobile_position": "center center", "background": "#fffaf3", "content_width": "full", "padding_top": 0, "padding_bottom": 0 } },
     "social": {
-      "type": "db-social-gallery",
+      "type": "os-social-gallery",
       "blocks": {
         "post1": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Fresh flowers and thoughtful gifting." } },
         "post2": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Made locally and delivered with care." } },
@@ -51,7 +51,7 @@
         ,"post8": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Fresh flowers across Christchurch." } }
       },
       "block_order": ["post1", "post2", "post3", "post4", "post5", "post6", "post7", "post8"],
-      "settings": { "heading": "A daily dose of fresh blooms, gifting inspiration and everyday joy @flowersacrosschristchurch", "background": "#fffaf3", "text_color": "#41511d", "content_width": "full", "padding_top": 32, "padding_bottom": 48 }
+      "settings": { "heading": "A daily dose of fresh blooms, gifting inspiration and everyday joy @flowersacrosschristchurch", "desktop_columns": 8, "mobile_columns": 3, "desktop_gap": 12, "mobile_gap": 6, "show_arrows": true, "show_mobile_arrows": true, "autoplay": false, "interval": 6, "modal_width": 1200, "modal_height": 90, "autoplay_video": true, "background": "#fffaf3", "text_color": "#41511d", "content_width": "full", "padding_top": 32, "padding_bottom": 48 }
     },
     "counter": {
       "type": "db-statement",

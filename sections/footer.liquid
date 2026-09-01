@@ -1,26 +1,115 @@
-<footer class="db-reference-footer full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
- <div class="db-reference-footer__inner">
-  <div class="db-reference-footer__grid">
-   <div class="db-reference-footer__identity">
-    <a class="db-reference-footer__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">{%- if settings.logo != blank -%}{{ settings.logo | image_url: width: 500 | image_tag: widths: '200,320,500', sizes: '200px', loading: 'lazy', alt: shop.name }}{%- else -%}{{ shop.name }}{%- endif -%}</a>
-    <div class="db-footer-socials">{%- for block in section.blocks -%}{%- if block.type == 'social' -%}<a href="{{ block.settings.link }}" aria-label="{{ block.settings.label | escape }}" {{ block.shopify_attributes }}>{%- if block.settings.icon != blank -%}{{ block.settings.icon | image_url: width: 64 | image_tag: width: 24, height: 24, loading: 'lazy', alt: '' }}{%- else -%}{%- assign social_key = block.settings.label | downcase -%}{%- case social_key -%}{%- when 'instagram' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>{%- when 'facebook' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 21v-8h3l.5-4H14V7c0-1.2.6-2 2.2-2H18V1.4c-.8-.1-1.8-.2-2.8-.2-3.2 0-5.2 2-5.2 5.5V9H7v4h3v8"/></svg>{%- when 'pinterest' -%}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 21c1.5-4.5 2-6.5 2.6-9.2-.6-1.3 0-4 1.8-4 1.4 0 1.9 1 1.9 2.2 0 1.4-.9 3.5-1.3 5.4-.4 1.6.8 2.9 2.4 2.9 2.9 0 4.8-3.7 4.8-8 0-3.3-2.7-7.3-8.3-7.3C7.2 3 3.5 7.5 3.5 12c0 2.1.6 3.6 1.8 4.8"/></svg>{%- else -%}<span>{{ block.settings.label | slice: 0 }}</span>{%- endcase -%}{%- endif -%}</a>{%- endif -%}{%- endfor -%}</div>
-   </div>
-   <div class="db-reference-footer__about"><div>{{ section.settings.about | newline_to_br }}</div>{%- if section.settings.about_secondary != blank -%}<p>{{ section.settings.about_secondary | newline_to_br }}</p>{%- endif -%}{%- if section.settings.phone != blank -%}<p><a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a></p>{%- endif -%}{%- if section.settings.acknowledgement != blank -%}<div class="db-reference-footer__ack">{{ section.settings.acknowledgement | newline_to_br }}</div>{%- endif -%}</div>
-   <nav><h2 class="visually-hidden">{{ section.settings.menu_one_heading }}</h2><ul>{%- for link in section.settings.menu_one.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul></nav>
-   <nav><h2 class="visually-hidden">{{ section.settings.menu_two_heading }}</h2><ul>{%- for link in section.settings.menu_two.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul></nav>
-   <div class="db-reference-footer__signup"><p>{{ section.settings.newsletter_heading }}</p>{%- form 'customer', class: 'db-reference-footer__form' -%}<input type="hidden" name="contact[tags]" value="newsletter"><label class="visually-hidden" for="FooterEmail-{{ section.id }}">Email address</label><input id="FooterEmail-{{ section.id }}" type="email" name="contact[email]" placeholder="Your email address" required><button type="submit" aria-label="Subscribe">→</button>{%- endform -%}</div>
+{%- liquid
+  assign footer_width = section.settings.content_width | default: 'fluid'
+  assign footer_logo = section.settings.logo
+-%}
+<footer class="os-footer full-width" style="--os-footer-bg:{{ section.settings.background }};--os-footer-color:{{ section.settings.text_color }};--os-footer-max:{{ section.settings.custom_width }}px;--os-footer-pad-top:{{ section.settings.padding_top }}px;--os-footer-pad-bottom:{{ section.settings.padding_bottom }}px;--os-footer-mobile-pad-top:{{ section.settings.mobile_padding_top }}px;--os-footer-mobile-pad-bottom:{{ section.settings.mobile_padding_bottom }}px">
+  <div class="os-footer__shell os-footer__shell--{{ footer_width }}">
+    <div class="os-footer__grid">
+      <div class="os-footer__identity">
+        <a class="os-footer__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+          {%- if footer_logo != blank -%}{{ footer_logo | image_url: width: 500 | image_tag: widths: '160,240,360,500', sizes: '(max-width: 749px) 130px, 170px', loading: 'lazy', alt: shop.name }}{%- else -%}{{ section.settings.logo_text | default: shop.name }}{%- endif -%}
+        </a>
+        <div class="os-footer__socials" aria-label="Social links">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'social' -%}
+              <a href="{{ block.settings.link }}" aria-label="{{ block.settings.label | escape }}" {{ block.shopify_attributes }}>
+                {%- if block.settings.icon != blank -%}{{ block.settings.icon | image_url: width: 64 | image_tag: width: 22, height: 22, loading: 'lazy', alt: '' }}
+                {%- else -%}
+                  {%- assign social_key = block.settings.label | downcase -%}
+                  {%- case social_key -%}
+                    {%- when 'facebook' -%}<svg viewBox="0 0 20 20"><path d="M18.05.811q.439 0 .744.305t.305.744v16.637q0 .439-.305.744t-.744.305h-4.732v-7.221h2.415l.342-2.854h-2.757v-1.83q0-.659.293-1t1.073-.342h1.488V3.762q-.976-.098-2.171-.098-1.634 0-2.635.964t-1 2.72V9.47H7.951v2.854h2.415v7.221H1.413q-.439 0-.744-.305t-.305-.744V1.859q0-.439.305-.744T1.413.81H18.05z"/></svg>
+                    {%- when 'pinterest' -%}<svg viewBox="0 0 20 20"><path d="M9.958.811q1.903 0 3.635.744t2.988 2 2 2.988.744 3.635q0 2.537-1.256 4.696t-3.415 3.415-4.696 1.256q-1.39 0-2.659-.366.707-1.147.951-2.025l.659-2.561q.244.463.903.817t1.39.354q1.464 0 2.622-.842t1.793-2.305.634-3.293q0-2.171-1.671-3.769t-4.257-1.598q-1.586 0-2.903.537T5.298 5.897 4.066 7.775t-.427 2.037q0 1.268.476 2.22t1.427 1.342q.171.073.293.012t.171-.232q.171-.61.195-.756.098-.268-.122-.512-.634-.707-.634-1.83 0-1.854 1.281-3.183t3.354-1.329q1.83 0 2.854 1t1.025 2.61q0 1.342-.366 2.476t-1.049 1.817-1.561.683q-.732 0-1.195-.537t-.293-1.269q.098-.342.256-.878t.268-.915.207-.817.098-.732q0-.61-.317-1t-.927-.39q-.756 0-1.269.695t-.512 1.744q0 .39.061.756t.134.537l.073.171q-1 4.342-1.22 5.098-.195.927-.146 2.171-2.513-1.122-4.062-3.44T.59 10.177q0-3.879 2.744-6.623T9.957.81z"/></svg>
+                    {%- when 'instagram' -%}<svg viewBox="0 0 512 512"><path d="M256 49.5c67.3 0 75.2.3 101.8 1.5 24.6 1.1 37.9 5.2 46.8 8.7 11.8 4.6 20.2 10 29 18.8s14.3 17.2 18.8 29c3.4 8.9 7.6 22.2 8.7 46.8 1.2 26.6 1.5 34.5 1.5 101.8s-.3 75.2-1.5 101.8c-1.1 24.6-5.2 37.9-8.7 46.8-4.6 11.8-10 20.2-18.8 29s-17.2 14.3-29 18.8c-8.9 3.4-22.2 7.6-46.8 8.7-26.6 1.2-34.5 1.5-101.8 1.5s-75.2-.3-101.8-1.5c-24.6-1.1-37.9-5.2-46.8-8.7-11.8-4.6-20.2-10-29-18.8s-14.3-17.2-18.8-29c-3.4-8.9-7.6-22.2-8.7-46.8-1.2-26.6-1.5-34.5-1.5-101.8s.3-75.2 1.5-101.8c1.1-24.6 5.2-37.9 8.7-46.8 4.6-11.8 10-20.2 18.8-29s17.2-14.3 29-18.8c8.9-3.4 22.2-7.6 46.8-8.7 26.6-1.3 34.5-1.5 101.8-1.5m0-45.4c-68.4 0-77 .3-103.9 1.5C125.3 6.8 107 11.1 91 17.3c-16.6 6.4-30.6 15.1-44.6 29.1-14 14-22.6 28.1-29.1 44.6-6.2 16-10.5 34.3-11.7 61.2C4.4 179 4.1 187.6 4.1 256s.3 77 1.5 103.9c1.2 26.8 5.5 45.1 11.7 61.2 6.4 16.6 15.1 30.6 29.1 44.6 14 14 28.1 22.6 44.6 29.1 16 6.2 34.3 10.5 61.2 11.7 26.9 1.2 35.4 1.5 103.9 1.5s77-.3 103.9-1.5c26.8-1.2 45.1-5.5 61.2-11.7 16.6-6.4 30.6-15.1 44.6-29.1 14-14 22.6-28.1 29.1-44.6 6.2-16 10.5-34.3 11.7-61.2 1.2-26.9 1.5-35.4 1.5-103.9s-.3-77-1.5-103.9c-1.2-26.8-5.5-45.1-11.7-61.2-6.4-16.6-15.1-30.6-29.1-44.6-14-14-28.1-22.6-44.6-29.1-16-6.2-34.3-10.5-61.2-11.7-27-1.1-35.6-1.4-104-1.4z"/><path d="M256 126.6c-71.4 0-129.4 57.9-129.4 129.4s58 129.4 129.4 129.4 129.4-58 129.4-129.4-58-129.4-129.4-129.4zm0 213.4c-46.4 0-84-37.6-84-84s37.6-84 84-84 84 37.6 84 84-37.6 84-84 84z"/><circle cx="390.5" cy="121.5" r="30.2"/></svg>
+                    {%- when 'youtube' -%}<svg viewBox="0 0 21 20"><path d="M-.196 15.803q0 1.23.812 2.092t1.977.861h14.946q1.165 0 1.977-.861t.812-2.092V3.909q0-1.23-.82-2.116T17.539.907H2.593q-1.148 0-1.969.886t-.82 2.116v11.894zm7.465-2.149V6.058q0-.115.066-.18.049-.016.082-.016l.082.016 7.153 3.806q.066.066.066.164 0 .066-.066.131l-7.153 3.806q-.033.033-.066.033-.066 0-.098-.033-.066-.066-.066-.131z"/></svg>
+                    {%- when 'tiktok' -%}<svg viewBox="0 0 14 16"><path d="M13.6893 6.47331C13.5586 6.48602 13.4273 6.49268 13.296 6.49327C11.8552 6.49347 10.5114 5.76723 9.72211 4.56182V11.1389C9.72211 13.8236 7.54571 16 4.86099 16C2.17627 16-.00012207 13.8236-.00012207 11.1389C-.00012207 8.45417 2.17627 6.27777 4.86099 6.27777C4.96247 6.27777 5.06166 6.28689 5.16143 6.29317V8.68866C5.06166 8.67669 4.96361 8.65845 4.86099 8.65845C3.49077 8.65845 2.37998 9.76923 2.37998 11.1395C2.37998 12.5097 3.49077 13.6205 4.86099 13.6205C6.23148 13.6205 7.44177 12.5407 7.44177 11.1702L7.46571 0H9.75745C9.97355 2.05512 11.6307 3.66035 13.6916 3.81102V6.47331"/></svg>
+                    {%- else -%}<span>{{ block.settings.label | slice: 0 }}</span>
+                  {%- endcase -%}
+                {%- endif -%}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <div class="os-footer__about">
+        {%- if section.settings.about != blank -%}<div>{{ section.settings.about | newline_to_br }}</div>{%- endif -%}
+        {%- if section.settings.about_secondary != blank -%}<p>{{ section.settings.about_secondary | newline_to_br }}</p>{%- endif -%}
+        {%- if section.settings.phone != blank -%}<p><a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a></p>{%- endif -%}
+        {%- if section.settings.acknowledgement != blank -%}<div class="os-footer__ack">{{ section.settings.acknowledgement | newline_to_br }}</div>{%- endif -%}
+      </div>
+
+      <nav class="os-footer__menu" aria-label="{{ section.settings.menu_one_heading | escape }}">
+        {%- if section.settings.show_menu_headings and section.settings.menu_one_heading != blank -%}<h2>{{ section.settings.menu_one_heading }}</h2>{%- endif -%}
+        <ul>{%- for link in section.settings.menu_one.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul>
+      </nav>
+      <nav class="os-footer__menu" aria-label="{{ section.settings.menu_two_heading | escape }}">
+        {%- if section.settings.show_menu_headings and section.settings.menu_two_heading != blank -%}<h2>{{ section.settings.menu_two_heading }}</h2>{%- endif -%}
+        <ul>{%- for link in section.settings.menu_two.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul>
+      </nav>
+
+      <div class="os-footer__signup">
+        {%- if section.settings.newsletter_heading != blank -%}<p>{{ section.settings.newsletter_heading }}</p>{%- endif -%}
+        {%- if section.settings.newsletter_form_mode == 'external' -%}
+          <div class="os-footer__external-form">
+            {%- if section.settings.newsletter_embed != blank -%}{{ section.settings.newsletter_embed }}
+            {%- elsif request.design_mode -%}<p class="os-footer__form-help">Paste the Shopify Forms or email-provider embed markup in this section.</p>{%- endif -%}
+          </div>
+        {%- else -%}
+          {%- form 'customer', class: 'os-footer__form os-footer__form--native' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            {%- if section.settings.newsletter_intro != blank -%}<div class="os-footer__form-intro">{{ section.settings.newsletter_intro }}</div>{%- endif -%}
+            <label class="visually-hidden" for="FooterEmail-{{ section.id }}">Email address</label>
+            <input class="os-footer__field" id="FooterEmail-{{ section.id }}" type="email" name="contact[email]" value="{% if form.email %}{{ form.email }}{% endif %}" placeholder="{{ section.settings.email_placeholder | escape }}" autocomplete="email" required>
+            <button class="os-footer__submit" type="submit">{{ section.settings.submit_label }}</button>
+            {%- if form.posted_successfully? -%}<p class="os-footer__message" tabindex="-1">{{ section.settings.success_message }}</p>{%- endif -%}
+            {%- if form.errors -%}<div class="os-footer__message" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+          {%- endform -%}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="os-footer__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ section.settings.copyright_name | default: shop.name }}</p>
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}<div class="os-footer__payments" aria-label="Payment methods accepted">{%- for type in shop.enabled_payment_types -%}{{ type | payment_type_svg_tag }}{%- endfor -%}</div>{%- endif -%}
+    </div>
   </div>
-  <div class="db-reference-footer__bottom"><p>© {{ 'now' | date: '%Y' }} {{ shop.name }}</p>{%- if section.settings.show_payment_icons -%}<div class="db-payment-icons">{%- for type in shop.enabled_payment_types -%}{{ type | payment_type_svg_tag }}{%- endfor -%}</div>{%- endif -%}</div>
- </div>
 </footer>
+
 {% schema %}
 {
- "name":"Reference footer",
- "settings":[
-  {"type":"textarea","id":"about","label":"Brand introduction","default":"We're the local experts in letting every day bloom with beautifully curated bouquets and thoughtful gifts."},{"type":"textarea","id":"about_secondary","label":"Additional brand text","default":"We love a blossoming relationship. Contact our friendly local team if you need help choosing or sending flowers."},{"type":"text","id":"phone","label":"Phone number"},{"type":"textarea","id":"acknowledgement","label":"Acknowledgement text"},
-  {"type":"text","id":"menu_one_heading","label":"First menu heading","default":"Customer care"},{"type":"link_list","id":"menu_one","label":"First menu"},{"type":"text","id":"menu_two_heading","label":"Second menu heading","default":"Flower delivery"},{"type":"link_list","id":"menu_two","label":"Second menu"},
-  {"type":"text","id":"newsletter_heading","label":"Newsletter heading","default":"Blooms to brighten the daily. Emails to delight your inbox."},{"type":"checkbox","id":"show_payment_icons","label":"Show payment icons","default":true},{"type":"color","id":"background","label":"Background","default":"#fff4f5"},{"type":"color","id":"text_color","label":"Text","default":"#41511d"}
- ],
- "blocks":[{"type":"social","name":"Social link","settings":[{"type":"text","id":"label","label":"Platform","default":"Instagram"},{"type":"url","id":"link","label":"Link"},{"type":"image_picker","id":"icon","label":"Custom icon"}]}],"max_blocks":8
+  "name": "Reference footer",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Footer logo", "info": "Uses the footer logo text when empty." },
+    { "type": "text", "id": "logo_text", "label": "Footer logo text", "default": "Flowers Across Christchurch" },
+    { "type": "textarea", "id": "about", "label": "Brand introduction", "default": "We're the original experts in letting every day bloom with beautifully curated bouquets, as well as an array of thoughtfully-selected gifts to brighten the daily." },
+    { "type": "textarea", "id": "about_secondary", "label": "Additional brand text", "default": "We love a blossoming relationship. Contact our friendly local team if you need help choosing or sending flowers." },
+    { "type": "text", "id": "phone", "label": "Phone number" },
+    { "type": "textarea", "id": "acknowledgement", "label": "Acknowledgement text" },
+    { "type": "checkbox", "id": "show_menu_headings", "label": "Show menu headings", "default": false },
+    { "type": "text", "id": "menu_one_heading", "label": "First menu heading", "default": "Customer care" },
+    { "type": "link_list", "id": "menu_one", "label": "First menu" },
+    { "type": "text", "id": "menu_two_heading", "label": "Second menu heading", "default": "Flower delivery" },
+    { "type": "link_list", "id": "menu_two", "label": "Second menu" },
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "Blooms to brighten the daily. Emails to delight your inbox." },
+    { "type": "select", "id": "newsletter_form_mode", "label": "Newsletter form", "default": "shopify", "options": [{ "value": "shopify", "label": "Shopify email signup" }, { "value": "external", "label": "External form embed" }] },
+    { "type": "liquid", "id": "newsletter_embed", "label": "External form embed", "info": "Paste your Shopify Forms or email provider's embed snippet. Used only in External form embed mode." },
+    { "type": "text", "id": "newsletter_intro", "label": "Signup introduction", "default": "Sign up for special access to delightful things!" },
+    { "type": "text", "id": "email_placeholder", "label": "Email placeholder", "default": "Your email address" },
+    { "type": "text", "id": "submit_label", "label": "Submit button label", "default": "Sign Me Up!" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "Thank you for signing up." },
+    { "type": "text", "id": "copyright_name", "label": "Copyright name" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
+    { "type": "color", "id": "background", "label": "Background", "default": "#fcf1f2" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#404d1c" },
+    { "type": "header", "content": "Layout" },
+    { "type": "select", "id": "content_width", "label": "Content width", "default": "fluid", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
+    { "type": "range", "id": "custom_width", "label": "Custom width", "min": 900, "max": 2000, "step": 20, "unit": "px", "default": 1760 },
+    { "type": "range", "id": "padding_top", "label": "Desktop top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 32 },
+    { "type": "range", "id": "mobile_padding_top", "label": "Mobile top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "mobile_padding_bottom", "label": "Mobile bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 32 }
+  ],
+  "blocks": [{ "type": "social", "name": "Social link", "settings": [{ "type": "text", "id": "label", "label": "Platform", "default": "Instagram" }, { "type": "url", "id": "link", "label": "Link" }, { "type": "image_picker", "id": "icon", "label": "Custom icon" }] }],
+  "max_blocks": 8
 }
 {% endschema %}

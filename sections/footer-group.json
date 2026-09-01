@@ -14,24 +14,40 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "about": "Thoughtfully curated bouquets and gifts designed to brighten the daily.",
-        "about_secondary": "We love a blossoming relationship. Contact our friendly local team if you need help choosing or sending flowers.",
-        "phone": "",
+        "logo_text": "Flowers Across Christchurch",
+        "about": "We're the original experts in letting every day bloom with beautifully curated bouquets, as well as an array of thoughtfully-selected gifts to brighten the daily.",
+        "about_secondary": "We love a blossoming relationship. You can chat to our friendly team by calling 0475 850 740.",
+        "phone": "0475 850 740",
+        "acknowledgement": "DAILYBlooms acknowledge the traditional owners and custodians of country throughout Australia and acknowledge their continuing connection to land, waters and community. We pay our respects to the people, the cultures and the elders past, present and emerging.",
         "menu_one_heading": "Customer care",
         "menu_one": "footer",
         "menu_two_heading": "Discover",
         "menu_two": "main-menu",
         "newsletter_heading": "Blooms to brighten the daily. Emails to delight your inbox.",
+        "newsletter_form_mode": "shopify",
+        "newsletter_intro": "Sign up for special access to Delightful things!",
+        "email_placeholder": "Your email address",
+        "submit_label": "Sign Me Up!",
+        "success_message": "Thank you for signing up.",
+        "copyright_name": "Flowers Across Christchurch",
         "show_payment_icons": true,
         "background": "#fff4f5",
-        "text_color": "#41511d"
+        "text_color": "#41511d",
+        "content_width": "fluid",
+        "custom_width": 1760,
+        "padding_top": 80,
+        "padding_bottom": 32,
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 32
       },
       "blocks": {
         "instagram": { "type": "social", "settings": { "label": "Instagram" } },
         "facebook": { "type": "social", "settings": { "label": "Facebook" } },
-        "pinterest": { "type": "social", "settings": { "label": "Pinterest" } }
+        "pinterest": { "type": "social", "settings": { "label": "Pinterest" } },
+        "youtube": { "type": "social", "settings": { "label": "YouTube" } },
+        "tiktok": { "type": "social", "settings": { "label": "TikTok" } }
       },
-      "block_order": ["instagram", "facebook", "pinterest"]
+      "block_order": ["facebook", "pinterest", "instagram", "youtube", "tiktok"]
     }
   },
   "order": [

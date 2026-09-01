@@ -97,5 +97,11 @@
       { "type": "color", "id": "color_red", "label": "Accent red", "default": "#BB3F4B" },
       { "type": "color", "id": "color_green", "label": "Deep green", "default": "#123F37" }
     ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      { "type": "checkbox", "id": "enable_cart_drawer", "label": "Enable cart drawer", "default": false, "info": "When disabled, cart actions continue to the cart page." }
+    ]
   }
 ]

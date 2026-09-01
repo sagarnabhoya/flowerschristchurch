@@ -12,12 +12,42 @@ class BloomDialog {
     if (this.dialog.id === 'db-cart-drawer') await refreshCartDrawer();
     this.dialog.showModal();
     document.body.classList.add('no-scroll');
-    if (this.dialog.id === 'db-search') window.requestAnimationFrame(() => this.dialog.querySelector('input[type="search"]')?.focus({ preventScroll: true }));
+    if (this.dialog.id === 'os-search-overlay') window.requestAnimationFrame(() => this.dialog.querySelector('input[type="search"]')?.focus({ preventScroll: true }));
   }
   close() { this.dialog.close(); document.body.classList.remove('no-scroll'); }
 }
 
 document.querySelectorAll('[data-dialog-trigger]').forEach((trigger) => new BloomDialog(trigger));
+
+class OsPredictiveSearch extends HTMLElement {
+  connectedCallback() {
+    this.input = this.querySelector('[data-predictive-input]');
+    this.results = this.querySelector('[data-predictive-results]');
+    this.status = this.querySelector('[data-predictive-status]');
+    this.abortController = null;
+    this.timer = null;
+    this.input?.addEventListener('input', () => {
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => this.search(this.input.value.trim()), 180);
+    });
+  }
+  async search(term) {
+    if (term.length < 2) { this.results.innerHTML = ''; this.status.textContent = ''; return; }
+    this.abortController?.abort();
+    this.abortController = new AbortController();
+    this.status.textContent = 'Searching…';
+    try {
+      const root = window.Shopify?.routes?.root || '/';
+      const response = await fetch(`${root}search/suggest.json?q=${encodeURIComponent(term)}&resources[type]=product&resources[limit]=8&resources[options][unavailable_products]=last`, { signal: this.abortController.signal });
+      if (!response.ok) throw new Error('Search unavailable');
+      const data = await response.json();
+      const products = data.resources?.results?.products || [];
+      this.status.textContent = products.length ? `${products.length} suggested products` : 'No products found';
+      this.results.innerHTML = products.map((product) => `<a class="os-predictive-card" href="${escapeHtml(product.url)}">${product.image ? `<img src="${escapeHtml(product.image)}&width=360" alt="" width="180" height="220">` : ''}<span><strong>${escapeHtml(product.title)}</strong><small>${escapeHtml(product.price || '')}</small></span></a>`).join('');
+    } catch (error) { if (error.name !== 'AbortError') this.status.textContent = 'Search is temporarily unavailable'; }
+  }
+}
+if (!customElements.get('os-predictive-search')) customElements.define('os-predictive-search', OsPredictiveSearch);
 
 document.querySelectorAll('[data-delivery-date]').forEach((input) => {
   const today = new Date();
@@ -92,8 +122,10 @@ async function refreshCartDrawer() {
 
 function openCartDrawer() {
   const drawer = document.getElementById('db-cart-drawer');
-  if (drawer && !drawer.open) drawer.showModal();
+  if (!drawer) return false;
+  if (!drawer.open) drawer.showModal();
   document.body.classList.add('no-scroll');
+  return true;
 }
 
 document.addEventListener('change', (event) => {
@@ -132,7 +164,7 @@ document.addEventListener('submit', async (event) => {
     try {
       const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
       if (!response.ok) { const detail = await response.json().catch(() => ({})); throw new Error(detail.description || 'One of these selections is no longer available.'); }
-      await refreshCartDrawer(); openCartDrawer();
+      await refreshCartDrawer(); if (!openCartDrawer()) { window.location.assign(`${window.Shopify.routes.root}cart`); return; }
       if (button) { button.disabled = false; button.textContent = 'Added to cart'; setTimeout(() => { button.textContent = originalLabel; }, 1800); }
     } catch (error) {
       if (errorBox) { errorBox.textContent = error.message; errorBox.hidden = false; } else alert(error.message);
@@ -150,7 +182,7 @@ document.addEventListener('submit', async (event) => {
   try {
     const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) });
     if (!response.ok) throw new Error('Unable to add this item.');
-    await refreshCartDrawer(); openCartDrawer();
+    await refreshCartDrawer(); if (!openCartDrawer()) { window.location.assign(`${window.Shopify.routes.root}cart`); return; }
     if (button) { button.disabled = false; button.textContent = label; }
   } catch (error) {
     alert(error.message);
@@ -281,6 +313,113 @@ class OsImageCarousel extends HTMLElement {
 
 if (!customElements.get('os-image-carousel')) customElements.define('os-image-carousel', OsImageCarousel);
 
+class OsProductCarousel extends HTMLElement {
+  connectedCallback() {
+    if (this.flickity || !window.Flickity) return;
+    this.track = this.querySelector('[data-product-carousel-track]');
+    this.slides = [...this.querySelectorAll('[data-product-carousel-slide]')];
+    if (!this.track || !this.slides.length) return;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const requestedIndex = Number(this.dataset.initialIndex) || 0;
+    this.flickity = new Flickity(this.track, {
+      cellSelector: '[data-product-carousel-slide]',
+      initialIndex: Math.min(Math.max(requestedIndex, 0), this.slides.length - 1),
+      cellAlign: 'center',
+      contain: false,
+      draggable: this.slides.length > 1,
+      wrapAround: this.slides.length > 1,
+      prevNextButtons: false,
+      pageDots: false,
+      adaptiveHeight: false,
+      autoPlay: this.dataset.autoplay === 'true' && !reduceMotion ? Number(this.dataset.interval) || 6000 : false,
+      pauseAutoPlayOnHover: true,
+      accessibility: true
+    });
+    this.querySelector('[data-product-carousel-prev]')?.addEventListener('click', () => this.flickity.previous());
+    this.querySelector('[data-product-carousel-next]')?.addEventListener('click', () => this.flickity.next());
+    this.querySelectorAll('img').forEach((image) => {
+      if (!image.complete) image.addEventListener('load', () => this.flickity?.resize(), { once: true });
+    });
+    this.addEventListener('shopify:block:select', (event) => {
+      const slide = event.target.closest('[data-product-carousel-slide]');
+      if (slide) this.flickity.selectCell(slide);
+    });
+  }
+
+  disconnectedCallback() {
+    this.flickity?.destroy();
+    this.flickity = null;
+  }
+}
+
+if (!customElements.get('os-product-carousel')) customElements.define('os-product-carousel', OsProductCarousel);
+
+class OsSocialGallery extends HTMLElement {
+  connectedCallback() {
+    if (this.initialized || !window.Flickity) return;
+    this.initialized = true;
+    this.track = this.querySelector('[data-social-gallery-track]');
+    this.cards = [...this.querySelectorAll('[data-social-card]')];
+    this.modal = this.querySelector('[data-social-modal]');
+    this.modalSlides = [...this.querySelectorAll('[data-social-modal-slide]')];
+    if (!this.track || !this.cards.length || !this.modal) return;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.flickity = new Flickity(this.track, {
+      cellSelector: '[data-social-card]',
+      cellAlign: 'left',
+      contain: false,
+      draggable: this.cards.length > 1,
+      wrapAround: this.cards.length > 1,
+      prevNextButtons: false,
+      pageDots: false,
+      autoPlay: this.dataset.autoplay === 'true' && !reduceMotion ? Number(this.dataset.interval) || 6000 : false,
+      pauseAutoPlayOnHover: true,
+      accessibility: true
+    });
+    this.querySelector('[data-social-gallery-prev]')?.addEventListener('click', () => this.flickity.previous());
+    this.querySelector('[data-social-gallery-next]')?.addEventListener('click', () => this.flickity.next());
+    this.cards.forEach((card) => card.addEventListener('click', () => this.openPost(Number(card.dataset.socialIndex) || 0)));
+    this.querySelector('[data-social-modal-close]')?.addEventListener('click', () => this.modal.close());
+    this.querySelector('[data-social-modal-prev]')?.addEventListener('click', () => this.openPost(this.currentIndex - 1));
+    this.querySelector('[data-social-modal-next]')?.addEventListener('click', () => this.openPost(this.currentIndex + 1));
+    this.modal.addEventListener('click', (event) => { if (event.target === this.modal) this.modal.close(); });
+    this.modal.addEventListener('close', () => this.closePost());
+    this.addEventListener('shopify:block:select', (event) => {
+      const card = event.target.closest('[data-social-card]');
+      if (card) this.flickity.selectCell(card);
+    });
+  }
+
+  openPost(index) {
+    if (!this.modalSlides.length) return;
+    this.currentIndex = (index + this.modalSlides.length) % this.modalSlides.length;
+    this.modalSlides.forEach((slide, slideIndex) => {
+      const active = slideIndex === this.currentIndex;
+      slide.hidden = !active;
+      slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      const video = slide.querySelector('video');
+      if (!video) return;
+      if (active && this.dataset.autoplayVideo === 'true') video.play().catch(() => {});
+      else video.pause();
+    });
+    if (!this.modal.open) this.modal.showModal();
+    document.body.classList.add('no-scroll');
+  }
+
+  closePost() {
+    document.body.classList.remove('no-scroll');
+    this.modal.querySelectorAll('video').forEach((video) => video.pause());
+  }
+
+  disconnectedCallback() {
+    this.flickity?.destroy();
+    this.flickity = null;
+    this.closePost();
+  }
+}
+
+if (!customElements.get('os-social-gallery')) customElements.define('os-social-gallery', OsSocialGallery);
+
 function initializeVerticalRotator(rotator) {
   if (rotator.dataset.rotatorReady === 'true') return;
   rotator.dataset.rotatorReady = 'true';
@@ -310,7 +449,3 @@ function initializeReferenceHomepage(root = document) {
 
 initializeReferenceHomepage();
 document.addEventListener('shopify:section:load', (event) => initializeReferenceHomepage(event.target));
-document.querySelectorAll('.db-social-modal').forEach((modal) => modal.addEventListener('close', () => {
-  document.body.classList.remove('no-scroll');
-  modal.querySelectorAll('video').forEach((video) => video.pause());
-}));

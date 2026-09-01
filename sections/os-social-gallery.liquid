@@ -1,0 +1,95 @@
+{% render 'db-section-style', section: section %}
+{%- assign social_desktop_gap_total = section.settings.desktop_columns | minus: 1 | times: section.settings.desktop_gap -%}
+{%- assign social_mobile_gap_total = section.settings.mobile_columns | minus: 1 | times: section.settings.mobile_gap -%}
+<section id="os-social-gallery-{{ section.id }}" class="os-social-section full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
+  <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'full' }}">
+    <os-social-gallery class="os-social-gallery{% if section.settings.show_mobile_arrows %} os-social-gallery--mobile-arrows{% endif %}" style="--os-social-card-width:calc((100% - {{ social_desktop_gap_total }}px)/{{ section.settings.desktop_columns }});--os-social-mobile-card-width:calc((100% - {{ social_mobile_gap_total }}px)/{{ section.settings.mobile_columns }});--os-social-gap:{{ section.settings.desktop_gap }}px;--os-social-mobile-gap:{{ section.settings.mobile_gap }}px;--os-social-modal-width:{{ section.settings.modal_width }}px;--os-social-modal-height:{{ section.settings.modal_height }}vh" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}" data-autoplay-video="{{ section.settings.autoplay_video }}">
+      {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+      <div class="os-social-gallery__viewport">
+        <div class="os-social-gallery__track" data-social-gallery-track>
+          {%- for block in section.blocks -%}
+            {%- assign fallback_social_image = collections.all.products[forloop.index0].featured_image | default: collections.all.products.first.featured_image -%}
+            {%- assign social_thumbnail = block.settings.thumbnail | default: block.settings.video.preview_image | default: block.settings.image | default: fallback_social_image -%}
+            <button class="os-social-card" type="button" data-social-card data-social-index="{{ forloop.index0 }}" {{ block.shopify_attributes }} aria-label="Open post {{ forloop.index }} by {{ block.settings.account | escape }}">
+              {%- if social_thumbnail != blank -%}{{ social_thumbnail | image_url: width: 900 | image_tag: widths: '240,360,500,700,900', sizes: '(min-width:750px) 13vw, 34vw', loading: 'lazy', alt: social_thumbnail.alt | default: block.settings.caption }}{%- else -%}{{ 'image' | placeholder_svg_tag }}{%- endif -%}
+              <span class="os-social-card__overlay{% if block.settings.video != blank %} os-social-card__overlay--video{% else %} os-social-card__overlay--post{% endif %}" aria-hidden="true">
+                {%- if block.settings.video != blank -%}
+                  <svg class="os-social-card__media-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14"/><path d="m13 10 9 6-9 6z"/></svg>
+                {%- else -%}
+                  <svg class="os-social-card__media-icon" viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="7"/><circle cx="16" cy="16" r="6"/><circle class="os-social-card__instagram-dot" cx="23.4" cy="8.8" r="1.6"/></svg>
+                {%- endif -%}
+              </span>
+            </button>
+          {%- endfor -%}
+        </div>
+        {%- if section.settings.show_arrows and section.blocks.size > 1 -%}<button class="os-social-gallery__arrow os-social-gallery__arrow--prev" type="button" data-social-gallery-prev aria-label="Previous posts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><button class="os-social-gallery__arrow os-social-gallery__arrow--next" type="button" data-social-gallery-next aria-label="Next posts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>{%- endif -%}
+      </div>
+
+      <dialog class="os-social-modal" data-social-modal aria-label="Social post viewer">
+        <button class="os-social-modal__close" type="button" data-social-modal-close aria-label="Close social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+        {%- if section.blocks.size > 1 -%}<button class="os-social-modal__nav os-social-modal__nav--prev" type="button" data-social-modal-prev aria-label="Previous social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>{%- endif -%}
+        <div class="os-social-modal__panel">
+          {%- for block in section.blocks -%}
+            {%- assign fallback_modal_image = collections.all.products[forloop.index0].featured_image | default: collections.all.products.first.featured_image -%}
+            <article class="os-social-modal__slide" data-social-modal-slide data-social-modal-index="{{ forloop.index0 }}" style="--os-social-media-fit:{{ block.settings.media_fit }}" hidden>
+              <div class="os-social-modal__media">
+                {%- if block.settings.video != blank -%}{{ block.settings.video | video_tag: controls: true, playsinline: true, preload: 'metadata', image_size: '1200x' }}
+                {%- elsif block.settings.image != blank -%}{{ block.settings.image | image_url: width: 1800 | image_tag: widths: '600,900,1200,1500,1800', sizes: '(min-width:750px) 60vw, 100vw', loading: 'lazy', alt: block.settings.image.alt | default: block.settings.caption }}
+                {%- elsif fallback_modal_image != blank -%}{{ fallback_modal_image | image_url: width: 1800 | image_tag: widths: '600,900,1200,1500,1800', sizes: '(min-width:750px) 60vw, 100vw', loading: 'lazy', alt: block.settings.caption }}
+                {%- else -%}{{ 'image' | placeholder_svg_tag }}{%- endif -%}
+              </div>
+              <div class="os-social-modal__copy">
+                <header>{%- if block.settings.avatar != blank -%}{{ block.settings.avatar | image_url: width: 96 | image_tag: width: 48, height: 48, loading: 'lazy', alt: '' }}{%- else -%}<span class="os-social-modal__avatar">{{ block.settings.account | slice: 0 | upcase }}</span>{%- endif -%}<strong>{{ block.settings.account }}</strong></header>
+                {%- if block.settings.caption != blank -%}<div class="os-social-modal__caption">{{ block.settings.caption | newline_to_br }}</div>{%- endif -%}
+                {%- if block.settings.date != blank -%}<p class="os-social-modal__date">{{ block.settings.date }}</p>{%- endif -%}
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+        {%- if section.blocks.size > 1 -%}<button class="os-social-modal__nav os-social-modal__nav--next" type="button" data-social-modal-next aria-label="Next social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>{%- endif -%}
+      </dialog>
+    </os-social-gallery>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Social gallery",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "A daily dose of fresh blooms, gifting inspiration and everyday joy @flowersacrosschristchurch" },
+    { "type": "range", "id": "desktop_columns", "label": "Desktop cards", "min": 5, "max": 10, "step": 1, "default": 8 },
+    { "type": "range", "id": "mobile_columns", "label": "Mobile cards", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "desktop_gap", "label": "Desktop gap", "min": 4, "max": 24, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "mobile_gap", "label": "Mobile gap", "min": 2, "max": 16, "step": 1, "unit": "px", "default": 6 },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show gallery arrows", "default": true },
+    { "type": "checkbox", "id": "show_mobile_arrows", "label": "Show gallery arrows on mobile", "default": true },
+    { "type": "checkbox", "id": "autoplay", "label": "Autoplay gallery", "default": false },
+    { "type": "range", "id": "interval", "label": "Gallery autoplay interval", "min": 3, "max": 10, "step": 1, "unit": "s", "default": 6 },
+    { "type": "range", "id": "modal_width", "label": "Desktop popup width", "min": 900, "max": 1400, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "modal_height", "label": "Desktop popup height", "min": 70, "max": 94, "step": 2, "unit": "vh", "default": 90 },
+    { "type": "checkbox", "id": "autoplay_video", "label": "Autoplay popup videos", "default": true },
+    { "type": "color", "id": "background", "label": "Section background", "default": "#fffaf3" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#41511d" },
+    { "type": "header", "content": "Section layout" },
+    { "type": "select", "id": "content_width", "label": "Content width", "default": "full", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
+    { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1600 },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 32 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "blocks": [{
+    "type": "post",
+    "name": "Social post",
+    "settings": [
+      { "type": "image_picker", "id": "image", "label": "Post image" },
+      { "type": "video", "id": "video", "label": "Post video" },
+      { "type": "image_picker", "id": "thumbnail", "label": "Video thumbnail", "info": "Optional. The video's preview image is used when empty." },
+      { "type": "select", "id": "media_fit", "label": "Popup media fit", "default": "cover", "options": [{ "value": "cover", "label": "Fill" }, { "value": "contain", "label": "Fit" }] },
+      { "type": "image_picker", "id": "avatar", "label": "Account avatar" },
+      { "type": "text", "id": "account", "label": "Account name", "default": "flowersacrosschristchurch" },
+      { "type": "textarea", "id": "caption", "label": "Caption", "default": "Fresh flowers and thoughtful gifting." },
+      { "type": "text", "id": "date", "label": "Date" }
+    ]
+  }],
+  "presets": [{ "name": "Social gallery", "blocks": [{ "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }, { "type": "post" }] }]
+}
+{% endschema %}

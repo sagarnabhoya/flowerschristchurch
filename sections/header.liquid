@@ -23,12 +23,12 @@
     </a>
 
     <div class="db-header__actions">
-      <button class="db-icon-button db-header-action" type="button" aria-label="Search" aria-controls="db-search" data-dialog-trigger>{% render 'icon', name: 'search', class: 'db-header__icon' %}<span>Search</span></button>
+      <button class="db-icon-button db-header-action" type="button" aria-label="Search" aria-controls="os-search-overlay" data-dialog-trigger>{% render 'icon', name: 'search', class: 'db-header__icon' %}<span>Search</span></button>
       {%- if shop.customer_accounts_enabled -%}<a class="db-account-link db-header-action" href="{{ routes.account_url }}" aria-label="Account">{% render 'icon', name: 'account', class: 'db-header__icon' %}<span>Account</span></a>{%- endif -%}
-      <button class="db-icon-button db-header-action" type="button" aria-label="Cart with {{ cart.item_count }} items" aria-controls="db-cart-drawer" data-dialog-trigger>
+      {%- if settings.enable_cart_drawer -%}<button class="db-icon-button db-header-action" type="button" aria-label="Cart with {{ cart.item_count }} items" aria-controls="db-cart-drawer" data-dialog-trigger>{%- else -%}<a class="db-icon-button db-header-action" href="{{ routes.cart_url }}" aria-label="Cart with {{ cart.item_count }} items">{%- endif -%}
         {% render 'icon', name: 'bag', class: 'db-header__icon' %}
         <span>Cart</span><span class="db-cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
-      </button>
+      {%- if settings.enable_cart_drawer -%}</button>{%- else -%}</a>{%- endif -%}
     </div>
   </div>
 
@@ -55,17 +55,21 @@
   {%- if section.settings.phone != blank -%}<a class="db-text-link" href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a>{%- endif -%}
 </dialog>
 
-<dialog id="db-search" class="db-overlay db-search-dialog" aria-label="Search">
-  <div class="db-search-panel">
-    <div class="db-search-panel__heading"><div><p class="db-kicker">Find the right flowers</p><h2>Search our blooms</h2></div><button class="db-close" type="button" data-dialog-close aria-label="Close search">&times;</button></div>
-    <form class="db-search-form" action="{{ routes.search_url }}" method="get" role="search">
-      <label class="visually-hidden" for="db-search-input">Search</label>
-      <input id="db-search-input" name="q" type="search" placeholder="Search blooms, gifts and occasions" autocomplete="off">
-      <button type="submit" aria-label="Submit search">{% render 'icon', name: 'search', class: 'db-header__icon' %}</button>
+<dialog id="os-search-overlay" class="os-search-overlay" aria-label="Search">
+  <button class="os-search-overlay__close" type="button" data-dialog-close aria-label="Close search">&times;</button>
+  <os-predictive-search class="os-predictive-search">
+    <form class="os-predictive-search__form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="visually-hidden" for="os-search-input">Search</label>
+      <input id="os-search-input" name="q" type="search" placeholder="Search" autocomplete="off" data-predictive-input>
+      <input type="hidden" name="type" value="product">
+      <button type="submit" aria-label="Search">{% render 'icon', name: 'search', class: 'db-header__icon' %}</button>
     </form>
-  </div>
+    <div class="os-predictive-search__status" data-predictive-status aria-live="polite"></div>
+    <div class="os-predictive-search__results" data-predictive-results></div>
+  </os-predictive-search>
 </dialog>
 
+{%- if settings.enable_cart_drawer -%}
 <dialog id="db-cart-drawer" class="db-overlay db-cart-dialog" aria-label="Cart drawer">
   <aside class="db-overlay__panel">
     <div class="db-cart-drawer__head"><div><p class="db-kicker">Your delivery</p><h2>Your cart</h2></div><button class="db-close" type="button" data-dialog-close aria-label="Close cart">&times;</button></div>
@@ -74,6 +78,7 @@
     </div>
   </aside>
 </dialog>
+{%- endif -%}
 
 {% schema %}
 {

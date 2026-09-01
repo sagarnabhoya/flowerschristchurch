@@ -1,15 +1,14 @@
 <section class="full-width">
   {%- liquid
-    assign collection_hero_image = collection.image
+    assign collection_hero_image = section.settings.hero_image | default: collection.image
     if collection_hero_image == blank and collection.products.first.featured_image
       assign collection_hero_image = collection.products.first.featured_image
     endif
   -%}
-  <header class="db-collection-hero{% unless section.settings.show_image and collection_hero_image %} db-collection-hero--text-only{% endunless %}">
-    <div class="db-page db-collection-hero__grid">
-      <div class="db-collection-hero__content"><p class="db-kicker">{{ section.settings.eyebrow }}</p><h1 class="db-title">{{ collection.title }}</h1>{%- if section.settings.show_collection_description and collection.description != blank -%}<div class="db-copy db-collection-hero__description"><p>{{ collection.description | strip_html | truncatewords: section.settings.description_words }}</p></div>{%- endif -%}</div>
-      {%- if section.settings.show_image and collection_hero_image -%}<div class="db-collection-hero__media">{{ collection_hero_image | image_url: width: 1600 | image_tag: widths: '600,900,1200,1600', sizes: '(min-width:750px) 48vw, 100vw', loading: 'eager', alt: collection.title }}</div>{%- endif -%}
-    </div>
+  <header class="os-collection-hero{% unless section.settings.show_image and collection_hero_image %} os-collection-hero--text-only{% endunless %}" style="--os-collection-height:{{ section.settings.hero_height }}px;--os-collection-mobile-height:{{ section.settings.mobile_hero_height }}px;--os-collection-position:{{ section.settings.image_position }};--os-collection-mobile-position:{{ section.settings.mobile_image_position }};--os-collection-overlay:{{ section.settings.overlay_opacity | divided_by: 100.0 }};--os-collection-text:{{ section.settings.hero_text_color }};--os-collection-bg:{{ section.settings.hero_background }}">
+    {%- if section.settings.show_image and collection_hero_image -%}<picture class="os-collection-hero__media">{%- if section.settings.mobile_hero_image != blank -%}<source media="(max-width:749px)" srcset="{{ section.settings.mobile_hero_image | image_url: width: 900 }}">{%- endif -%}{{ collection_hero_image | image_url: width: 2400 | image_tag: widths: '750,1200,1600,2000,2400', sizes: '100vw', loading: 'eager', alt: collection.title }}</picture>{%- endif -%}
+    <div class="os-collection-hero__overlay"></div>
+    <div class="db-page os-collection-hero__content"><p class="db-kicker">{{ section.settings.eyebrow }}</p><h1>{{ collection.title }}</h1>{%- if section.settings.show_collection_description and collection.description != blank -%}<div class="os-collection-hero__description"><p>{{ collection.description | strip_html | truncatewords: section.settings.description_words }}</p></div>{%- endif -%}</div>
   </header>
   {%- if section.settings.show_promises and section.blocks.size > 0 -%}<div class="db-collection-promises"><div class="db-page db-collection-promises__grid">{%- for block in section.blocks -%}<div class="db-collection-promise" {{ block.shopify_attributes }}>{%- if block.settings.icon != blank -%}<div class="db-collection-promise__icon">{{ block.settings.icon }}</div>{%- endif -%}<p>{{ block.settings.text }}</p></div>{%- endfor -%}</div></div>{%- endif -%}
   <div class="db-page db-section">
@@ -26,6 +25,15 @@
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Freshly curated" },
     { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": true },
+    { "type": "image_picker", "id": "hero_image", "label": "Custom desktop image", "info": "Uses the collection image when empty." },
+    { "type": "image_picker", "id": "mobile_hero_image", "label": "Custom mobile image", "info": "Uses the desktop image when empty." },
+    { "type": "select", "id": "image_position", "label": "Desktop image focus", "default": "center center", "options": [{ "value": "left top", "label": "Top left" }, { "value": "center top", "label": "Top center" }, { "value": "right top", "label": "Top right" }, { "value": "left center", "label": "Center left" }, { "value": "center center", "label": "Center" }, { "value": "right center", "label": "Center right" }, { "value": "left bottom", "label": "Bottom left" }, { "value": "center bottom", "label": "Bottom center" }, { "value": "right bottom", "label": "Bottom right" }] },
+    { "type": "select", "id": "mobile_image_position", "label": "Mobile image focus", "default": "center center", "options": [{ "value": "left top", "label": "Top left" }, { "value": "center top", "label": "Top center" }, { "value": "right top", "label": "Top right" }, { "value": "left center", "label": "Center left" }, { "value": "center center", "label": "Center" }, { "value": "right center", "label": "Center right" }, { "value": "left bottom", "label": "Bottom left" }, { "value": "center bottom", "label": "Bottom center" }, { "value": "right bottom", "label": "Bottom right" }] },
+    { "type": "range", "id": "hero_height", "label": "Desktop hero height", "min": 180, "max": 600, "step": 10, "unit": "px", "default": 250 },
+    { "type": "range", "id": "mobile_hero_height", "label": "Mobile hero height", "min": 160, "max": 500, "step": 10, "unit": "px", "default": 220 },
+    { "type": "range", "id": "overlay_opacity", "label": "Image overlay", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 15 },
+    { "type": "color", "id": "hero_text_color", "label": "Hero text", "default": "#ffffff" },
+    { "type": "color", "id": "hero_background", "label": "Hero background", "default": "#efc9c5" },
     { "type": "checkbox", "id": "show_collection_description", "label": "Show collection description", "default": true },
     { "type": "range", "id": "description_words", "label": "Description word limit", "min": 20, "max": 100, "step": 10, "default": 50 },
     { "type": "checkbox", "id": "show_promises", "label": "Show service promises", "default": true },
