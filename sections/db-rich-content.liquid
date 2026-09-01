@@ -1,8 +1,8 @@
-<section class="db-section db-rich-content full-width" style="background:{{ section.settings.background }}"><div class="db-page db-rich-content__grid"><div><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2></div><div class="db-rich-content__body db-rte">{{ section.settings.content }}</div></div></section>
+{% render 'db-section-style', section: section %}
+<section class="db-seo-content full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}"><div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}"><div class="db-seo-content__body">{{ section.settings.content }}</div></div></section>
 {% schema %}
-{
-  "name": "Editorial rich content",
-  "settings": [{ "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Daily delight, guaranteed" }, { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Beauty in <em>the everyday.</em>" }, { "type": "richtext", "id": "content", "label": "Content", "default": "<p>We believe thoughtful flowers can transform an ordinary day. Every arrangement is made fresh, packed responsibly and delivered with care.</p><p>If something is not quite right, our friendly team will always do everything we can to make it right.</p>" }, { "type": "color", "id": "background", "label": "Background", "default": "#f7f0e7" }],
-  "presets": [{ "name": "Editorial rich content" }]
-}
+{"name":"Homepage SEO content","settings":[
+ {"type":"richtext","id":"content","label":"Content","default":"<p><strong>Daily Delight, Guaranteed.</strong></p><p>We are all about finding the beauty in the daily. We pride ourselves on delivering delight through thoughtful products and personalised service.</p><p><strong>Christchurch Flower Delivery</strong></p><p>Our floral bouquets are handmade by talented local florists and delivered with care.</p>"},{"type":"color","id":"background","label":"Section background","default":"#fffaf3"},{"type":"color","id":"text_color","label":"Text","default":"#41511d"},
+ {"type":"header","content":"Section layout"},{"type":"select","id":"content_width","label":"Content width","default":"custom","options":[{"value":"contained","label":"Container"},{"value":"fluid","label":"Container fluid"},{"value":"full","label":"Full width"},{"value":"custom","label":"Custom width"}]},{"type":"range","id":"custom_width","label":"Custom width","min":600,"max":2000,"step":20,"unit":"px","default":1280},{"type":"range","id":"padding_top","label":"Top padding","min":0,"max":160,"step":4,"unit":"px","default":20},{"type":"range","id":"padding_bottom","label":"Bottom padding","min":0,"max":160,"step":4,"unit":"px","default":64}
+],"presets":[{"name":"Homepage SEO content"}]}
 {% endschema %}

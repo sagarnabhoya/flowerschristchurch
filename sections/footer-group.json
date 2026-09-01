@@ -15,14 +15,23 @@
       "type": "footer",
       "settings": {
         "about": "Thoughtfully curated bouquets and gifts designed to brighten the daily.",
+        "about_secondary": "We love a blossoming relationship. Contact our friendly local team if you need help choosing or sending flowers.",
         "phone": "",
         "menu_one_heading": "Customer care",
         "menu_one": "footer",
         "menu_two_heading": "Discover",
         "menu_two": "main-menu",
         "newsletter_heading": "Blooms to brighten the daily. Emails to delight your inbox.",
-        "show_payment_icons": true
-      }
+        "show_payment_icons": true,
+        "background": "#fff4f5",
+        "text_color": "#41511d"
+      },
+      "blocks": {
+        "instagram": { "type": "social", "settings": { "label": "Instagram" } },
+        "facebook": { "type": "social", "settings": { "label": "Facebook" } },
+        "pinterest": { "type": "social", "settings": { "label": "Pinterest" } }
+      },
+      "block_order": ["instagram", "facebook", "pinterest"]
     }
   },
   "order": [

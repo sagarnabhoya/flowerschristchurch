@@ -1,42 +1,69 @@
 {
   "sections": {
-    "hero": { "type": "db-hero", "settings": { "layout": "campaign", "desktop_height": 720, "overlay_opacity": 10, "show_content": false, "eyebrow": "Made fresh every day", "heading": "Flowers to make <em>the daily delightful.</em>", "copy": "<p>Thoughtful seasonal blooms, handcrafted by local florists and delivered with care.</p>", "button_label": "Shop blooms", "button_link": "shopify://collections/all", "badge": "", "background": "#efc9c5", "text_color": "#193e36" } },
-    "marquee": { "type": "db-marquee", "blocks": { "fresh": { "type": "message", "settings": { "image": "shopify://shop_images/Flowers_Across_Christchurch_logo.png", "image_width": 36, "text": "Handmade by local florists" } }, "delivery": { "type": "message", "settings": { "image_width": 44, "text": "Same-day Christchurch delivery" } }, "seasonal": { "type": "message", "settings": { "image_width": 44, "text": "Fresh seasonal flowers" } }, "thoughtful": { "type": "message", "settings": { "image_width": 44, "text": "Thoughtful gifts for every moment" } } }, "block_order": ["fresh", "delivery", "seasonal", "thoughtful"], "settings": { "accessibility_label": "Why shop with us", "separator": "✦", "speed": 26, "background": "#efc9c5", "text_color": "#123f37" } },
-    "categories": {
-      "type": "db-category-grid",
+    "hero": { "type": "db-hero", "settings": { "layout": "campaign", "desktop_height": 720, "overlay_opacity": 5, "show_content": false, "heading": "Fresh flowers delivered with care", "button_label": "SHOP ALL BLOOMS", "button_link": "shopify://collections/all", "background": "#efc9c5", "text_color": "#193e36" } },
+    "press_marquee": {
+      "type": "db-marquee",
       "blocks": {
-        "blooms": { "type": "category", "settings": { "title": "Fresh blooms", "label": "Shop blooms" } },
-        "hampers": { "type": "category", "settings": { "title": "Flower & gift hampers", "label": "Shop hampers" } },
-        "gifts": { "type": "category", "settings": { "title": "Thoughtful gifts", "label": "Shop gifts" } }
+        "elle": { "type": "message", "settings": { "image_width": 100, "wordmark_style": "serif", "text": "ELLE" } },
+        "timeout": { "type": "message", "settings": { "image_width": 112, "wordmark_style": "outline", "text": "TimeOut" } },
+        "urban": { "type": "message", "settings": { "image_width": 112, "wordmark_style": "bold", "text": "URBAN LIST" } },
+        "nine": { "type": "message", "settings": { "image_width": 100, "wordmark_style": "dots", "text": "••• 9" } },
+        "journal": { "type": "message", "settings": { "image_width": 120, "wordmark_style": "small", "text": "FASHION JOURNAL" } },
+        "trusted": { "type": "message", "settings": { "image_width": 100, "wordmark_style": "sans", "text": "Trusted by" } },
+        "broadsheet": { "type": "message", "settings": { "image_width": 120, "wordmark_style": "serif", "text": "• BROADSHEET" } }
       },
-      "block_order": ["blooms", "hampers", "gifts"],
-      "settings": { "eyebrow": "Find their favourite", "heading": "Something lovely, <em>for every moment.</em>", "copy": "<p>Fresh flowers, thoughtful hampers and locally made gifts for every kind of day.</p>", "background": "#fffaf3" }
+      "block_order": ["elle", "timeout", "urban", "nine", "journal", "trusted", "broadsheet"],
+      "settings": { "accessibility_label": "Featured in", "separator": "", "speed": 24, "gap": 56, "direction": "left", "pause_hover": true, "content_width": "full", "padding_top": 20, "padding_bottom": 24, "background": "#fffaf3", "text_color": "#ef3d32" }
     },
-    "promises": {
+    "promotions": {
+      "type": "os-promo-carousel",
+      "blocks": {
+        "hampers": { "type": "slide", "settings": { "title": "Flower and gift hampers", "button_label": "Shop Flower & Gift Hampers", "link": "shopify://collections/all" } },
+        "limited": { "type": "slide", "settings": { "title": "Limited edition blooms", "button_label": "Shop Limited Edition Blooms", "link": "shopify://collections/all" } },
+        "blooms": { "type": "slide", "settings": { "title": "All blooms", "button_label": "Shop All Blooms", "link": "shopify://collections/all" } }
+      },
+      "block_order": ["hampers", "limited", "blooms"],
+      "settings": { "autoplay": false, "interval": 5, "background": "#f8e5e8", "text_color": "#ef3d32", "content_width": "full", "padding_top": 84, "padding_bottom": 68 }
+    },
+    "benefits": {
       "type": "db-value-strip",
       "blocks": {
-        "fresh": { "type": "promise", "settings": { "heading": "Handmade daily", "text": "By local florists" } },
-        "delivery": { "type": "promise", "settings": { "heading": "Delivered with care", "text": "Fresh and on time" } },
-        "packaging": { "type": "promise", "settings": { "heading": "Beautifully packed", "text": "Lower-impact materials" } },
-        "makers": { "type": "promise", "settings": { "heading": "Thoughtful extras", "text": "From local makers" } }
+        "fresh": { "type": "benefit", "settings": { "icon_style": "scissors", "text": "Handmade by florists, different daily." } },
+        "delivery": { "type": "benefit", "settings": { "icon_style": "clock", "text": "Same day Christchurch delivery" } },
+        "packaging": { "type": "benefit", "settings": { "icon_style": "pin", "text": "Premium blooms, sustainably packaged" } },
+        "makers": { "type": "benefit", "settings": { "icon_style": "cake", "text": "Thoughtful treats, from local makers." } }
       },
       "block_order": ["fresh", "delivery", "packaging", "makers"],
-      "settings": {}
+      "settings": { "background": "#fff5f6", "text_color": "#ef3d32", "content_width": "contained", "padding_top": 44, "padding_bottom": 40 }
     },
-    "products": { "type": "db-featured-products", "settings": { "collection": "shopify://collections/all", "eyebrow": "Made today, loved today", "heading": "Today's most-loved <em>blooms.</em>", "copy": "<p>Our freshest favourites, arranged by hand and ready to make someone's day.</p>", "link_label": "Shop all blooms", "products_to_show": 4, "show_description": true, "background": "#fffaf3" } },
-    "statement": {
+    "products": { "type": "db-featured-products", "settings": { "collection": "shopify://collections/all", "products_to_show": 8, "show_description": true, "button_label": "Order Now", "badge_label": "DB LOVES!", "autoplay": true, "interval": 5, "background": "#fffbf6", "text_color": "#41511d", "content_width": "full", "padding_top": 0, "padding_bottom": 0 } },
+    "occasion": { "type": "db-occasion-banner", "settings": { "height": 640, "overlay": 5, "heading": "What to Send,", "subheading": "WHEN IT MATTERS.", "button_label": "SHOP OCCASIONS", "button_link": "shopify://collections/all", "background": "#fffaf3", "text_color": "#ffffff", "content_width": "full", "padding_top": 0, "padding_bottom": 0 } },
+    "social": {
+      "type": "db-social-gallery",
+      "blocks": {
+        "post1": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Fresh flowers and thoughtful gifting." } },
+        "post2": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Made locally and delivered with care." } },
+        "post3": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "A little everyday delight." } },
+        "post4": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Seasonal blooms from our florists." } },
+        "post5": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Thoughtful moments that matter." } }
+        ,"post6": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Flowers made for meaningful moments." } }
+        ,"post7": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Behind the scenes with our local florists." } }
+        ,"post8": { "type": "post", "settings": { "account": "flowersacrosschristchurch", "caption": "Fresh flowers across Christchurch." } }
+      },
+      "block_order": ["post1", "post2", "post3", "post4", "post5", "post6", "post7", "post8"],
+      "settings": { "heading": "A daily dose of fresh blooms, gifting inspiration and everyday joy @flowersacrosschristchurch", "background": "#fffaf3", "text_color": "#41511d", "content_width": "full", "padding_top": 32, "padding_bottom": 48 }
+    },
+    "counter": {
       "type": "db-statement",
       "blocks": {
-        "thanks": { "type": "counter", "settings": { "number": "25,000+", "message": "thank-yous delivered" } },
-        "love": { "type": "counter", "settings": { "number": "25,000+", "message": "I-love-yous delivered" } },
-        "birthday": { "type": "counter", "settings": { "number": "25,000+", "message": "birthdays brightened" } }
+        "birthday": { "type": "counter", "settings": { "number": "11,28,657", "message": "happy birthday's delivered" } },
+        "thanks": { "type": "counter", "settings": { "number": "25,000+", "message": "thank-you's delivered" } },
+        "love": { "type": "counter", "settings": { "number": "25,000+", "message": "I-love-you's delivered" } }
       },
-      "block_order": ["thanks", "love", "birthday"],
-      "settings": { "eyebrow": "A little joy goes a long way", "heading": "Let every day <em>bloom.</em>", "background": "#da8f96", "text_color": "#193e36" }
+      "block_order": ["birthday", "thanks", "love"],
+      "settings": { "heading": "Let Every Day Bloom", "interval": 4, "speed": 500, "background": "#fffaf3", "text_color": "#ef3d32", "content_width": "contained", "padding_top": 80, "padding_bottom": 92 }
     },
-    "story": { "type": "db-editorial-story", "settings": { "eyebrow": "Made differently", "heading": "Handmade by florists, <em>different daily.</em>", "copy": "<p>We let the season lead, selecting the freshest stems and arranging every bouquet with its own personality.</p>", "button_label": "Our story", "button_link": "shopify://pages/about-us", "image_position": "left", "background": "#123f37", "text_color": "#ffffff" } },
-    "content": { "type": "db-rich-content", "settings": { "eyebrow": "Daily delight, guaranteed", "heading": "Beauty in <em>the everyday.</em>", "content": "<p>We believe thoughtful flowers can transform an ordinary day. Every arrangement is made fresh, packed responsibly and delivered with care.</p><p>Ordering flowers online should feel easy and personal. Our team is here to help from choosing the right bouquet to making sure it reaches the right doorstep.</p><p>If something is not quite right, our friendly team will always do everything we can to make it right.</p>", "background": "#f7f0e7" } },
-    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "A little delight, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+    "seo": { "type": "db-rich-content", "settings": { "content": "<p><strong>Daily Delight, Guaranteed.</strong></p><p>Flowers Across Christchurch is about finding beauty in the daily. We pride ourselves on delivering delight through thoughtful flowers, gifts and personal service. If something is not quite right, our friendly local team is here to help.</p><p><strong>Christchurch Flower Delivery</strong></p><p>Our bouquets are handmade by local florists and delivered fresh and with care. Each arrangement is prepared for its occasion using beautiful seasonal flowers and thoughtful presentation.</p><p>Ordering flowers online should feel easy. Choose the bouquet that suits the moment, add the delivery information and your personal message, and our team will take care of the details.</p><p>Our flower and gift range is designed for birthdays, celebrations, thank-yous and the everyday moments that deserve something lovely.</p><p><strong>Same Day Gifting For All Occasions &amp; Events</strong></p><p>When same-day delivery is available, finding and ordering a thoughtful gift is simple and fast. Browse flowers and gifts, select the right arrangement and confirm the recipient details during checkout.</p><p>Alongside fresh bouquets, you can choose thoughtful extras and gifts to make the delivery feel personal. Product and delivery availability is shown while you shop.</p>", "background": "#fffaf3", "text_color": "#41511d", "content_width": "custom", "custom_width": 960, "padding_top": 36, "padding_bottom": 72 } }
   },
-  "order": ["hero", "marquee", "categories", "promises", "products", "statement", "story", "content", "newsletter"]
+  "order": ["hero", "press_marquee", "promotions", "benefits", "products", "occasion", "social", "counter", "seo"]
 }

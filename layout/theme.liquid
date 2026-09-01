@@ -20,6 +20,7 @@
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'flickity.min.css' | asset_url | stylesheet_tag }}
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
@@ -35,6 +36,7 @@
     <main id="MainContent" tabindex="-1">{{ content_for_layout }}</main>
 
     {% sections 'footer-group' %}
+    <script src="{{ 'flickity.pkgd.min.js' | asset_url }}" defer></script>
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
   </body>
 </html>

@@ -159,6 +159,13 @@ document.addEventListener('submit', async (event) => {
 });
 
 document.addEventListener('click', async (event) => {
+  const socialTrigger = event.target.closest('[data-social-open]');
+  if (socialTrigger) {
+    const modal = document.getElementById(socialTrigger.dataset.socialOpen);
+    if (modal && !modal.open) { modal.showModal(); document.body.classList.add('no-scroll'); }
+    return;
+  }
+
   const dialogClose = event.target.closest('[data-dialog-close]');
   if (dialogClose) {
     dialogClose.closest('dialog')?.close();
@@ -197,3 +204,113 @@ document.addEventListener('click', async (event) => {
     giftButton.textContent = originalLabel;
   }
 });
+
+function initializeEditorialCarousel(carousel) {
+  if (carousel.dataset.carouselReady === 'true') return;
+  carousel.dataset.carouselReady = 'true';
+  const track = carousel.querySelector('[data-carousel-track]');
+  const slides = [...carousel.querySelectorAll('[data-carousel-slide]')];
+  if (!track || !slides.length) return;
+  const startIndex = Math.min(Number(carousel.dataset.startIndex) || 0, slides.length - 1);
+  if (startIndex > 0) window.requestAnimationFrame(() => { track.scrollLeft = Math.max(0, slides[startIndex].offsetLeft - track.clientWidth * .13); });
+  const nearestIndex = () => {
+    const trackBox = track.getBoundingClientRect();
+    let closest = 0;
+    let distance = Infinity;
+    slides.forEach((slide, index) => {
+      const current = Math.abs(slide.getBoundingClientRect().left - trackBox.left);
+      if (current < distance) { distance = current; closest = index; }
+    });
+    return closest;
+  };
+  const move = (direction) => {
+    const current = nearestIndex();
+    const next = (current + direction + slides.length) % slides.length;
+    slides[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+  };
+  carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => move(-1));
+  carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => move(1));
+  if (carousel.dataset.autoplay !== 'true' || slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let timer;
+  let visible = true;
+  let paused = false;
+  const schedule = () => {
+    window.clearInterval(timer);
+    if (visible && !paused) timer = window.setInterval(() => move(1), Number(carousel.dataset.interval) || 5000);
+  };
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }, { threshold: .2 }).observe(carousel);
+  carousel.addEventListener('mouseenter', () => { paused = true; schedule(); });
+  carousel.addEventListener('mouseleave', () => { paused = false; schedule(); });
+  carousel.addEventListener('focusin', () => { paused = true; schedule(); });
+  carousel.addEventListener('focusout', () => { paused = false; schedule(); });
+  schedule();
+}
+
+class OsImageCarousel extends HTMLElement {
+  connectedCallback() {
+    if (this.flickity || !window.Flickity) return;
+    this.track = this.querySelector('[data-carousel-track]');
+    this.slides = [...this.querySelectorAll('[data-carousel-slide]')];
+    if (!this.track || !this.slides.length) return;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.flickity = new Flickity(this.track, {
+      cellSelector: '[data-carousel-slide]',
+      cellAlign: 'center',
+      contain: false,
+      draggable: this.slides.length > 1,
+      wrapAround: this.slides.length > 1,
+      prevNextButtons: false,
+      pageDots: false,
+      adaptiveHeight: false,
+      autoPlay: this.dataset.autoplay === 'true' && !reduceMotion ? Number(this.dataset.interval) || 6000 : false,
+      pauseAutoPlayOnHover: true,
+      accessibility: true
+    });
+    this.querySelector('[data-carousel-prev]')?.addEventListener('click', () => this.flickity.previous());
+    this.querySelector('[data-carousel-next]')?.addEventListener('click', () => this.flickity.next());
+    this.querySelectorAll('img').forEach((image) => {
+      if (!image.complete) image.addEventListener('load', () => this.flickity?.resize(), { once: true });
+    });
+  }
+
+  disconnectedCallback() {
+    this.flickity?.destroy();
+    this.flickity = null;
+  }
+}
+
+if (!customElements.get('os-image-carousel')) customElements.define('os-image-carousel', OsImageCarousel);
+
+function initializeVerticalRotator(rotator) {
+  if (rotator.dataset.rotatorReady === 'true') return;
+  rotator.dataset.rotatorReady = 'true';
+  const items = [...rotator.querySelectorAll('[data-rotator-item]')];
+  if (items.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let current = 0;
+  let timer;
+  const rotate = () => {
+    const previous = items[current];
+    current = (current + 1) % items.length;
+    previous.classList.add('is-leaving');
+    previous.classList.remove('is-active');
+    items[current].classList.add('is-active');
+    window.setTimeout(() => previous.classList.remove('is-leaving'), 1100);
+  };
+  const observer = new IntersectionObserver(([entry]) => {
+    window.clearInterval(timer);
+    if (entry.isIntersecting) timer = window.setInterval(rotate, Number(rotator.dataset.interval) || 4000);
+  }, { threshold: .3 });
+  observer.observe(rotator);
+}
+
+function initializeReferenceHomepage(root = document) {
+  root.querySelectorAll('[data-carousel]').forEach(initializeEditorialCarousel);
+  root.querySelectorAll('[data-vertical-rotator]').forEach(initializeVerticalRotator);
+}
+
+initializeReferenceHomepage();
+document.addEventListener('shopify:section:load', (event) => initializeReferenceHomepage(event.target));
+document.querySelectorAll('.db-social-modal').forEach((modal) => modal.addEventListener('close', () => {
+  document.body.classList.remove('no-scroll');
+  modal.querySelectorAll('video').forEach((video) => video.pause());
+}));

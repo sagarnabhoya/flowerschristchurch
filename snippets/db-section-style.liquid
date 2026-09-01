@@ -1,0 +1,8 @@
+{%- assign custom_width = section.settings.custom_width | default: 1200 -%}
+<style>
+  #shopify-section-{{ section.id }} .db-section-shell {
+    --db-section-custom-width: {{ custom_width }}px;
+    --db-section-pad-top: {{ section.settings.padding_top | default: 0 }}px;
+    --db-section-pad-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+  }
+</style>
