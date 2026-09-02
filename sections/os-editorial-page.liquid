@@ -1,0 +1,75 @@
+{%- liquid
+  assign content_width = section.settings.custom_width
+  if section.settings.width_mode == 'page'
+    assign content_width = 1320
+  elsif section.settings.width_mode == 'full'
+    assign content_width = 9999
+  endif
+-%}
+<section
+  class="os-editorial-page os-editorial-page--{{ section.settings.layout }} full-width"
+  style="--os-page-bg:{{ section.settings.background }};--os-page-color:{{ section.settings.text_color }};--os-page-width:{{ content_width }}px;--os-page-pad-top:{{ section.settings.padding_top }}px;--os-page-pad-bottom:{{ section.settings.padding_bottom }}px;--os-page-pad-top-mobile:{{ section.settings.padding_top_mobile }}px;--os-page-pad-bottom-mobile:{{ section.settings.padding_bottom_mobile }}px;"
+>
+  <div class="os-editorial-page__inner">
+    {%- if section.settings.show_title -%}
+      <h1>{{ section.settings.heading | default: page.title }}</h1>
+    {%- endif -%}
+
+    <div class="os-editorial-page__content db-rte">
+      {%- if section.settings.use_custom_content -%}
+        {{ section.settings.custom_content }}
+      {%- else -%}
+        {{ page.content }}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_contact_form -%}
+      <div class="os-editorial-page__form">
+        {%- form 'contact' -%}
+          {%- if form.posted_successfully? -%}<p class="db-form-message" tabindex="-1">{{ section.settings.success_message }}</p>{%- endif -%}
+          {%- if form.errors -%}<div class="db-form-message db-form-message--error">{{ form.errors | default_errors }}</div>{%- endif -%}
+          <div class="db-field-row"><label for="OsContactName-{{ section.id }}">Name</label><input id="OsContactName-{{ section.id }}" name="contact[name]" type="text" value="{{ form.name }}" autocomplete="name"></div>
+          <div class="db-field-row"><label for="OsContactEmail-{{ section.id }}">Email</label><input id="OsContactEmail-{{ section.id }}" name="contact[email]" type="email" value="{{ form.email }}" autocomplete="email" required></div>
+          <div class="db-field-row"><label for="OsContactPhone-{{ section.id }}">Phone <span>Optional</span></label><input id="OsContactPhone-{{ section.id }}" name="contact[phone]" type="tel" value="{{ form.phone }}" autocomplete="tel"></div>
+          <div class="db-field-row"><label for="OsContactMessage-{{ section.id }}">How can we help?</label><textarea id="OsContactMessage-{{ section.id }}" name="contact[body]" rows="5" required>{{ form.body }}</textarea></div>
+          <button class="db-button" type="submit">{{ section.settings.button_label }} {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</button>
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "OS editorial page",
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Page style", "default": "about", "options": [
+      { "value": "about", "label": "About - centred column" },
+      { "value": "contact", "label": "Contact - wide column" }
+    ] },
+    { "type": "checkbox", "id": "show_title", "label": "Show page title", "default": true },
+    { "type": "text", "id": "heading", "label": "Custom title" },
+    { "type": "checkbox", "id": "use_custom_content", "label": "Use custom content instead of page content", "default": false },
+    { "type": "richtext", "id": "custom_content", "label": "Custom content" },
+    { "type": "header", "content": "Width and spacing" },
+    { "type": "select", "id": "width_mode", "label": "Content width", "default": "custom", "options": [
+      { "value": "page", "label": "Container" },
+      { "value": "full", "label": "Full width" },
+      { "value": "custom", "label": "Custom width" }
+    ] },
+    { "type": "range", "id": "custom_width", "min": 600, "max": 1800, "step": 20, "unit": "px", "label": "Custom width", "default": 920 },
+    { "type": "range", "id": "padding_top", "min": 20, "max": 180, "step": 4, "unit": "px", "label": "Desktop top spacing", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "min": 20, "max": 180, "step": 4, "unit": "px", "label": "Desktop bottom spacing", "default": 96 },
+    { "type": "range", "id": "padding_top_mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "label": "Mobile top spacing", "default": 48 },
+    { "type": "range", "id": "padding_bottom_mobile", "min": 16, "max": 120, "step": 4, "unit": "px", "label": "Mobile bottom spacing", "default": 64 },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background", "label": "Section background", "default": "#f9f5ef" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#314116" },
+    { "type": "header", "content": "Optional native Shopify form" },
+    { "type": "checkbox", "id": "show_contact_form", "label": "Show contact form", "default": false },
+    { "type": "text", "id": "button_label", "label": "Submit button", "default": "Send enquiry" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "Thanks for reaching out. We'll be in touch shortly." }
+  ],
+  "presets": [{ "name": "OS editorial page" }]
+}
+{% endschema %}

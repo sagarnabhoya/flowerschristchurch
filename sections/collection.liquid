@@ -11,10 +11,34 @@
     <div class="db-page os-collection-hero__content"><p class="db-kicker">{{ section.settings.eyebrow }}</p><h1>{{ collection.title }}</h1>{%- if section.settings.show_collection_description and collection.description != blank -%}<div class="os-collection-hero__description"><p>{{ collection.description | strip_html | truncatewords: section.settings.description_words }}</p></div>{%- endif -%}</div>
   </header>
   {%- if section.settings.show_promises and section.blocks.size > 0 -%}<div class="db-collection-promises"><div class="db-page db-collection-promises__grid">{%- for block in section.blocks -%}<div class="db-collection-promise" {{ block.shopify_attributes }}>{%- if block.settings.icon != blank -%}<div class="db-collection-promise__icon">{{ block.settings.icon }}</div>{%- endif -%}<p>{{ block.settings.text }}</p></div>{%- endfor -%}</div></div>{%- endif -%}
-  <div class="db-page db-section">
+  <div class="db-page db-section db-collection-products">
+    {%- liquid
+      assign effective_card_ratio = settings.card_image_ratio
+      assign effective_card_radius = settings.card_corner_radius
+      assign effective_title_size = settings.card_title_size
+      assign effective_description_size = settings.card_description_size
+      assign effective_price_size = settings.card_price_size
+      assign effective_badge_size = settings.card_badge_size
+      assign effective_badge_position = settings.card_badge_position
+      assign effective_badge_color = settings.card_badge_color
+      assign effective_badge_text_color = settings.card_badge_text_color
+      assign effective_default_badge = settings.card_default_badge
+      if section.settings.override_card_settings
+        assign effective_card_ratio = section.settings.card_image_ratio
+        assign effective_card_radius = section.settings.card_corner_radius
+        assign effective_title_size = section.settings.card_title_size
+        assign effective_description_size = section.settings.card_description_size
+        assign effective_price_size = section.settings.card_price_size
+        assign effective_badge_size = section.settings.card_badge_size
+        assign effective_badge_position = section.settings.card_badge_position
+        assign effective_badge_color = section.settings.badge_color
+        assign effective_badge_text_color = section.settings.badge_text_color
+        assign effective_default_badge = section.settings.default_badge_label
+      endif
+    -%}
     {%- if section.settings.show_toolbar -%}<form class="db-toolbar" method="get"><span>{{ collection.products_count }} products</span><label>Sort by <select name="sort_by" onchange="this.form.submit()">{%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}{%- for option in collection.sort_options -%}<option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>{%- endfor -%}</select></label></form>{%- endif -%}
     {%- paginate collection.products by section.settings.products_per_page -%}
-      <ul class="db-product-grid db-product-grid--collection db-product-grid--{{ section.settings.desktop_columns }}" role="list">{%- for product in collection.products -%}<li>{% render 'product-card', product: product, show_description: section.settings.show_description, show_quick_add: section.settings.show_quick_add, show_secondary_image: section.settings.show_secondary_image, show_badges: section.settings.show_badges, show_auto_new: section.settings.show_auto_new, new_product_days: section.settings.new_product_days, new_badge_label: section.settings.new_badge_label, badge_color: section.settings.badge_color %}</li>{%- else -%}<li class="db-empty">No products found.</li>{%- endfor -%}</ul>
+      <ul class="db-product-grid db-product-grid--collection db-product-grid--{{ section.settings.desktop_columns }}" role="list">{%- for product in collection.products -%}<li>{% render 'product-card', product: product, show_description: section.settings.show_description, show_quick_add: section.settings.show_quick_add, show_secondary_image: section.settings.show_secondary_image, show_badges: section.settings.show_badges, show_auto_new: section.settings.show_auto_new, new_product_days: section.settings.new_product_days, new_badge_label: section.settings.new_badge_label, default_badge_label: effective_default_badge, badge_color: effective_badge_color, badge_text_color: effective_badge_text_color, badge_size: effective_badge_size, badge_position: effective_badge_position, card_image_ratio: effective_card_ratio, card_radius: effective_card_radius, card_title_size: effective_title_size, card_description_size: effective_description_size, card_price_size: effective_price_size %}</li>{%- else -%}<li class="db-empty">No products found.</li>{%- endfor -%}</ul>
       {%- render 'pagination', paginate: paginate -%}
     {%- endpaginate -%}
   </div>
@@ -43,11 +67,21 @@
     { "type": "checkbox", "id": "show_description", "label": "Show product descriptions", "default": true },
     { "type": "checkbox", "id": "show_quick_add", "label": "Show quick-add buttons", "default": false },
     { "type": "checkbox", "id": "show_secondary_image", "label": "Show second image on hover", "default": true },
+    { "type": "checkbox", "id": "override_card_settings", "label": "Override global product card design", "default": false },
+    { "type": "select", "id": "card_image_ratio", "label": "Card image ratio", "default": "0.77", "options": [{ "value": "1", "label": "Square" }, { "value": "0.82", "label": "Portrait" }, { "value": "0.77", "label": "Reference portrait" }] },
+    { "type": "range", "id": "card_corner_radius", "label": "Card image radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 10 },
+    { "type": "range", "id": "card_title_size", "label": "Card title size", "min": 14, "max": 30, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "card_description_size", "label": "Card description size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "card_price_size", "label": "Card price size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "card_badge_size", "label": "Flower badge size", "min": 44, "max": 100, "step": 2, "unit": "px", "default": 72 },
+    { "type": "select", "id": "card_badge_position", "label": "Flower badge position", "default": "right", "options": [{ "value": "left", "label": "Top left" }, { "value": "right", "label": "Top right" }] },
     { "type": "checkbox", "id": "show_badges", "label": "Show product badges", "default": true, "info": "Set custom.card_badge on a product, or add a product tag such as badge:DB Loves." },
     { "type": "checkbox", "id": "show_auto_new", "label": "Automatically label recent products", "default": true },
     { "type": "range", "id": "new_product_days", "label": "Product remains new for", "min": 15, "max": 365, "step": 10, "unit": "day", "default": 185 },
     { "type": "text", "id": "new_badge_label", "label": "New badge text", "default": "New!" },
     { "type": "color", "id": "badge_color", "label": "Badge colour", "default": "#ef5a59" }
+    ,{ "type": "color", "id": "badge_text_color", "label": "Badge text colour", "default": "#ffffff" }
+    ,{ "type": "text", "id": "default_badge_label", "label": "Default badge text", "info": "Optional fallback when a product has no custom badge." }
   ],
   "blocks": [{ "type": "promise", "name": "Service promise", "limit": 4, "settings": [{ "type": "text", "id": "icon", "label": "Icon or symbol", "default": "✿" }, { "type": "text", "id": "text", "label": "Text", "default": "Handmade by local florists" }] }]
 }

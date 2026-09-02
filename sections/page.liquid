@@ -14,16 +14,31 @@
   endif
 -%}
 <section class="db-inner-page full-width db-inner-page--{{ page.handle }}">
-  {%- if section.settings.show_header -%}
-    <header class="db-inner-hero"><div class="db-page"><p class="db-kicker">{%- if is_contact -%}We are here to help{%- elsif is_faq -%}Good to know{%- elsif is_delivery -%}From our studio to their door{%- elsif is_policy -%}The important details{%- else -%}{{ section.settings.eyebrow }}{%- endif -%}</p><h1 class="db-title">{{ page.title }}</h1></div></header>
+  {%- if section.settings.show_header and is_contact == false -%}
+    <header class="db-inner-hero"><div class="db-page"><p class="db-kicker">{%- if is_faq -%}Good to know{%- elsif is_delivery -%}From our studio to their door{%- elsif is_policy -%}The important details{%- else -%}{{ section.settings.eyebrow }}{%- endif -%}</p><h1 class="db-title">{{ page.title }}</h1></div></header>
   {%- endif -%}
   {%- if is_contact -%}
-    <div class="db-page db-contact-layout db-section">
-      <div class="db-contact-intro"><p class="db-kicker">Say hello</p><h2>Let’s get the conversation <em>blossoming.</em></h2><div class="db-rte">{{ page.content }}</div>{%- if section.settings.contact_email != blank -%}<a class="db-contact-link" href="mailto:{{ section.settings.contact_email }}">{{ section.settings.contact_email }}</a>{%- endif -%}{%- if section.settings.contact_phone != blank -%}<a class="db-contact-link" href="tel:{{ section.settings.contact_phone | remove: ' ' }}">{{ section.settings.contact_phone }}</a>{%- endif -%}</div>
-      <div class="db-contact-card">{%- form 'contact' -%}{%- if form.posted_successfully? -%}<p class="db-form-message" tabindex="-1">Thanks for reaching out. We’ll be in touch shortly.</p>{%- endif -%}{%- if form.errors -%}<div class="db-form-message db-form-message--error">{{ form.errors | default_errors }}</div>{%- endif -%}<div class="db-field-row"><label for="ContactName-{{ section.id }}">Name</label><input id="ContactName-{{ section.id }}" name="contact[name]" type="text" value="{{ form.name }}" autocomplete="name"></div><div class="db-field-row"><label for="ContactEmail-{{ section.id }}">Email</label><input id="ContactEmail-{{ section.id }}" name="contact[email]" type="email" value="{{ form.email }}" autocomplete="email" required></div><div class="db-field-row"><label for="ContactPhone-{{ section.id }}">Phone <span>Optional</span></label><input id="ContactPhone-{{ section.id }}" name="contact[phone]" type="tel" value="{{ form.phone }}" autocomplete="tel"></div><div class="db-field-row"><label for="ContactMessage-{{ section.id }}">How can we help?</label><textarea id="ContactMessage-{{ section.id }}" name="contact[body]" rows="5" required>{{ form.body }}</textarea></div><button class="db-button" type="submit">Send enquiry {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</button>{%- endform -%}</div>
+    <div class="os-editorial-page os-editorial-page--contact" style="--os-page-bg:{{ section.settings.contact_background }};--os-page-color:{{ section.settings.contact_text_color }};--os-page-width:{{ section.settings.contact_width }}px;--os-page-pad-top:{{ section.settings.contact_padding_top }}px;--os-page-pad-bottom:{{ section.settings.contact_padding_bottom }}px;--os-page-pad-top-mobile:{{ section.settings.contact_padding_top_mobile }}px;--os-page-pad-bottom-mobile:{{ section.settings.contact_padding_bottom_mobile }}px">
+      <div class="os-editorial-page__inner">
+        <h1>{{ page.title }}</h1>
+        <div class="os-editorial-page__content db-rte">{{ page.content }}</div>
+        {%- if section.settings.show_contact_form -%}
+          <div class="os-editorial-page__form">
+            {%- form 'contact' -%}
+              {%- if form.posted_successfully? -%}<p class="db-form-message" tabindex="-1">Thanks for reaching out. We'll be in touch shortly.</p>{%- endif -%}
+              {%- if form.errors -%}<div class="db-form-message db-form-message--error">{{ form.errors | default_errors }}</div>{%- endif -%}
+              <div class="db-field-row"><label for="ContactName-{{ section.id }}">Name</label><input id="ContactName-{{ section.id }}" name="contact[name]" type="text" value="{{ form.name }}" autocomplete="name"></div>
+              <div class="db-field-row"><label for="ContactEmail-{{ section.id }}">Email</label><input id="ContactEmail-{{ section.id }}" name="contact[email]" type="email" value="{{ form.email }}" autocomplete="email" required></div>
+              <div class="db-field-row"><label for="ContactPhone-{{ section.id }}">Phone <span>Optional</span></label><input id="ContactPhone-{{ section.id }}" name="contact[phone]" type="tel" value="{{ form.phone }}" autocomplete="tel"></div>
+              <div class="db-field-row"><label for="ContactMessage-{{ section.id }}">How can we help?</label><textarea id="ContactMessage-{{ section.id }}" name="contact[body]" rows="5" required>{{ form.body }}</textarea></div>
+              <button class="db-button" type="submit">{{ section.settings.contact_button_label }} {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</button>
+            {%- endform -%}
+          </div>
+        {%- endif -%}
+      </div>
     </div>
   {%- elsif is_faq or is_delivery -%}
-    <div class="db-page db-content-layout db-section"><article class="db-rte db-content-layout__main">{{ page.content }}</article><aside class="db-help-card"><p class="db-kicker">Still wondering?</p><h2>We’re happy to help.</h2><p>Our local team can help with delivery timing, flower care and choosing the right gift.</p><a class="db-button db-button--outline" href="{{ section.settings.help_link | default: pages['contact'].url }}">{{ section.settings.help_label }} {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</a></aside></div>
+    <div class="db-page db-content-layout db-section"><article class="db-rte db-content-layout__main">{{ page.content }}</article><aside class="db-help-card"><p class="db-kicker">Still wondering?</p><h2>We're happy to help.</h2><p>Our local team can help with delivery timing, flower care and choosing the right gift.</p><a class="db-button db-button--outline" href="{{ section.settings.help_link | default: pages['contact'].url }}">{{ section.settings.help_label }} {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</a></aside></div>
   {%- elsif is_policy -%}
     <article class="db-policy db-page db-section"><div class="db-rte">{{ page.content }}</div></article>
   {%- else -%}
@@ -38,6 +53,16 @@
     { "type": "text", "id": "eyebrow", "label": "Default eyebrow", "default": "From our flower studio" },
     { "type": "text", "id": "contact_email", "label": "Contact email" },
     { "type": "text", "id": "contact_phone", "label": "Contact phone" },
+    { "type": "header", "content": "Contact page layout" },
+    { "type": "checkbox", "id": "show_contact_form", "label": "Show native Shopify contact form", "default": false },
+    { "type": "text", "id": "contact_button_label", "label": "Contact form button", "default": "Send enquiry" },
+    { "type": "range", "id": "contact_width", "min": 800, "max": 1800, "step": 20, "unit": "px", "label": "Contact content width", "default": 1740 },
+    { "type": "range", "id": "contact_padding_top", "min": 20, "max": 180, "step": 4, "unit": "px", "label": "Desktop top spacing", "default": 80 },
+    { "type": "range", "id": "contact_padding_bottom", "min": 20, "max": 180, "step": 4, "unit": "px", "label": "Desktop bottom spacing", "default": 112 },
+    { "type": "range", "id": "contact_padding_top_mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "label": "Mobile top spacing", "default": 48 },
+    { "type": "range", "id": "contact_padding_bottom_mobile", "min": 16, "max": 120, "step": 4, "unit": "px", "label": "Mobile bottom spacing", "default": 64 },
+    { "type": "color", "id": "contact_background", "label": "Contact background", "default": "#f9f5ef" },
+    { "type": "color", "id": "contact_text_color", "label": "Contact text colour", "default": "#314116" },
     { "type": "text", "id": "help_label", "label": "Help button label", "default": "Contact our team" },
     { "type": "url", "id": "help_link", "label": "Help button link" }
   ]

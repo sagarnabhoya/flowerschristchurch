@@ -103,5 +103,21 @@
     "settings": [
       { "type": "checkbox", "id": "enable_cart_drawer", "label": "Enable cart drawer", "default": false, "info": "When disabled, cart actions continue to the cart page." }
     ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      { "type": "select", "id": "card_image_ratio", "label": "Image ratio", "default": "0.77", "options": [{ "value": "1", "label": "Square" }, { "value": "0.82", "label": "Portrait" }, { "value": "0.77", "label": "Reference portrait" }] },
+      { "type": "range", "id": "card_corner_radius", "label": "Image corner radius", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 10 },
+      { "type": "checkbox", "id": "card_show_secondary_image", "label": "Show second image on hover", "default": true },
+      { "type": "range", "id": "card_title_size", "label": "Title size", "min": 14, "max": 30, "step": 1, "unit": "px", "default": 20 },
+      { "type": "range", "id": "card_description_size", "label": "Description size", "min": 10, "max": 18, "step": 1, "unit": "px", "default": 12 },
+      { "type": "range", "id": "card_price_size", "label": "Price size", "min": 11, "max": 22, "step": 1, "unit": "px", "default": 14 },
+      { "type": "range", "id": "card_badge_size", "label": "Flower badge size", "min": 44, "max": 100, "step": 2, "unit": "px", "default": 72 },
+      { "type": "select", "id": "card_badge_position", "label": "Badge position", "default": "right", "options": [{ "value": "left", "label": "Top left" }, { "value": "right", "label": "Top right" }] },
+      { "type": "color", "id": "card_badge_color", "label": "Badge background", "default": "#ef493e" },
+      { "type": "color", "id": "card_badge_text_color", "label": "Badge text", "default": "#ffffff" },
+      { "type": "text", "id": "card_default_badge", "label": "Default badge text", "info": "Optional fallback when a product has no custom badge." }
+    ]
   }
 ]

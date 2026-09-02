@@ -9,6 +9,9 @@
     assign secondary_image = card_product.media[1].preview_image
   endunless
   assign card_badge_text = blank
+  if show_secondary_image == nil
+    assign show_secondary_image = settings.card_show_secondary_image
+  endif
   if show_badges and card_is_placeholder == false
     assign card_badge_text = card_product.metafields.custom.card_badge.value | default: card_product.metafields.custom.card_badge
     if card_badge_text == blank
@@ -28,9 +31,12 @@
         assign card_badge_text = new_badge_label | default: 'New!'
       endif
     endif
+    if card_badge_text == blank and default_badge_label != blank
+      assign card_badge_text = default_badge_label
+    endif
   endif
 -%}
-<article class="db-product-card">
+<article class="db-product-card" style="--db-card-ratio:{{ card_image_ratio | default: settings.card_image_ratio | default: '0.77' }};--db-card-radius:{{ card_radius | default: settings.card_corner_radius | default: 10 }}px;--db-card-title-size:{{ card_title_size | default: settings.card_title_size | default: 20 }}px;--db-card-description-size:{{ card_description_size | default: settings.card_description_size | default: 14 }}px;--db-card-price-size:{{ card_price_size | default: settings.card_price_size | default: 16 }}px;--db-card-badge-size:{{ badge_size | default: settings.card_badge_size | default: 72 }}px;--db-card-badge-text:{{ badge_text_color | default: settings.card_badge_text_color | default: '#ffffff' }}">
   <a class="db-product-card__media" href="{% if card_is_placeholder %}{{ routes.all_products_collection_url }}{% else %}{{ card_product.url }}{% endif %}">
     {%- if card_image != blank and card_image.width != blank -%}
       {{ card_image | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', sizes: '(min-width: 990px) 25vw, 50vw', loading: 'lazy', alt: card_image.alt | default: card_product.title }}
@@ -39,7 +45,7 @@
       {{ 'product-1' | placeholder_svg_tag }}
     {%- endif -%}
     {%- unless card_is_placeholder or card_product.available -%}<span class="db-product-card__badge">Sold out</span>{%- endunless -%}
-    {%- if card_badge_text != blank -%}<span class="db-product-card__flower-badge" style="--db-card-badge:{{ badge_color | default: '#ef5a59' }}"><span>{{ card_badge_text }}</span></span>{%- endif -%}
+    {%- if card_badge_text != blank -%}<span class="db-product-card__flower-badge db-product-card__flower-badge--{{ badge_position | default: settings.card_badge_position | default: 'right' }}" style="--db-card-badge:{{ badge_color | default: '#ef5a59' }}"><span>{{ card_badge_text }}</span></span>{%- endif -%}
   </a>
   <div class="db-product-card__content">
     <h3 class="db-product-card__title"><a href="{% if card_is_placeholder %}{{ routes.all_products_collection_url }}{% else %}{{ card_product.url }}{% endif %}">{% if card_is_placeholder %}Fresh flowers{% else %}{{ card_product.title | escape }}{% endif %}</a></h3>

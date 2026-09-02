@@ -420,6 +420,92 @@ class OsSocialGallery extends HTMLElement {
 
 if (!customElements.get('os-social-gallery')) customElements.define('os-social-gallery', OsSocialGallery);
 
+class OsCartCarousel extends HTMLElement {
+  connectedCallback() {
+    if (this.flickity || !window.Flickity) return;
+    const track = this.querySelector('[data-cart-carousel-track]');
+    const cells = this.querySelectorAll('[data-cart-carousel-cell]');
+    if (!track || !cells.length) return;
+    this.flickity = new Flickity(track, { cellSelector: '[data-cart-carousel-cell]', cellAlign: 'left', contain: true, draggable: cells.length > 1, prevNextButtons: false, pageDots: false, groupCells: false, accessibility: true });
+    this.querySelector('[data-cart-carousel-prev]')?.addEventListener('click', () => this.flickity.previous());
+    this.querySelector('[data-cart-carousel-next]')?.addEventListener('click', () => this.flickity.next());
+    this.querySelectorAll('img').forEach((image) => { if (!image.complete) image.addEventListener('load', () => this.flickity?.resize(), { once: true }); });
+  }
+  disconnectedCallback() { this.flickity?.destroy(); this.flickity = null; }
+}
+if (!customElements.get('os-cart-carousel')) customElements.define('os-cart-carousel', OsCartCarousel);
+
+class OsCartPage extends HTMLElement {
+  connectedCallback() {
+    if (this.ready) return;
+    this.ready = true;
+    this.form = this.querySelector('[data-cart-form]');
+    this.status = this.querySelector('[data-cart-status]');
+    this.addEventListener('click', (event) => this.onClick(event));
+    this.addEventListener('change', (event) => this.onChange(event));
+    this.message = this.querySelector('[data-message-input]');
+    this.message?.addEventListener('input', () => this.updateMessage());
+    this.updateMessage();
+  }
+  async request(path, body) {
+    this.classList.add('is-loading');
+    try {
+      const response = await fetch(`${window.Shopify.routes.root}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+      if (!response.ok) throw new Error((await response.json()).description || 'Unable to update your cart.');
+      window.location.reload();
+    } catch (error) {
+      if (this.status) this.status.textContent = error.message;
+      this.classList.remove('is-loading');
+    }
+  }
+  cartAttributes() {
+    if (!this.form) return {};
+    const data = new FormData(this.form), attributes = {};
+    for (const [name, value] of data.entries()) if (name.startsWith('attributes[')) attributes[name.slice(11, -1)] = value;
+    return { attributes, note: data.get('note') || '' };
+  }
+  async persistDetails() {
+    if (!this.form) return;
+    await fetch(`${window.Shopify.routes.root}cart/update.js`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(this.cartAttributes()) });
+  }
+  async onClick(event) {
+    const quantity = event.target.closest('[data-cart-quantity]');
+    if (quantity) {
+      const item = quantity.closest('[data-cart-line]'), input = item?.querySelector('input[name="updates[]"]');
+      if (item && input) { await this.persistDetails(); await this.request('cart/change.js', { line: Number(item.dataset.cartLine), quantity: Math.max(0, Number(input.value) + Number(quantity.dataset.cartQuantity)) }); }
+      return;
+    }
+    const remove = event.target.closest('[data-cart-remove]');
+    if (remove) { const item = remove.closest('[data-cart-line]'); if (item) { await this.persistDetails(); await this.request('cart/change.js', { line: Number(item.dataset.cartLine), quantity: 0 }); } return; }
+    const addon = event.target.closest('button[data-cart-addon]');
+    if (addon) { addon.disabled = true; await this.persistDetails(); await this.request('cart/add.js', { items: [{ id: Number(addon.dataset.cartAddon), quantity: 1 }] }); return; }
+    const emoji = event.target.closest('[data-message-emoji]');
+    if (emoji && this.message) { const start = this.message.selectionStart, end = this.message.selectionEnd; this.message.setRangeText(emoji.dataset.messageEmoji, start, end, 'end'); this.message.dispatchEvent(new Event('input')); this.message.focus(); return; }
+    if (event.target.closest('[data-message-helper]')) { this.message?.focus(); this.message?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+  async onChange(event) {
+    const checkbox = event.target.closest('input[data-cart-addon]');
+    if (!checkbox) return;
+    checkbox.disabled = true;
+    await this.persistDetails();
+    if (checkbox.checked) await this.request('cart/add.js', { items: [{ id: Number(checkbox.dataset.cartAddon), quantity: 1 }] });
+    else {
+      try {
+        const cart = await fetch(`${window.Shopify.routes.root}cart.js`).then((response) => response.json());
+        const item = cart.items.find((entry) => entry.variant_id === Number(checkbox.dataset.cartAddon));
+        if (item) await this.request('cart/change.js', { id: item.key, quantity: 0 }); else checkbox.disabled = false;
+      } catch (error) { if (this.status) this.status.textContent = 'Unable to update your cart.'; checkbox.disabled = false; }
+    }
+  }
+  updateMessage() {
+    if (!this.message) return;
+    const count = this.querySelector('[data-message-count]'), preview = this.querySelector('[data-message-preview]');
+    if (count) count.textContent = this.message.value.length;
+    if (preview) preview.textContent = this.message.value || preview.dataset.empty || '';
+  }
+}
+if (!customElements.get('os-cart-page')) customElements.define('os-cart-page', OsCartPage);
+
 function initializeVerticalRotator(rotator) {
   if (rotator.dataset.rotatorReady === 'true') return;
   rotator.dataset.rotatorReady = 'true';
