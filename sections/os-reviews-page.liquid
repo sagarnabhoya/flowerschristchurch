@@ -1,0 +1,122 @@
+{%- for block in section.blocks -%}
+  {%- if block.type == '@app' -%}{% render block %}{%- endif -%}
+{%- endfor -%}
+
+{%- if section.settings.show_fallback -%}
+  <section class="os-reviews full-width" style="--os-reviews-bg:{{ section.settings.background }};--os-reviews-card:{{ section.settings.card_background }};--os-reviews-text:{{ section.settings.text_color }};--os-reviews-accent:{{ section.settings.accent }};--os-reviews-width:{{ section.settings.content_width }}px">
+    <div class="os-reviews__inner">
+      <h1>{{ section.settings.heading | default: page.title }}</h1>
+
+      <div class="os-reviews__summary">
+        <div class="os-reviews__rating">
+          <p><strong>{{ section.settings.rating }}</strong> <span class="os-reviews__stars" aria-label="{{ section.settings.rating }} out of 5 stars">★★★★★</span> <span>{{ section.settings.based_on }}</span></p>
+          <div class="os-reviews__bars">
+            {%- for index in (1..5) reversed -%}
+              {%- assign width_key = 'star_' | append: index | append: '_percent' -%}
+              {%- assign count_key = 'star_' | append: index | append: '_count' -%}
+              <div><span>{{ index }} ★</span><i><b style="width:{{ section.settings[width_key] }}%"></b></i><span>{{ section.settings[count_key] }}</span></div>
+            {%- endfor -%}
+          </div>
+        </div>
+        <p class="os-reviews__recommend"><strong>{{ section.settings.recommend_percent }}%</strong> {{ section.settings.recommend_text }}</p>
+        <div class="os-reviews__gallery">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'photo' and block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 240 | image_tag: widths: '100,160,240', sizes: '72px', loading: 'lazy', alt: block.settings.alt }}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- if section.settings.summary != blank -%}
+        <div class="os-reviews__ai-summary"><strong>{{ section.settings.summary_heading }}</strong><div class="db-rte">{{ section.settings.summary }}</div></div>
+      {%- endif -%}
+
+      <div class="os-reviews__toolbar">
+        <div><strong>{{ section.settings.reviews_tab }}</strong><span>{{ section.settings.questions_tab }}</span></div>
+        {%- if section.settings.write_link != blank -%}<a class="os-reviews__button" href="{{ section.settings.write_link }}">{{ section.settings.write_label }}</a>{%- endif -%}
+      </div>
+
+      <div class="os-reviews__list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'review' -%}
+            <article class="os-review" {{ block.shopify_attributes }}>
+              <div class="os-review__author">
+                <strong>{{ block.settings.author }}</strong>
+                {%- if block.settings.verified -%}<span>{{ section.settings.verified_label }} ✓</span>{%- endif -%}
+                {%- if block.settings.product != blank -%}<small>{{ section.settings.reviewing_label }}</small><p>{{ block.settings.product }}</p>{%- endif -%}
+                {%- if block.settings.recommended -%}<p>● {{ section.settings.recommend_label }}</p>{%- endif -%}
+              </div>
+              <div class="os-review__body">
+                <span class="os-reviews__stars" aria-label="{{ block.settings.stars }} out of 5 stars">{%- for index in (1..5) -%}{% if index <= block.settings.stars %}★{% else %}☆{% endif %}{%- endfor -%}</span>
+                <strong>{{ block.settings.title }}</strong>
+                <div class="db-rte">{{ block.settings.body }}</div>
+              </div>
+              <time>{{ block.settings.date }}</time>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "OS reviews page",
+  "settings": [
+    { "type": "checkbox", "id": "show_fallback", "label": "Show theme review layout", "info": "Disable when a review app block supplies the complete interface.", "default": true },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Reviews" },
+    { "type": "text", "id": "rating", "label": "Average rating", "default": "0.0" },
+    { "type": "text", "id": "based_on", "label": "Rating caption", "default": "Based on customer reviews" },
+    { "type": "range", "id": "recommend_percent", "label": "Recommend percentage", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+    { "type": "text", "id": "recommend_text", "label": "Recommendation caption", "default": "would recommend these products" },
+    { "type": "header", "content": "Rating distribution" },
+    { "type": "range", "id": "star_5_percent", "label": "5 star bar", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+    { "type": "text", "id": "star_5_count", "label": "5 star count" },
+    { "type": "range", "id": "star_4_percent", "label": "4 star bar", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+    { "type": "text", "id": "star_4_count", "label": "4 star count" },
+    { "type": "range", "id": "star_3_percent", "label": "3 star bar", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+    { "type": "text", "id": "star_3_count", "label": "3 star count" },
+    { "type": "range", "id": "star_2_percent", "label": "2 star bar", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+    { "type": "text", "id": "star_2_count", "label": "2 star count" },
+    { "type": "range", "id": "star_1_percent", "label": "1 star bar", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+    { "type": "text", "id": "star_1_count", "label": "1 star count" },
+    { "type": "header", "content": "Review summary" },
+    { "type": "text", "id": "summary_heading", "label": "Summary heading", "default": "Reviews Summary" },
+    { "type": "richtext", "id": "summary", "label": "Summary text", "info": "Only enter a summary based on verified customer reviews." },
+    { "type": "header", "content": "Toolbar" },
+    { "type": "text", "id": "reviews_tab", "label": "Reviews label", "default": "Reviews" },
+    { "type": "text", "id": "questions_tab", "label": "Questions label", "default": "Questions" },
+    { "type": "text", "id": "write_label", "label": "Write review label", "default": "Write a review" },
+    { "type": "url", "id": "write_link", "label": "Write review link" },
+    { "type": "text", "id": "verified_label", "label": "Verified label", "default": "Verified buyer" },
+    { "type": "text", "id": "reviewing_label", "label": "Reviewing label", "default": "Reviewing" },
+    { "type": "text", "id": "recommend_label", "label": "Recommendation label", "default": "I recommend this product" },
+    { "type": "header", "content": "Layout and colours" },
+    { "type": "range", "id": "content_width", "label": "Content width", "min": 900, "max": 1700, "step": 20, "unit": "px", "default": 1320 },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
+    { "type": "color", "id": "card_background", "label": "Review card background", "default": "#fbf0f1" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#404d1c" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#8f2343" }
+  ],
+  "blocks": [
+    { "type": "@app" },
+    { "type": "photo", "name": "Customer photo", "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "text", "id": "alt", "label": "Alt text" }
+    ] },
+    { "type": "review", "name": "Verified review", "settings": [
+      { "type": "text", "id": "author", "label": "Customer name" },
+      { "type": "checkbox", "id": "verified", "label": "Verified purchase", "default": true },
+      { "type": "text", "id": "product", "label": "Product reviewed" },
+      { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+      { "type": "text", "id": "title", "label": "Review title" },
+      { "type": "richtext", "id": "body", "label": "Review text" },
+      { "type": "text", "id": "date", "label": "Display date" },
+      { "type": "checkbox", "id": "recommended", "label": "Customer recommends product", "default": true }
+    ] }
+  ],
+  "presets": [{ "name": "OS reviews page" }]
+}
+{% endschema %}

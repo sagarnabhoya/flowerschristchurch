@@ -1,4 +1,4 @@
-{% render 'db-section-style', section: section %}
+{% render 'os-section-style', section: section %}
 <section class="db-delivery-counter full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}"><div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}">
  <h2>{{ section.settings.heading }}</h2>
  <div class="db-counter-pill" data-vertical-rotator data-interval="{{ section.settings.interval | times: 1000 }}" style="--db-counter-speed:{{ section.settings.speed }}ms">
@@ -9,5 +9,5 @@
 {"name":"Delivery counter slider","settings":[
  {"type":"inline_richtext","id":"heading","label":"Heading","default":"Let Every Day Bloom"},{"type":"range","id":"interval","label":"Slide interval","min":2,"max":10,"step":1,"unit":"s","default":4},{"type":"range","id":"speed","label":"Animation speed","min":200,"max":1000,"step":100,"unit":"ms","default":500},{"type":"color","id":"background","label":"Section background","default":"#fffaf3"},{"type":"color","id":"text_color","label":"Text","default":"#ef3d32"},
  {"type":"header","content":"Section layout"},{"type":"select","id":"content_width","label":"Content width","default":"contained","options":[{"value":"contained","label":"Container"},{"value":"fluid","label":"Container fluid"},{"value":"full","label":"Full width"},{"value":"custom","label":"Custom width"}]},{"type":"range","id":"custom_width","label":"Custom width","min":600,"max":2000,"step":20,"unit":"px","default":1200},{"type":"range","id":"padding_top","label":"Top padding","min":0,"max":160,"step":4,"unit":"px","default":64},{"type":"range","id":"padding_bottom","label":"Bottom padding","min":0,"max":160,"step":4,"unit":"px","default":80}
-],"blocks":[{"type":"counter","name":"Counter message","settings":[{"type":"text","id":"number","label":"Number","default":"11,28,657"},{"type":"text","id":"message","label":"Message","default":"happy birthday's delivered"}]}],"presets":[{"name":"Delivery counter slider","blocks":[{"type":"counter"},{"type":"counter"},{"type":"counter"}]}]}
+],"blocks":[{"type":"counter","name":"Rotating message","settings":[{"type":"text","id":"number","label":"Leading text","default":"Christchurch-wide"},{"type":"text","id":"message","label":"Message","default":"flower delivery"}]}],"presets":[{"name":"Rotating service messages","blocks":[{"type":"counter"},{"type":"counter"},{"type":"counter"}]}]}
 {% endschema %}

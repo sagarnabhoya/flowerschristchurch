@@ -9,16 +9,60 @@
     assign secondary_image = card_product.media[1].preview_image
   endunless
   assign card_badge_text = blank
+  assign card_badge_type = blank
+  assign card_badge_svg = blank
   if show_secondary_image == nil
     assign show_secondary_image = settings.card_show_secondary_image
   endif
+  if show_badges == nil
+    assign show_badges = true
+  endif
   if show_badges and card_is_placeholder == false
     assign card_badge_text = card_product.metafields.custom.card_badge.value | default: card_product.metafields.custom.card_badge
+    assign card_badge_type = card_product.metafields.custom.card_badge_type.value | default: card_product.metafields.custom.card_badge_type | downcase | strip
+    assign card_badge_svg = card_product.metafields.custom.card_badge_svg.value | default: card_product.metafields.custom.card_badge_svg
+    if card_badge_svg != blank
+      assign card_badge_type = 'custom'
+    endif
+    assign local_badge_tag = settings.card_badge_local_tag | downcase | strip
+    assign new_badge_tag = settings.card_badge_new_tag | downcase | strip
     if card_badge_text == blank
       for product_tag in card_product.tags
         assign normalized_tag = product_tag | downcase
-        if normalized_tag contains 'badge:'
+        assign mapped_badge_found = false
+        for mapping_index in (1..5)
+          assign mapping_tag_key = 'card_badge_map_' | append: mapping_index | append: '_tag'
+          assign mapping_label_key = 'card_badge_map_' | append: mapping_index | append: '_label'
+          assign mapping_svg_key = 'card_badge_map_' | append: mapping_index | append: '_svg'
+          assign mapping_tag = settings[mapping_tag_key] | downcase | strip
+          if mapping_tag != blank and normalized_tag == mapping_tag
+            assign card_badge_text = settings[mapping_label_key] | default: product_tag
+            assign card_badge_svg = settings[mapping_svg_key]
+            if card_badge_svg != blank
+              assign card_badge_type = 'custom'
+            endif
+            assign mapped_badge_found = true
+            break
+          endif
+        endfor
+        if mapped_badge_found
+          break
+        elsif local_badge_tag != blank and normalized_tag == local_badge_tag
+          assign card_badge_text = 'Locally grown'
+          assign card_badge_type = 'locally-grown'
+          break
+        elsif new_badge_tag != blank and normalized_tag == new_badge_tag
+          assign card_badge_text = new_badge_label | default: 'New!'
+          assign card_badge_type = 'new'
+          break
+        elsif normalized_tag contains 'badge:'
           assign card_badge_text = product_tag | split: ':' | last | strip
+          assign normalized_badge_text = card_badge_text | downcase
+          if normalized_badge_text contains 'local'
+            assign card_badge_type = 'locally-grown'
+          elsif normalized_badge_text contains 'new'
+            assign card_badge_type = 'new'
+          endif
           break
         endif
       endfor
@@ -29,10 +73,19 @@
       assign new_product_cutoff = 'now' | date: '%s' | minus: new_window_seconds
       if product_created >= new_product_cutoff
         assign card_badge_text = new_badge_label | default: 'New!'
+        assign card_badge_type = 'new'
       endif
     endif
     if card_badge_text == blank and default_badge_label != blank
       assign card_badge_text = default_badge_label
+    endif
+    if card_badge_type == 'local' or card_badge_type == 'locally grown'
+      assign card_badge_type = 'locally-grown'
+    endif
+    if card_badge_text == blank and card_badge_type == 'locally-grown'
+      assign card_badge_text = 'Locally grown'
+    elsif card_badge_text == blank and card_badge_type == 'new'
+      assign card_badge_text = new_badge_label | default: 'New!'
     endif
   endif
 -%}
@@ -45,7 +98,21 @@
       {{ 'product-1' | placeholder_svg_tag }}
     {%- endif -%}
     {%- unless card_is_placeholder or card_product.available -%}<span class="db-product-card__badge">Sold out</span>{%- endunless -%}
-    {%- if card_badge_text != blank -%}<span class="db-product-card__flower-badge db-product-card__flower-badge--{{ badge_position | default: settings.card_badge_position | default: 'right' }}" style="--db-card-badge:{{ badge_color | default: '#ef5a59' }}"><span>{{ card_badge_text }}</span></span>{%- endif -%}
+    {%- if card_badge_text != blank or card_badge_svg != blank -%}
+      {%- if card_badge_type == 'new' or card_badge_type == 'locally-grown' or card_badge_type == 'custom' -%}
+        <span class="db-product-card__flower-badge db-product-card__flower-badge--svg db-product-card__flower-badge--{{ badge_position | default: settings.card_badge_position | default: 'right' }}" role="img" aria-label="{{ card_badge_text | default: 'Product badge' | escape }}">
+          {%- if card_badge_type == 'custom' and card_badge_svg != blank -%}
+            {{ card_badge_svg }}
+          {%- elsif card_badge_type == 'locally-grown' -%}
+            {%- if settings.card_badge_local_svg != blank -%}{{ settings.card_badge_local_svg }}{%- else -%}{% render 'os-badge-locally-grown' %}{%- endif -%}
+          {%- else -%}
+            {%- if settings.card_badge_new_svg != blank -%}{{ settings.card_badge_new_svg }}{%- else -%}{% render 'os-badge-new' %}{%- endif -%}
+          {%- endif -%}
+        </span>
+      {%- else -%}
+        <span class="db-product-card__flower-badge db-product-card__flower-badge--{{ badge_position | default: settings.card_badge_position | default: 'right' }}" style="--db-card-badge:{{ badge_color | default: '#ef5a59' }}"><span>{{ card_badge_text }}</span></span>
+      {%- endif -%}
+    {%- endif -%}
   </a>
   <div class="db-product-card__content">
     <h3 class="db-product-card__title"><a href="{% if card_is_placeholder %}{{ routes.all_products_collection_url }}{% else %}{{ card_product.url }}{% endif %}">{% if card_is_placeholder %}Fresh flowers{% else %}{{ card_product.title | escape }}{% endif %}</a></h3>

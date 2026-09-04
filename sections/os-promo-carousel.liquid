@@ -1,4 +1,4 @@
-{% render 'db-section-style', section: section %}
+{% render 'os-section-style', section: section %}
 <section id="os-promo-carousel-{{ section.id }}" class="os-promo-section full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}">
     <os-image-carousel class="os-promo-carousel" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}">

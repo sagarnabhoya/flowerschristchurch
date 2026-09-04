@@ -1,9 +1,62 @@
 {
   "sections": {
-    "hero": { "type": "db-hero", "settings": { "eyebrow": "Flower rewards", "heading": "More reasons to keep life <em>in bloom.</em>", "copy": "<p>Explain how customers join, earn and enjoy merchant-approved flower rewards.</p>", "button_label": "Ask about rewards", "button_link": "shopify://pages/contact", "badge": "For flower people", "background": "#efc9c5", "text_color": "#193e36" } },
-    "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Rewards" } },
-    "promises": { "type": "db-value-strip", "blocks": { "one": { "type": "promise", "settings": { "heading": "Join", "text": "Create an account" } }, "two": { "type": "promise", "settings": { "heading": "Earn", "text": "Shop and participate" } }, "three": { "type": "promise", "settings": { "heading": "Enjoy", "text": "Use eligible rewards" } }, "four": { "type": "promise", "settings": { "heading": "Stay delighted", "text": "Hear what is blooming" } } }, "block_order": ["one", "two", "three", "four"], "settings": {} },
-    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Members first", "heading": "Flower news and rewards, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+    "main": {
+      "type": "os-loyalty-page",
+      "blocks": {
+        "step1": { "type": "step", "settings": { "number": "1", "title": "Join", "text": "Create an account and start earning." } },
+        "step2": { "type": "step", "settings": { "number": "2", "title": "Earn", "text": "Earn points every time you shop." } },
+        "step3": { "type": "step", "settings": { "number": "3", "title": "Redeem", "text": "Redeem points for discounts and products." } },
+        "earn1": { "type": "earn", "settings": { "title": "Create an Account", "points": "50 Points" } },
+        "earn2": { "type": "earn", "settings": { "title": "Celebrate Your Birthday", "points": "100 Points on your birthday" } },
+        "earn3": { "type": "earn", "settings": { "title": "Follow us on Instagram", "points": "20 Points" } },
+        "earn4": { "type": "earn", "settings": { "title": "Like us on Facebook", "points": "20 Points" } },
+        "earn5": { "type": "earn", "settings": { "title": "Sign up for SMS", "points": "20 Points" } },
+        "earn6": { "type": "earn", "settings": { "title": "Refer a Friend", "points": "200 Points" } },
+        "earn7": { "type": "earn", "settings": { "title": "Leave a Review", "points": "Up to 150 Points" } },
+        "reward1": { "type": "reward", "settings": { "title": "$10 off", "points": "100 Points" } },
+        "reward2": { "type": "reward", "settings": { "title": "$20 off", "points": "200 Points" } },
+        "reward3": { "type": "reward", "settings": { "title": "$30 off", "points": "300 Points" } },
+        "tier1": { "type": "tier", "settings": { "title": "Petal", "threshold": "Sign up", "rate": "1 point per $1" } },
+        "tier2": { "type": "tier", "settings": { "title": "Bud", "threshold": "After spending $125", "rate": "2 points per $1" } },
+        "tier3": { "type": "tier", "settings": { "title": "Bloom", "threshold": "After spending $250", "rate": "3 points per $1" } },
+        "tier4": { "type": "tier", "settings": { "title": "Bouquet", "threshold": "After spending $400", "rate": "4 points per $1" } },
+        "faq1": { "type": "faq", "settings": { "question": "What are the minimum spend requirements?" } },
+        "faq2": { "type": "faq", "settings": { "question": "Can businesses participate in Petal Perks?" } },
+        "faq3": { "type": "faq", "settings": { "question": "How is my current spend calculated?" } },
+        "faq4": { "type": "faq", "settings": { "question": "How can I redeem my points?" } },
+        "faq5": { "type": "faq", "settings": { "question": "Can I use all my discounts at once?" } },
+        "faq6": { "type": "faq", "settings": { "question": "Is there a limit to how many points I can earn?" } },
+        "faq7": { "type": "faq", "settings": { "question": "How do I move up a tier?" } },
+        "faq8": { "type": "faq", "settings": { "question": "How can I track my point history or balance?" } },
+        "faq9": { "type": "faq", "settings": { "question": "Can I merge accounts or move points?" } },
+        "faq10": { "type": "faq", "settings": { "question": "When will I receive my birthday points?" } }
+      },
+      "block_order": ["step1","step2","step3","earn1","earn2","earn3","earn4","earn5","earn6","earn7","reward1","reward2","reward3","tier1","tier2","tier3","tier4","faq1","faq2","faq3","faq4","faq5","faq6","faq7","faq8","faq9","faq10"],
+      "settings": {
+        "show_fallback": true,
+        "heading": "Join Petal Perks",
+        "intro": "<p>Is your love language gift-giving? Ours too!</p>",
+        "join_label": "Join Now",
+        "login_label": "Log In",
+        "how_heading": "How it works",
+        "profile_heading": "Your perks are waiting",
+        "profile_text": "Log in to get started",
+        "member_heading": "Welcome back",
+        "earn_heading": "How to earn points",
+        "redeem_heading": "Redeem your rewards",
+        "tiers_heading": "VIP tiers",
+        "show_referral": true,
+        "referral_heading": "Give $20, Get $20",
+        "referral_text": "<p>Register your interest in the referral program.</p>",
+        "email_label": "Your Email",
+        "referral_button": "Next",
+        "faq_heading": "Frequently asked questions",
+        "background": "#f9f5ef",
+        "text_color": "#404d1c",
+        "accent": "#80233a",
+        "soft_background": "#e3d8f5"
+      }
+    }
   },
-  "order": ["hero", "content", "promises", "newsletter"]
+  "order": ["main"]
 }

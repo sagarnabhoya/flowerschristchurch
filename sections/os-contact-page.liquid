@@ -1,0 +1,31 @@
+<section class="os-contact full-width" style="--os-contact-bg:{{ section.settings.background }};--os-contact-text:{{ section.settings.text_color }}">
+  <div class="db-page os-contact__inner">
+    <header class="os-contact__intro"><p class="db-kicker">{{ section.settings.eyebrow }}</p><h1>{{ section.settings.heading | default: page.title }}</h1><div class="db-rte">{{ section.settings.intro }}</div></header>
+    <div class="os-contact__grid">
+      <aside class="os-contact__details">
+        <h2>{{ section.settings.details_heading }}</h2>
+        <address><strong>{{ section.settings.business_name }}</strong><br>{{ section.settings.address | newline_to_br }}</address>
+        {%- if section.settings.map_link != blank -%}<a class="db-text-link" href="{{ section.settings.map_link }}" target="_blank" rel="noopener">View on Google Maps</a>{%- endif -%}
+        <dl><div><dt>Phone</dt><dd><a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a></dd></div><div><dt>Email</dt><dd><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></dd></div><div><dt>Opening hours</dt><dd>{{ section.settings.hours | newline_to_br }}</dd></div></dl>
+      </aside>
+      <div class="os-contact__form-wrap"><h2>{{ section.settings.form_heading }}</h2>
+        {%- form 'contact', class: 'os-contact__form' -%}
+          {%- if form.posted_successfully? -%}<p class="os-contact__success" tabindex="-1">Thanks for getting in touch. Our Christchurch team will reply as soon as possible.</p>{%- endif -%}
+          {{ form.errors | default_errors }}
+          <div class="os-contact__fields"><label>Name<input name="contact[name]" value="{{ form.name }}" autocomplete="name"></label><label>Email *<input type="email" name="contact[email]" value="{{ form.email }}" autocomplete="email" required></label><label>Phone<input type="tel" name="contact[phone]" value="{{ form.phone }}" autocomplete="tel"></label><label>Subject<input name="contact[subject]" value="{{ form.subject }}"></label><label class="os-contact__message">Your message<textarea name="contact[body]" rows="7" required>{{ form.body }}</textarea></label></div>
+          <button class="db-button" type="submit">{{ section.settings.button_label }}</button>
+        {%- endform -%}
+      </div>
+    </div>
+    <div class="os-contact__more"><p class="db-kicker">Thoughtful gifting</p><h2>{{ section.settings.more_heading }}</h2><div class="db-rte">{{ section.settings.more_text }}</div></div>
+  </div>
+</section>
+{% schema %}
+{"name":"Contact page","settings":[
+{"type":"text","id":"eyebrow","label":"Eyebrow","default":"We are here to help"},{"type":"text","id":"heading","label":"Heading","default":"Contact Us"},{"type":"richtext","id":"intro","label":"Introduction","default":"<p>We’d love to hear from you! Whether you have a question about an order, need help choosing the perfect bouquet, or just want to say hello — our friendly Christchurch team is here to help.</p>"},
+{"type":"header","content":"Contact details"},{"type":"text","id":"details_heading","label":"Details heading","default":"Visit or contact our florist"},{"type":"text","id":"business_name","label":"Business name","default":"Flowers Across Christchurch"},{"type":"textarea","id":"address","label":"Address","default":"555 Colombo Street\nChristchurch Central City\nChristchurch 8011"},{"type":"url","id":"map_link","label":"Google Maps link"},{"type":"text","id":"phone","label":"Phone","default":"03 9300145"},{"type":"text","id":"email","label":"Email","default":"order.fach@gmail.com"},{"type":"textarea","id":"hours","label":"Opening hours","default":"Mon–Sat: 9:00 AM – 6:00 PM\nSun: 10:00 AM – 5:00 PM\nPublic holidays: 10:00 AM – 5:00 PM"},
+{"type":"header","content":"Form"},{"type":"text","id":"form_heading","label":"Form heading","default":"Send us a message"},{"type":"text","id":"button_label","label":"Button label","default":"Send Message"},
+{"type":"header","content":"Closing content"},{"type":"text","id":"more_heading","label":"Heading","default":"More Than Flowers"},{"type":"richtext","id":"more_text","label":"Text","default":"<p>Beyond bouquets, we create experiences — from lush floral arrangements to thoughtful gift hampers filled with chocolates, candles, and treats. Every order is carefully packaged and delivered with your personal touch, because we know it’s not just about the flowers — it’s about the feeling behind them.</p>"},
+{"type":"color","id":"background","label":"Background","default":"#fffaf3"},{"type":"color","id":"text_color","label":"Text","default":"#193e36"}
+]}
+{% endschema %}

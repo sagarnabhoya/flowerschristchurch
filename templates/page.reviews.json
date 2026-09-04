@@ -1,9 +1,29 @@
 {
+
   "sections": {
-    "hero": { "type": "db-hero", "settings": { "eyebrow": "Kind words", "heading": "Notes from our <em>happy flower people.</em>", "copy": "<p>Real stories from Christchurch customers who trusted us with meaningful moments.</p>", "button_label": "Send some flowers", "button_link": "shopify://collections/all", "badge": "Made and delivered locally", "background": "#f7f0e7", "text_color": "#193e36" } },
-    "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Customer stories" } },
-    "promises": { "type": "db-value-strip", "blocks": { "one": { "type": "promise", "settings": { "heading": "Florist made", "text": "Arranged with care" } }, "two": { "type": "promise", "settings": { "heading": "Local delivery", "text": "Across Christchurch" } }, "three": { "type": "promise", "settings": { "heading": "Thoughtful service", "text": "People who listen" } }, "four": { "type": "promise", "settings": { "heading": "Freshness first", "text": "Season-led flowers" } } }, "block_order": ["one", "two", "three", "four"], "settings": {} },
-    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "A little delight, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+    "main": {
+      "type": "os-reviews-page",
+      "settings": {
+        "show_fallback": true,
+        "heading": "Reviews",
+        "rating": "0.0",
+        "based_on": "Based on customer reviews",
+        "recommend_percent": 0,
+        "recommend_text": "would recommend these products",
+        "summary_heading": "Reviews Summary",
+        "reviews_tab": "Reviews",
+        "questions_tab": "Questions",
+        "write_label": "Write a review",
+        "verified_label": "Verified buyer",
+        "reviewing_label": "Reviewing",
+        "recommend_label": "I recommend this product",
+        "content_width": 1320,
+        "background": "#f9f5ef",
+        "card_background": "#fbf0f1",
+        "text_color": "#404d1c",
+        "accent": "#8f2343"
+      }
+    }
   },
-  "order": ["hero", "content", "promises", "newsletter"]
+  "order": ["main"]
 }

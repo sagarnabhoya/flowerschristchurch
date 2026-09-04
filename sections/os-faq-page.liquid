@@ -1,0 +1,36 @@
+<section class="os-faq-page full-width" style="--os-faq-bg:{{ section.settings.background }};--os-faq-color:{{ section.settings.text_color }};--os-faq-line:{{ section.settings.line_color }};--os-faq-width:{{ section.settings.custom_width }}px;--os-faq-top:{{ section.settings.padding_top }}px;--os-faq-bottom:{{ section.settings.padding_bottom }}px">
+  <os-faq class="os-faq-page__inner">
+    <header><h1>{{ section.settings.heading | default: page.title }}</h1></header>
+    <div class="os-faq-page__list">
+      {%- for block in section.blocks -%}
+        <details class="os-faq-item" {{ block.shopify_attributes }}{% if section.settings.open_first and forloop.first %} open{% endif %}>
+          <summary><span>{{ block.settings.question }}</span><span class="os-faq-item__icon" aria-hidden="true"></span></summary>
+          {%- if block.settings.answer != blank -%}<div class="os-faq-item__answer db-rte">{{ block.settings.answer }}</div>{%- endif -%}
+        </details>
+      {%- endfor -%}
+    </div>
+  </os-faq>
+</section>
+{% schema %}
+{
+  "name": "OS FAQ page",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "FAQ's" },
+    { "type": "checkbox", "id": "open_first", "label": "Open first question", "default": false },
+    { "type": "range", "id": "custom_width", "label": "Content width", "min": 1000, "max": 1800, "step": 20, "unit": "px", "default": 1540 },
+    { "type": "range", "id": "padding_top", "label": "Desktop top spacing", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 84 },
+    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom spacing", "min": 40, "max": 180, "step": 4, "unit": "px", "default": 100 },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#314116" },
+    { "type": "color", "id": "line_color", "label": "Divider colour", "default": "#80353a" }
+  ],
+  "blocks": [
+    { "type": "question", "name": "Question", "settings": [
+      { "type": "text", "id": "question", "label": "Question", "default": "How can we help?" },
+      { "type": "richtext", "id": "answer", "label": "Answer" }
+    ] }
+  ],
+  "max_blocks": 50,
+  "presets": [{ "name": "OS FAQ page", "blocks": [{ "type": "question" }, { "type": "question" }, { "type": "question" }] }]
+}
+{% endschema %}

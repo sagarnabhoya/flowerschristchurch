@@ -1,4 +1,4 @@
-{% render 'db-section-style', section: section %}
+{% render 'os-section-style', section: section %}
 <section class="db-benefits full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}"><div class="db-benefits__grid">
     {%- for block in section.blocks -%}<div class="db-benefit" {{ block.shopify_attributes }}>

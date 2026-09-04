@@ -20,7 +20,7 @@
       "settings": {}
     },
     "related": {
-      "type": "db-related-products",
+      "type": "os-related-products",
       "settings": {
         "eyebrow": "Keep the delight going",
         "heading": "You may also <em>love.</em>",
@@ -30,7 +30,7 @@
       }
     },
     "newsletter": {
-      "type": "db-newsletter",
+      "type": "os-newsletter",
       "settings": {
         "eyebrow": "Stay in bloom",
         "heading": "A little delight, <em>straight to your inbox.</em>",

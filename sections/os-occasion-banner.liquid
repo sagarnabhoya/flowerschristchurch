@@ -1,21 +1,28 @@
-{% render 'db-section-style', section: section %}
+{% render 'os-section-style', section: section %}
 <section id="os-occasion-banner-{{ section.id }}" class="os-occasion-banner full-width" style="background:{{ section.settings.background }}">
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'full' }}">
     <a class="os-occasion-banner__link" href="{{ section.settings.link | default: routes.all_products_collection_url }}" aria-label="{{ section.settings.accessibility_label | escape }}" style="--os-banner-height:{{ section.settings.desktop_height }}px;--os-banner-mobile-height:{{ section.settings.mobile_height }}px;--os-banner-position:{{ section.settings.desktop_position }};--os-banner-mobile-position:{{ section.settings.mobile_position }}">
-      {%- assign fallback_banner_image = collections.all.products[2].featured_image | default: collections.all.products.first.featured_image -%}
       {%- if section.settings.desktop_image != blank -%}
         <picture>
           {%- if section.settings.mobile_image != blank -%}<source media="(max-width:749px)" srcset="{{ section.settings.mobile_image | image_url: width: 1000 }}">{%- endif -%}
           {{ section.settings.desktop_image | image_url: width: 2600 | image_tag: widths: '750,1100,1500,2000,2600', sizes: '100vw', loading: 'lazy', alt: section.settings.desktop_image.alt | default: section.settings.accessibility_label }}
         </picture>
-      {%- elsif fallback_banner_image != blank -%}
-        {{ fallback_banner_image | image_url: width: 2600 | image_tag: widths: '750,1100,1500,2000,2600', sizes: '100vw', loading: 'lazy', alt: section.settings.accessibility_label }}
       {%- else -%}
         {{ 'lifestyle-2' | placeholder_svg_tag }}
       {%- endif -%}
     </a>
   </div>
 </section>
+
+{% stylesheet %}
+.os-occasion-banner__link { display: block; height: var(--os-banner-height); overflow: hidden; }
+.os-occasion-banner__link picture, .os-occasion-banner__link img, .os-occasion-banner__link svg { display: block; height: 100%; width: 100%; }
+.os-occasion-banner__link img, .os-occasion-banner__link svg { object-fit: cover; object-position: var(--os-banner-position); }
+@media (max-width: 749px) {
+  .os-occasion-banner__link { height: var(--os-banner-mobile-height); }
+  .os-occasion-banner__link img, .os-occasion-banner__link svg { object-position: var(--os-banner-mobile-position); }
+}
+{% endstylesheet %}
 
 {% schema %}
 {

@@ -1,0 +1,17 @@
+<section class="os-press full-width" style="--os-press-bg:{{ section.settings.background }};--os-press-text:{{ section.settings.text_color }};--os-press-accent:{{ section.settings.accent }};--os-press-width:{{ section.settings.content_width }}px">
+  <div class="os-press__inner">
+    <h1>{{ section.settings.heading | default: page.title }}</h1>
+    <div class="os-press__grid">
+      {%- for block in section.blocks -%}
+        <article class="os-press-card" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}<a href="{{ block.settings.link }}">{{ block.settings.image | image_url: width: 1000 | image_tag: widths: '360,540,720,1000', sizes: '(min-width:990px) 33vw, (min-width:600px) 50vw, 100vw', loading: 'lazy', alt: block.settings.title }}</a>{%- endif -%}
+          <div><h2>{%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}">{{ block.settings.title }}</a>{%- else -%}{{ block.settings.title }}{%- endif -%}</h2>{%- if block.settings.date != blank -%}<time>{{ block.settings.date }}</time>{%- endif -%}<div class="db-rte">{{ block.settings.text }}</div></div>
+        </article>
+      {%- endfor -%}
+    </div>
+    {%- if section.settings.contact_text != blank -%}<div class="os-press__contact db-rte">{{ section.settings.contact_text }}</div>{%- endif -%}
+  </div>
+</section>
+{% schema %}
+{"name":"OS press page","settings":[{"type":"text","id":"heading","label":"Heading","default":"PRESS"},{"type":"range","id":"content_width","label":"Content width","min":800,"max":1600,"step":20,"unit":"px","default":1200},{"type":"richtext","id":"contact_text","label":"Press contact"},{"type":"color","id":"background","label":"Background","default":"#f9f5ef"},{"type":"color","id":"text_color","label":"Text","default":"#404d1c"},{"type":"color","id":"accent","label":"Accent","default":"#8f2343"}],"blocks":[{"type":"article","name":"Press item","settings":[{"type":"image_picker","id":"image","label":"Image or logo"},{"type":"text","id":"title","label":"Title"},{"type":"text","id":"date","label":"Date"},{"type":"richtext","id":"text","label":"Summary"},{"type":"url","id":"link","label":"Article link"}]}],"presets":[{"name":"OS press page"}]}
+{% endschema %}

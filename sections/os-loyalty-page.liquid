@@ -1,0 +1,71 @@
+{%- for block in section.blocks -%}{%- if block.type == '@app' -%}{% render block %}{%- endif -%}{%- endfor -%}
+{%- if section.settings.show_fallback -%}
+<section class="os-loyalty full-width" style="--os-loyalty-bg:{{ section.settings.background }};--os-loyalty-color:{{ section.settings.text_color }};--os-loyalty-accent:{{ section.settings.accent }};--os-loyalty-soft:{{ section.settings.soft_background }}">
+  <div class="os-loyalty-hero">
+    <picture class="os-loyalty-hero__media">
+      {%- if section.settings.hero_mobile != blank -%}<source media="(max-width:749px)" srcset="{{ section.settings.hero_mobile | image_url: width: 900 }}">{%- endif -%}
+      {%- if section.settings.hero != blank -%}{{ section.settings.hero | image_url: width: 2400 | image_tag: widths: '750,1200,1600,2000,2400', sizes: '100vw', loading: 'eager', fetchpriority: 'high', alt: section.settings.heading }}{%- else -%}<span class="os-loyalty-placeholder"></span>{%- endif -%}
+    </picture>
+    <div class="os-loyalty-hero__content"><h1>{{ section.settings.heading }}</h1><div class="db-rte">{{ section.settings.intro }}</div><div class="os-loyalty-actions"><a href="{{ section.settings.join_link | default: routes.account_register_url }}">{{ section.settings.join_label }}</a><a href="{{ section.settings.login_link | default: routes.account_login_url }}">{{ section.settings.login_label }}</a></div></div>
+  </div>
+
+  <section class="os-loyalty-section os-loyalty-how"><h2>{{ section.settings.how_heading }}</h2><div class="os-loyalty-how__grid">{%- for block in section.blocks -%}{%- if block.type == 'step' -%}<article {{ block.shopify_attributes }}><strong>{{ block.settings.number }}</strong><h3>{{ block.settings.title }}</h3><p>{{ block.settings.text }}</p></article>{%- endif -%}{%- endfor -%}</div></section>
+
+  <section class="os-loyalty-profile"><h2>{% if customer %}{{ section.settings.member_heading }}{% else %}{{ section.settings.profile_heading }}{% endif %}</h2><p>{% if customer %}{{ customer.first_name | default: customer.email }}{% else %}{{ section.settings.profile_text }}{% endif %}</p>{% unless customer %}<a class="os-loyalty-button" href="{{ section.settings.login_link | default: routes.account_login_url }}">{{ section.settings.login_label }}</a>{% endunless %}</section>
+
+  <section class="os-loyalty-section"><h2>{{ section.settings.earn_heading }}</h2><div class="os-loyalty-card-grid os-loyalty-card-grid--earn">{%- for block in section.blocks -%}{%- if block.type == 'earn' -%}<article class="os-loyalty-card{% if block.settings.image == blank %} os-loyalty-card--placeholder{% endif %}" {{ block.shopify_attributes }}>{%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 600 | image_tag: widths: '240,360,480,600', sizes: '(min-width:990px) 25vw, 50vw', loading: 'lazy', alt: block.settings.title }}{%- endif -%}<h3>{{ block.settings.title }}</h3><p>{{ block.settings.points }}</p></article>{%- endif -%}{%- endfor -%}</div></section>
+
+  <section class="os-loyalty-section"><h2>{{ section.settings.redeem_heading }}</h2><div class="os-loyalty-card-grid os-loyalty-card-grid--rewards">{%- for block in section.blocks -%}{%- if block.type == 'reward' -%}<article class="os-loyalty-card{% if block.settings.image == blank %} os-loyalty-card--placeholder{% endif %}" {{ block.shopify_attributes }}>{%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 800 | image_tag: widths: '320,480,640,800', sizes: '(min-width:990px) 33vw, 100vw', loading: 'lazy', alt: block.settings.title }}{%- endif -%}<h3>{{ block.settings.title }}</h3><p>{{ block.settings.points }}</p></article>{%- endif -%}{%- endfor -%}</div></section>
+
+  <section class="os-loyalty-section"><h2>{{ section.settings.tiers_heading }}</h2><div class="os-loyalty-tier-grid">{%- for block in section.blocks -%}{%- if block.type == 'tier' -%}<article class="os-loyalty-tier" {{ block.shopify_attributes }}>{%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 500 | image_tag: widths: '220,360,500', sizes: '(min-width:990px) 25vw, 50vw', loading: 'lazy', alt: block.settings.title }}{%- endif -%}<h3>{{ block.settings.title }}</h3><p>{{ block.settings.threshold }}</p><strong>{{ block.settings.rate }}</strong><div class="db-rte">{{ block.settings.perks }}</div></article>{%- endif -%}{%- endfor -%}</div></section>
+
+  {%- if section.settings.show_referral -%}<section class="os-loyalty-refer"><div class="os-loyalty-refer__media">{%- if section.settings.referral_image != blank -%}{{ section.settings.referral_image | image_url: width: 1400 | image_tag: widths: '600,900,1200,1400', sizes: '(min-width:750px) 50vw, 100vw', loading: 'lazy', alt: section.settings.referral_heading }}{%- endif -%}</div><div class="os-loyalty-refer__content"><h2>{{ section.settings.referral_heading }}</h2><div class="db-rte">{{ section.settings.referral_text }}</div>{%- form 'customer', class: 'os-loyalty-referral' -%}<input type="hidden" name="contact[tags]" value="loyalty-referral-interest"><label for="LoyaltyEmail-{{ section.id }}">{{ section.settings.email_label }}</label><input id="LoyaltyEmail-{{ section.id }}" type="email" name="contact[email]" value="{% if customer %}{{ customer.email }}{% endif %}" autocomplete="email" required><button type="submit">{{ section.settings.referral_button }}</button>{%- endform -%}</div></section>{%- endif -%}
+
+  <section class="os-loyalty-section os-loyalty-faq"><h2>{{ section.settings.faq_heading }}</h2><div>{%- for block in section.blocks -%}{%- if block.type == 'faq' -%}<details class="os-faq-item" {{ block.shopify_attributes }}><summary><span>{{ block.settings.question }}</span><span class="os-faq-item__icon" aria-hidden="true"></span></summary>{%- if block.settings.answer != blank -%}<div class="os-faq-item__answer db-rte">{{ block.settings.answer }}</div>{%- endif -%}</details>{%- endif -%}{%- endfor -%}</div></section>
+</section>
+{%- endif -%}
+{% schema %}
+{
+  "name": "OS Petal Perks",
+  "settings": [
+    { "type": "paragraph", "content": "Add a loyalty app block above and disable the fallback layout when the app should control balances, points, rewards and referrals." },
+    { "type": "checkbox", "id": "show_fallback", "label": "Show theme loyalty layout", "default": true },
+    { "type": "image_picker", "id": "hero", "label": "Hero image" },
+    { "type": "image_picker", "id": "hero_mobile", "label": "Mobile hero image" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Join Petal Perks" },
+    { "type": "richtext", "id": "intro", "label": "Introduction", "default": "<p>Join our flower-loving community and enjoy rewards created by the merchant.</p>" },
+    { "type": "text", "id": "join_label", "label": "Join label", "default": "Join Now" },
+    { "type": "url", "id": "join_link", "label": "Join link" },
+    { "type": "text", "id": "login_label", "label": "Login label", "default": "Log In" },
+    { "type": "url", "id": "login_link", "label": "Login link" },
+    { "type": "text", "id": "how_heading", "label": "How it works heading", "default": "How it works" },
+    { "type": "text", "id": "profile_heading", "label": "Logged-out heading", "default": "Your perks are waiting" },
+    { "type": "text", "id": "profile_text", "label": "Logged-out text", "default": "Log in to get started" },
+    { "type": "text", "id": "member_heading", "label": "Logged-in heading", "default": "Welcome back" },
+    { "type": "text", "id": "earn_heading", "label": "Earn heading", "default": "How to earn points" },
+    { "type": "text", "id": "redeem_heading", "label": "Rewards heading", "default": "Redeem your rewards" },
+    { "type": "text", "id": "tiers_heading", "label": "Tiers heading", "default": "VIP tiers" },
+    { "type": "checkbox", "id": "show_referral", "label": "Show referral interest section", "default": true },
+    { "type": "image_picker", "id": "referral_image", "label": "Referral image" },
+    { "type": "text", "id": "referral_heading", "label": "Referral heading", "default": "Give joy, get rewarded" },
+    { "type": "richtext", "id": "referral_text", "label": "Referral text", "default": "<p>Register your interest in the referral program.</p>" },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "Your Email" },
+    { "type": "text", "id": "referral_button", "label": "Referral button", "default": "Next" },
+    { "type": "text", "id": "faq_heading", "label": "FAQ heading", "default": "Frequently asked questions" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#404d1c" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#80233a" },
+    { "type": "color", "id": "soft_background", "label": "Soft background", "default": "#e3d8f5" }
+  ],
+  "blocks": [
+    { "type": "@app" },
+    { "type": "step", "name": "How it works step", "settings": [{ "type": "text", "id": "number", "label": "Number", "default": "1" },{ "type": "text", "id": "title", "label": "Title", "default": "Join" },{ "type": "text", "id": "text", "label": "Text", "default": "Create an account and start earning." }] },
+    { "type": "earn", "name": "Earn action", "settings": [{ "type": "image_picker", "id": "image", "label": "Image" },{ "type": "text", "id": "title", "label": "Title", "default": "Create an account" },{ "type": "text", "id": "points", "label": "Points", "default": "50 Points" }] },
+    { "type": "reward", "name": "Reward", "settings": [{ "type": "image_picker", "id": "image", "label": "Image" },{ "type": "text", "id": "title", "label": "Title", "default": "$10 off" },{ "type": "text", "id": "points", "label": "Points", "default": "100 Points" }] },
+    { "type": "tier", "name": "VIP tier", "settings": [{ "type": "image_picker", "id": "image", "label": "Image" },{ "type": "text", "id": "title", "label": "Title", "default": "Petal" },{ "type": "text", "id": "threshold", "label": "Entry requirement", "default": "Sign up" },{ "type": "text", "id": "rate", "label": "Earning rate", "default": "1 point per $1" },{ "type": "richtext", "id": "perks", "label": "Perks" }] },
+    { "type": "faq", "name": "FAQ", "settings": [{ "type": "text", "id": "question", "label": "Question", "default": "How does the rewards program work?" },{ "type": "richtext", "id": "answer", "label": "Answer" }] }
+  ],
+  "max_blocks": 50,
+  "presets": [{ "name": "OS Petal Perks" }]
+}
+{% endschema %}

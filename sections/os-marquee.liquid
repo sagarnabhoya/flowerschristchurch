@@ -1,5 +1,5 @@
-{% render 'db-section-style', section: section %}
-<section class="db-marquee full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}" aria-label="{{ section.settings.accessibility_label | escape }}">
+{% render 'os-section-style', section: section %}
+<section class="db-marquee full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }};--os-marquee-text-case:{{ section.settings.text_case }}" aria-label="{{ section.settings.accessibility_label | escape }}">
  <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}">
   <div class="db-marquee__track{% if section.settings.pause_hover %} db-marquee__track--pause{% endif %}" style="--db-marquee-speed:{{ section.settings.speed }}s;--db-marquee-gap:{{ section.settings.gap }}px;{% if section.settings.direction == 'right' %}animation-direction:reverse{% endif %}">
     {%- for repeat in (1..2) -%}
@@ -7,7 +7,7 @@
         {%- for block in section.blocks -%}
           {%- assign marquee_image_style = '--db-marquee-image-width:' | append: block.settings.image_width | append: 'px' -%}
           {%- assign marquee_image_sizes = block.settings.image_width | append: 'px' -%}
-          <span class="db-marquee__item db-marquee__item--{{ block.settings.wordmark_style | default: 'sans' }}" {{ block.shopify_attributes }}>
+          <span class="db-marquee__item db-marquee__item--{{ block.settings.wordmark_style | default: 'sans' }}" style="--os-marquee-block-size:{{ block.settings.font_size }}px" {{ block.shopify_attributes }}>
             {%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 240 | image_tag: widths: '60,90,120,180,240', sizes: marquee_image_sizes, loading: 'lazy', alt: block.settings.image.alt, style: marquee_image_style }}{%- endif -%}
             {%- if block.settings.text != blank -%}<em>{{ block.settings.text }}</em>{%- endif -%}
             {%- if section.settings.separator != blank -%}<b aria-hidden="true">{{ section.settings.separator }}</b>{%- endif -%}
@@ -25,6 +25,7 @@
     { "type": "text", "id": "separator", "label": "Separator", "default": "✦" },
     { "type": "range", "id": "speed", "label": "Animation duration", "min": 12, "max": 50, "step": 2, "unit": "s", "default": 24 },
     { "type": "range", "id": "gap", "label": "Item spacing", "min": 16, "max": 120, "step": 4, "unit": "px", "default": 52 },
+    { "type": "select", "id": "text_case", "label": "Text style", "default": "none", "options": [{ "value": "none", "label": "As entered" }, { "value": "uppercase", "label": "Uppercase" }, { "value": "lowercase", "label": "Lowercase" }, { "value": "capitalize", "label": "Capitalize" }] },
     { "type": "select", "id": "direction", "label": "Direction", "default": "left", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }] },
     { "type": "checkbox", "id": "pause_hover", "label": "Pause on hover", "default": true },
     { "type": "header", "content": "Section layout" },
@@ -38,6 +39,7 @@
   "blocks": [{ "type": "message", "name": "Message", "settings": [
     { "type": "image_picker", "id": "image", "label": "Optional image" },
     { "type": "range", "id": "image_width", "label": "Image width", "min": 24, "max": 120, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "font_size", "label": "Text size", "min": 8, "max": 40, "step": 1, "unit": "px", "default": 16 },
     { "type": "select", "id": "wordmark_style", "label": "Text logo style", "default": "sans", "options": [{ "value": "serif", "label": "Editorial serif" }, { "value": "outline", "label": "Outlined" }, { "value": "bold", "label": "Heavy sans" }, { "value": "dots", "label": "Dot mark" }, { "value": "small", "label": "Small wordmark" }, { "value": "sans", "label": "Simple sans" }] },
     { "type": "text", "id": "text", "label": "Text", "default": "Handmade by local florists" }
   ] }],

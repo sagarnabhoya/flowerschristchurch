@@ -1,9 +1,43 @@
 {
   "sections": {
-    "hero": { "type": "db-hero", "settings": { "eyebrow": "Christchurch flower delivery", "heading": "Fresh flowers, <em>right across the city.</em>", "copy": "<p>Explore delivery areas, ordering cut-offs and the details that help flowers arrive beautifully.</p>", "button_label": "Shop flowers", "button_link": "shopify://collections/all", "badge": "Local delivery", "background": "#efc9c5", "text_color": "#193e36" } },
-    "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Delivery information" } },
-    "promises": { "type": "db-value-strip", "blocks": { "one": { "type": "promise", "settings": { "heading": "Christchurch wide", "text": "Local delivery areas" } }, "two": { "type": "promise", "settings": { "heading": "Date selection", "text": "Choose on product pages" } }, "three": { "type": "promise", "settings": { "heading": "Safe placement", "text": "Careful handover" } }, "four": { "type": "promise", "settings": { "heading": "Delivery help", "text": "A local team" } } }, "block_order": ["one", "two", "three", "four"], "settings": {} },
-    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "Fresh flowers and local notes, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+    "checker": {
+      "type": "os-delivery-checker",
+      "settings": {
+        "heading": "Delivery Suburbs",
+        "intro": "<p>Check whether we deliver to your suburb and view the applicable delivery details.</p>",
+        "delivery_label": "Delivery To",
+        "placeholder": "Postcode / Suburb",
+        "check_label": "Check",
+        "edit_label": "edit",
+        "fee_label": "Delivery Cost:",
+        "not_found": "Sorry, we currently don't deliver to that postcode or suburb.",
+        "custom_width": 1540,
+        "padding_top": 84,
+        "padding_bottom": 84,
+        "background": "#f9f5ef",
+        "text_color": "#314116",
+        "accent": "#80233a",
+        "soft_background": "#f9e9ed"
+      }
+    },
+    "faq": {
+      "type": "os-faq-page",
+      "blocks": {
+        "q1": { "type": "question", "settings": { "question": "Where do you deliver?" } },
+        "q2": { "type": "question", "settings": { "question": "Do you offer delivery outside Christchurch?" } },
+        "q3": { "type": "question", "settings": { "question": "Why don't you deliver to my suburb?" } },
+        "q4": { "type": "question", "settings": { "question": "What time will my order arrive?" } },
+        "q5": { "type": "question", "settings": { "question": "Will I receive a tracking link for my order?" } },
+        "q6": { "type": "question", "settings": { "question": "Where are you located?" } },
+        "q7": { "type": "question", "settings": { "question": "Do you have a retail store?" } },
+        "q8": { "type": "question", "settings": { "question": "Do you offer express delivery?" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"],
+      "settings": { "heading": "Delivery FAQ", "open_first": false, "custom_width": 1540, "padding_top": 84, "padding_bottom": 100, "background": "#f9f5ef", "text_color": "#314116", "line_color": "#80233a" }
+    }
   },
-  "order": ["hero", "content", "promises", "newsletter"]
+  "order": [
+    "checker",
+    "faq"
+  ]
 }

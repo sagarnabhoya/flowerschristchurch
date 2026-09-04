@@ -1,0 +1,62 @@
+<section class="os-delivery-page full-width" style="--os-delivery-bg:{{ section.settings.background }};--os-delivery-color:{{ section.settings.text_color }};--os-delivery-accent:{{ section.settings.accent }};--os-delivery-soft:{{ section.settings.soft_background }};--os-delivery-width:{{ section.settings.custom_width }}px;--os-delivery-top:{{ section.settings.padding_top }}px;--os-delivery-bottom:{{ section.settings.padding_bottom }}px">
+  <os-delivery-checker class="os-delivery-page__inner" data-storage-key="os-delivery-area-{{ shop.id }}" data-not-found="{{ section.settings.not_found | escape }}">
+    <header><h1>{{ section.settings.heading | default: page.title }}</h1></header>
+    <div class="os-delivery-page__content">
+      {%- if section.settings.intro != blank -%}<div class="os-delivery-page__intro db-rte">{{ section.settings.intro }}</div>{%- endif -%}
+      <div class="os-delivery-card">
+        <div class="os-delivery-card__search" data-delivery-search>
+          <label for="DeliverySearch-{{ section.id }}">{{ section.settings.delivery_label }}</label>
+          <div class="os-delivery-card__input">
+            <svg viewBox="0 0 15 17" aria-hidden="true"><path d="M2.55 2.05A7 7 0 0 1 12.45 11.95L7.5 16.9l-4.95-4.95a7 7 0 0 1 0-9.9ZM7.5 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+            <input id="DeliverySearch-{{ section.id }}" type="search" placeholder="{{ section.settings.placeholder }}" autocomplete="postal-code" data-delivery-input list="DeliveryOptions-{{ section.id }}">
+            <datalist id="DeliveryOptions-{{ section.id }}">{%- for block in section.blocks -%}{%- if block.type == 'zone' -%}<option value="{{ block.settings.location | escape }}"></option>{%- endif -%}{%- endfor -%}</datalist>
+            <button type="button" data-delivery-submit>{{ section.settings.check_label }}</button>
+          </div>
+        </div>
+        <div class="os-delivery-card__found" data-delivery-found hidden>
+          <span>{{ section.settings.delivery_label }}</span>
+          <svg viewBox="0 0 15 17" aria-hidden="true"><path d="M2.55 2.05A7 7 0 0 1 12.45 11.95L7.5 16.9l-4.95-4.95a7 7 0 0 1 0-9.9ZM7.5 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+          <strong data-delivery-location></strong>
+          <button type="button" data-delivery-edit>{{ section.settings.edit_label }}</button>
+        </div>
+        <a class="os-delivery-card__cutoff" data-delivery-link hidden><span data-delivery-cutoff></span><span aria-hidden="true">→</span></a>
+        <div class="os-delivery-card__fee" data-delivery-fee-wrap hidden>{{ section.settings.fee_label }} <strong data-delivery-fee></strong></div>
+        <p class="os-delivery-card__message" data-delivery-message hidden role="status"></p>
+      </div>
+      <script type="application/json" data-delivery-zones>[{%- for block in section.blocks -%}{%- if block.type == 'zone' -%}{"location":{{ block.settings.location | json }},"postcodes":{{ block.settings.postcodes | json }},"cutoff":{{ block.settings.cutoff | json }},"fee":{{ block.settings.fee | json }},"url":{{ block.settings.collection.url | default: routes.all_products_collection_url | json }}}{% unless forloop.last %},{% endunless %}{%- endif -%}{%- endfor -%}]</script>
+    </div>
+  </os-delivery-checker>
+</section>
+{% schema %}
+{
+  "name": "OS delivery checker",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Delivery Suburbs" },
+    { "type": "richtext", "id": "intro", "label": "Introduction", "default": "<p>Check whether we deliver to your suburb and view the applicable delivery details.</p>" },
+    { "type": "text", "id": "delivery_label", "label": "Delivery label", "default": "Delivery To" },
+    { "type": "text", "id": "placeholder", "label": "Search placeholder", "default": "Postcode / Suburb" },
+    { "type": "text", "id": "check_label", "label": "Check button", "default": "Check" },
+    { "type": "text", "id": "edit_label", "label": "Edit button", "default": "edit" },
+    { "type": "text", "id": "fee_label", "label": "Fee label", "default": "Delivery Cost:" },
+    { "type": "text", "id": "not_found", "label": "Not-found message", "default": "Sorry, we currently don't deliver to that postcode or suburb." },
+    { "type": "range", "id": "custom_width", "label": "Content width", "min": 1000, "max": 1800, "step": 20, "unit": "px", "default": 1540 },
+    { "type": "range", "id": "padding_top", "label": "Desktop top spacing", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 84 },
+    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom spacing", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 84 },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#314116" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#80233a" },
+    { "type": "color", "id": "soft_background", "label": "Card background", "default": "#f9e9ed" }
+  ],
+  "blocks": [
+    { "type": "zone", "name": "Delivery zone", "settings": [
+      { "type": "text", "id": "location", "label": "Displayed suburb or area" },
+      { "type": "textarea", "id": "postcodes", "label": "Postcodes", "info": "Comma-separated postcodes. The displayed location is also searchable." },
+      { "type": "text", "id": "cutoff", "label": "Delivery and cutoff message" },
+      { "type": "text", "id": "fee", "label": "Delivery fee", "info": "Include the currency symbol, for example $14.95." },
+      { "type": "collection", "id": "collection", "label": "Destination collection" }
+    ] }
+  ],
+  "max_blocks": 50,
+  "presets": [{ "name": "OS delivery checker" }]
+}
+{% endschema %}

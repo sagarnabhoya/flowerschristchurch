@@ -1,0 +1,44 @@
+{%- assign location_links = section.settings.menu.links -%}
+{%- if location_links.size > 0 -%}{%- assign location_total = location_links.size -%}{%- else -%}{%- assign location_total = section.blocks.size -%}{%- endif -%}
+{%- assign hidden_location_total = location_total | minus: 6 -%}
+{%- render 'os-section-style', section: section -%}
+<section class="os-locations full-width" style="--os-locations-bg:{{ section.settings.background }};--os-locations-panel:{{ section.settings.panel_color }};--os-locations-text:{{ section.settings.text_color }};--os-locations-accent:{{ section.settings.accent_color }}">
+  <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
+    <header class="os-locations__header">
+      <div>{%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}{%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}</div>
+      {%- if section.settings.intro != blank -%}<div class="db-rte">{{ section.settings.intro }}</div>{%- endif -%}
+    </header>
+    <div class="os-locations__layout">
+      <aside class="os-locations__promise">
+        <svg class="os-locations__route" aria-hidden="true" viewBox="0 0 400 520" fill="none">
+          <path class="os-locations__route-line" pathLength="1" d="M38 74c74-53 114 54 188 7 64-40 124-3 125 61 1 55-59 70-109 95-61 31-90 82-48 123 40 39 106 8 153 50"/>
+          <circle class="os-locations__route-start" cx="38" cy="74" r="7"/>
+          <g class="os-locations__route-pin"><path d="M347 389c-14 0-25 11-25 25 0 20 25 42 25 42s25-22 25-42c0-14-11-25-25-25Z"/><circle cx="347" cy="414" r="7"/></g>
+        </svg>
+        <div class="os-locations__count"><strong>{{ section.settings.location_count }}</strong><span>{{ section.settings.count_label }}</span></div>
+        <p class="os-locations__note">{{ section.settings.delivery_note }}</p>
+        {%- if section.settings.button_label != blank -%}<a class="os-locations__button" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }} <span aria-hidden="true">→</span></a>{%- endif -%}
+      </aside>
+      <div class="os-locations__directory">
+        <div class="os-locations__directory-head"><div><span>{{ section.settings.directory_label }}</span><h3>{{ section.settings.directory_heading }}</h3></div></div>
+        <nav class="os-locations__links os-locations__links--desktop" aria-label="Christchurch flower delivery locations">
+          {%- for link in location_links -%}<a href="{{ link.url }}"><span>{{ link.title }}</span><i aria-hidden="true">→</i></a>{%- else -%}{%- for block in section.blocks -%}<a href="{{ block.settings.link }}" {{ block.shopify_attributes }}><span>{{ block.settings.title }}</span><i aria-hidden="true">→</i></a>{%- endfor -%}{%- endfor -%}
+        </nav>
+        <nav class="os-locations__links os-locations__links--mobile os-locations__links--preview" aria-label="Featured Christchurch flower delivery locations">
+          {%- for link in location_links limit: 6 -%}<a href="{{ link.url }}"><span>{{ link.title }}</span><i aria-hidden="true">→</i></a>{%- else -%}{%- for block in section.blocks limit: 6 -%}<a href="{{ block.settings.link }}" {{ block.shopify_attributes }}><span>{{ block.settings.title }}</span><i aria-hidden="true">→</i></a>{%- endfor -%}{%- endfor -%}
+        </nav>
+        {%- if hidden_location_total > 0 -%}
+          <details class="os-locations__disclosure">
+            <summary><span>See {{ hidden_location_total }} more suburbs</span><i aria-hidden="true"></i></summary>
+            <nav class="os-locations__links os-locations__links--mobile os-locations__links--more" aria-label="More Christchurch flower delivery locations">
+              {%- for link in location_links offset: 6 -%}<a href="{{ link.url }}"><span>{{ link.title }}</span><i aria-hidden="true">→</i></a>{%- else -%}{%- for block in section.blocks offset: 6 -%}<a href="{{ block.settings.link }}" {{ block.shopify_attributes }}><span>{{ block.settings.title }}</span><i aria-hidden="true">→</i></a>{%- endfor -%}{%- endfor -%}
+            </nav>
+          </details>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"Delivery locations","settings":[{"type":"header","content":"Section layout"},{"type":"select","id":"content_width","label":"Content width","default":"custom","options":[{"value":"contained","label":"Container"},{"value":"fluid","label":"Container fluid"},{"value":"full","label":"Full width"},{"value":"custom","label":"Custom width"}]},{"type":"range","id":"custom_width","label":"Custom width","min":600,"max":2000,"step":20,"unit":"px","default":1540},{"type":"range","id":"padding_top","label":"Top padding","min":0,"max":160,"step":4,"unit":"px","default":88},{"type":"range","id":"padding_bottom","label":"Bottom padding","min":0,"max":160,"step":4,"unit":"px","default":88},{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Flower Shop Christchurch"},{"type":"text","id":"heading","label":"Heading","default":"Flowers across Christchurch."},{"type":"richtext","id":"intro","label":"Introduction","default":"<p>Handmade locally and delivered with care throughout Christchurch and nearby suburbs.</p>"},{"type":"text","id":"location_count","label":"Location count","default":"23"},{"type":"text","id":"count_label","label":"Count label","default":"suburbs delivered"},{"type":"textarea","id":"delivery_note","label":"Delivery note","default":"Same-day FREE delivery is available in most areas when ordered within the daily cut-off."},{"type":"text","id":"directory_heading","label":"Directory heading","default":"Where we deliver"},{"type":"text","id":"directory_label","label":"Directory helper","default":"Choose your suburb"},{"type":"link_list","id":"menu","label":"Locations menu","info":"Create a Shopify navigation menu containing every suburb page, then select it here."},{"type":"text","id":"button_label","label":"Button label","default":"Shop all flowers"},{"type":"url","id":"button_link","label":"Button link"},{"type":"color","id":"background","label":"Background","default":"#123f37"},{"type":"color","id":"panel_color","label":"Directory background","default":"#fffaf3"},{"type":"color","id":"text_color","label":"Text","default":"#fffaf3"},{"type":"color","id":"accent_color","label":"Accent","default":"#efc9c5"}],"blocks":[{"type":"location","name":"Fallback location","settings":[{"type":"text","id":"title","label":"Suburb"},{"type":"url","id":"link","label":"Location page"}]}],"presets":[{"name":"Delivery locations"}]}
+{% endschema %}

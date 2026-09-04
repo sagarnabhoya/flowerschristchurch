@@ -1,7 +1,7 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Bloom Atelier",
+    "theme_name": "Christchurch Flowers",
     "theme_version": "1.0.0",
     "theme_author": "Custom Skeleton Studio",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
@@ -117,7 +117,39 @@
       { "type": "select", "id": "card_badge_position", "label": "Badge position", "default": "right", "options": [{ "value": "left", "label": "Top left" }, { "value": "right", "label": "Top right" }] },
       { "type": "color", "id": "card_badge_color", "label": "Badge background", "default": "#ef493e" },
       { "type": "color", "id": "card_badge_text_color", "label": "Badge text", "default": "#ffffff" },
-      { "type": "text", "id": "card_default_badge", "label": "Default badge text", "info": "Optional fallback when a product has no custom badge." }
+      { "type": "text", "id": "card_default_badge", "label": "Default badge text", "info": "Optional fallback when a product has no custom badge." },
+      { "type": "header", "content": "SVG badge mapping" },
+      { "type": "paragraph", "content": "Per-product metafields: custom.card_badge (label), custom.card_badge_type (new, locally-grown or custom), and custom.card_badge_svg (custom SVG markup). Metafields override tag mappings." },
+      { "type": "text", "id": "card_badge_local_tag", "label": "Locally grown product tag", "default": "locally grown" },
+      { "type": "text", "id": "card_badge_new_tag", "label": "New product tag", "default": "new" },
+      { "type": "textarea", "id": "card_badge_local_svg", "label": "Custom locally grown SVG", "info": "Optional. Leave empty to use the built-in locally grown SVG." },
+      { "type": "textarea", "id": "card_badge_new_svg", "label": "Custom new SVG", "info": "Optional. Leave empty to use the built-in NEW SVG." }
+    ]
+  },
+  {
+    "name": "Product badge mappings",
+    "settings": [
+      { "type": "paragraph", "content": "Map up to five exact product tags to custom badge labels and SVG markup. Product metafields override these mappings." },
+      { "type": "header", "content": "Mapping 1" },
+      { "type": "text", "id": "card_badge_map_1_tag", "label": "Product tag" },
+      { "type": "text", "id": "card_badge_map_1_label", "label": "Accessible badge label" },
+      { "type": "textarea", "id": "card_badge_map_1_svg", "label": "SVG markup" },
+      { "type": "header", "content": "Mapping 2" },
+      { "type": "text", "id": "card_badge_map_2_tag", "label": "Product tag" },
+      { "type": "text", "id": "card_badge_map_2_label", "label": "Accessible badge label" },
+      { "type": "textarea", "id": "card_badge_map_2_svg", "label": "SVG markup" },
+      { "type": "header", "content": "Mapping 3" },
+      { "type": "text", "id": "card_badge_map_3_tag", "label": "Product tag" },
+      { "type": "text", "id": "card_badge_map_3_label", "label": "Accessible badge label" },
+      { "type": "textarea", "id": "card_badge_map_3_svg", "label": "SVG markup" },
+      { "type": "header", "content": "Mapping 4" },
+      { "type": "text", "id": "card_badge_map_4_tag", "label": "Product tag" },
+      { "type": "text", "id": "card_badge_map_4_label", "label": "Accessible badge label" },
+      { "type": "textarea", "id": "card_badge_map_4_svg", "label": "SVG markup" },
+      { "type": "header", "content": "Mapping 5" },
+      { "type": "text", "id": "card_badge_map_5_tag", "label": "Product tag" },
+      { "type": "text", "id": "card_badge_map_5_label", "label": "Accessible badge label" },
+      { "type": "textarea", "id": "card_badge_map_5_svg", "label": "SVG markup" }
     ]
   }
 ]

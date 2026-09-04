@@ -1,9 +1,9 @@
 {
   "sections": {
-    "hero": { "type": "db-hero", "settings": { "eyebrow": "Beautiful for longer", "heading": "Simple care for <em>happier flowers.</em>", "copy": "<p>A practical guide to helping fresh flowers open beautifully and last as long as possible.</p>", "button_label": "Shop fresh flowers", "button_link": "shopify://collections/all", "badge": "Florist care notes", "background": "#efc9c5", "text_color": "#193e36" } },
+    "hero": { "type": "os-hero", "settings": { "eyebrow": "Beautiful for longer", "heading": "Simple care for <em>happier flowers.</em>", "copy": "<p>A practical guide to helping fresh flowers open beautifully and last as long as possible.</p>", "button_label": "Shop fresh flowers", "button_link": "shopify://collections/all", "badge": "Florist care notes", "background": "#efc9c5", "text_color": "#193e36" } },
     "content": { "type": "page", "settings": { "show_header": false, "eyebrow": "Flower care" } },
-    "story": { "type": "db-editorial-story", "settings": { "eyebrow": "A daily ritual", "heading": "Fresh water, clean stems, <em>a little attention.</em>", "copy": "<p>Trim stems on an angle, refresh the vase regularly and keep arrangements away from direct heat and ripening fruit.</p>", "button_label": "Ask our florists", "button_link": "shopify://pages/contact", "image_position": "right", "background": "#123f37", "text_color": "#ffffff" } },
-    "newsletter": { "type": "db-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "Flower care and gifting notes, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
+    "story": { "type": "os-editorial-story", "settings": { "eyebrow": "A daily ritual", "heading": "Fresh water, clean stems, <em>a little attention.</em>", "copy": "<p>Trim stems on an angle, refresh the vase regularly and keep arrangements away from direct heat and ripening fruit.</p>", "button_label": "Ask our florists", "button_link": "shopify://pages/contact", "image_position": "right", "background": "#123f37", "text_color": "#ffffff" } },
+    "newsletter": { "type": "os-newsletter", "settings": { "eyebrow": "Stay in bloom", "heading": "Flower care and gifting notes, <em>straight to your inbox.</em>", "background": "#efc9c5", "text_color": "#193e36" } }
   },
   "order": ["hero", "content", "story", "newsletter"]
 }

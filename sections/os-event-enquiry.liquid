@@ -1,0 +1,24 @@
+<section class="os-event-form full-width" style="--os-form-bg:{{ section.settings.background }};--os-form-card:{{ section.settings.card_background }};--os-form-text:{{ section.settings.text_color }};--os-form-accent:{{ section.settings.accent }};--os-form-width:{{ section.settings.content_width }}px">
+  <div class="os-event-form__inner"><h1>{{ section.settings.heading | default: page.title }}</h1><div class="db-rte os-event-form__intro">{{ section.settings.intro }}</div>
+    {%- form 'contact', class: 'os-event-form__form' -%}
+      <input type="hidden" name="contact[form_type]" value="Event enquiry">
+      {%- if form.posted_successfully? -%}<p class="db-form-message" tabindex="-1">{{ section.settings.success_message }}</p>{%- endif -%}
+      {%- if form.errors -%}<div class="db-form-message db-form-message--error">{{ form.errors | default_errors }}</div>{%- endif -%}
+      <div class="os-event-form__grid">
+        <label>{{ section.settings.name_label }}<input name="contact[name]" type="text" autocomplete="name" required></label>
+        <label>{{ section.settings.business_label }}<input name="contact[Business name]" type="text" autocomplete="organization"></label>
+        <label>{{ section.settings.email_label }}<input name="contact[email]" type="email" autocomplete="email" required></label>
+        <label>{{ section.settings.phone_label }}<input name="contact[phone]" type="tel" autocomplete="tel" required></label>
+        <label>{{ section.settings.type_label }}<select name="contact[Event type]" required><option value="">{{ section.settings.choose_label }}</option>{%- for block in section.blocks -%}<option value="{{ block.settings.label | escape }}">{{ block.settings.label }}</option>{%- endfor -%}</select></label>
+        <label>{{ section.settings.date_label }}<input name="contact[Event date]" type="date" required></label>
+        <label>{{ section.settings.location_label }}<input name="contact[Event location]" type="text" required></label>
+        <label>{{ section.settings.budget_label }}<input name="contact[Floral budget]" type="text" inputmode="decimal"></label>
+        <label class="os-event-form__wide">{{ section.settings.palette_label }}<input name="contact[Colour palette]" type="text"></label>
+        <label class="os-event-form__wide">{{ section.settings.message_label }}<textarea name="contact[body]" rows="7"></textarea></label>
+      </div><button type="submit">{{ section.settings.button_label }}</button>
+    {%- endform -%}
+  </div>
+</section>
+{% schema %}
+{"name":"OS event enquiry","settings":[{"type":"text","id":"heading","label":"Heading","default":"Event Enquiry Form"},{"type":"richtext","id":"intro","label":"Introduction"},{"type":"text","id":"name_label","label":"Name label","default":"Name"},{"type":"text","id":"business_label","label":"Business label","default":"Business name"},{"type":"text","id":"email_label","label":"Email label","default":"Email"},{"type":"text","id":"phone_label","label":"Phone label","default":"Phone number"},{"type":"text","id":"type_label","label":"Event type label","default":"Event type"},{"type":"text","id":"choose_label","label":"Choose option label","default":"Choose an event type"},{"type":"text","id":"date_label","label":"Date label","default":"Event date"},{"type":"text","id":"location_label","label":"Location label","default":"Event location"},{"type":"text","id":"budget_label","label":"Budget label","default":"Floral budget"},{"type":"text","id":"palette_label","label":"Palette label","default":"Colour palette"},{"type":"text","id":"message_label","label":"Message label","default":"Additional information"},{"type":"text","id":"button_label","label":"Submit button","default":"Submit enquiry"},{"type":"text","id":"success_message","label":"Success message","default":"Thank you. Our team will be in touch."},{"type":"range","id":"content_width","label":"Form width","min":600,"max":1100,"step":20,"unit":"px","default":820},{"type":"color","id":"background","label":"Background","default":"#f9f5ef"},{"type":"color","id":"card_background","label":"Form background","default":"#f8e3e4"},{"type":"color","id":"text_color","label":"Text","default":"#404d1c"},{"type":"color","id":"accent","label":"Accent","default":"#8f2343"}],"blocks":[{"type":"event_type","name":"Event type","settings":[{"type":"text","id":"label","label":"Option","default":"Corporate function"}]}],"presets":[{"name":"OS event enquiry"}]}
+{% endschema %}

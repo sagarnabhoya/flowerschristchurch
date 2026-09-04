@@ -1,0 +1,52 @@
+{%- liquid
+  assign legal_title = section.settings.heading
+  if legal_title == blank
+    assign legal_title = page.title
+  endif
+-%}
+<article class="os-policy full-width" style="--os-policy-bg:{{ section.settings.background }};--os-policy-text:{{ section.settings.text_color }};--os-policy-accent:{{ section.settings.accent }};--os-policy-width:{{ section.settings.content_width }}px;--os-policy-top:{{ section.settings.padding_top }}px;--os-policy-bottom:{{ section.settings.padding_bottom }}px">
+  <div class="os-policy__inner">
+    <header class="os-policy__header"><h1>{{ legal_title }}</h1>{%- if section.settings.last_updated != blank -%}<p>{{ section.settings.last_updated_label }} {{ section.settings.last_updated }}</p>{%- endif -%}</header>
+    {%- if section.settings.show_navigation and section.blocks.size > 0 -%}<nav class="os-policy__nav" aria-label="{{ section.settings.navigation_label }}"><strong>{{ section.settings.navigation_label }}</strong><ul>{%- for block in section.blocks -%}<li><a href="#PolicyPart-{{ section.id }}-{{ block.id }}">{{ block.settings.heading }}</a></li>{%- endfor -%}</ul></nav>{%- endif -%}
+    <div class="os-policy__body db-rte">
+      {%- if section.settings.content_source == 'custom' -%}
+        {{ section.settings.custom_content }}
+      {%- else -%}
+        {{ page.content }}
+      {%- endif -%}
+      {%- for block in section.blocks -%}<section id="PolicyPart-{{ section.id }}-{{ block.id }}" class="os-policy__part" {{ block.shopify_attributes }}><h2>{{ block.settings.heading }}</h2><div class="db-rte">{{ block.settings.content }}</div></section>{%- endfor -%}
+    </div>
+    {%- if section.settings.contact_text != blank -%}<footer class="os-policy__contact db-rte">{{ section.settings.contact_text }}</footer>{%- endif -%}
+  </div>
+</article>
+{% schema %}
+{
+  "name": "OS legal policy",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Custom heading", "info": "Leave blank to use the Shopify policy or page title." },
+    { "type": "select", "id": "content_source", "label": "Content source", "default": "automatic", "options": [
+      { "value": "automatic", "label": "Shopify policy or page content" },
+      { "value": "custom", "label": "Custom content below" }
+    ] },
+    { "type": "richtext", "id": "custom_content", "label": "Custom legal content", "info": "Have legal wording reviewed for your business and jurisdiction." },
+    { "type": "text", "id": "last_updated_label", "label": "Updated label", "default": "Last updated:" },
+    { "type": "text", "id": "last_updated", "label": "Last updated date" },
+    { "type": "checkbox", "id": "show_navigation", "label": "Show section navigation", "default": false },
+    { "type": "text", "id": "navigation_label", "label": "Navigation label", "default": "On this page" },
+    { "type": "richtext", "id": "contact_text", "label": "Contact note" },
+    { "type": "range", "id": "content_width", "label": "Content width", "min": 600, "max": 1400, "step": 20, "unit": "px", "default": 1000 },
+    { "type": "range", "id": "padding_top", "label": "Top spacing", "min": 30, "max": 160, "step": 5, "unit": "px", "default": 75 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom spacing", "min": 30, "max": 180, "step": 5, "unit": "px", "default": 100 },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#404d1c" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#8f2343" }
+  ],
+  "blocks": [
+    { "type": "clause", "name": "Legal section", "settings": [
+      { "type": "text", "id": "heading", "label": "Heading" },
+      { "type": "richtext", "id": "content", "label": "Content" }
+    ] }
+  ],
+  "presets": [{ "name": "OS legal policy" }]
+}
+{% endschema %}

@@ -1,0 +1,36 @@
+{
+  "sections": {
+    "main": {
+      "type": "os-faq-page",
+      "blocks": {
+        "q1": { "type": "question", "settings": { "question": "How does flower delivery work?" } },
+        "q2": { "type": "question", "settings": { "question": "What size bouquets do you offer?" } },
+        "q3": { "type": "question", "settings": { "question": "Where do you deliver?" } },
+        "q4": { "type": "question", "settings": { "question": "Do you charge a delivery fee?" } },
+        "q5": { "type": "question", "settings": { "question": "Do you deliver to my suburb?" } },
+        "q6": { "type": "question", "settings": { "question": "Can I select a time for my delivery?" } },
+        "q7": { "type": "question", "settings": { "question": "Can I track my order?" } },
+        "q8": { "type": "question", "settings": { "question": "I provided the wrong address. What should I do?" } },
+        "q9": { "type": "question", "settings": { "question": "Have a different delivery question?" } },
+        "q10": { "type": "question", "settings": { "question": "What happens if the recipient is not home?" } },
+        "q11": { "type": "question", "settings": { "question": "What special instructions should I include?" } },
+        "q12": { "type": "question", "settings": { "question": "What happens if I provide incorrect delivery instructions?" } },
+        "q13": { "type": "question", "settings": { "question": "Will my flowers look exactly like the website image?" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12", "q13"],
+      "settings": {
+        "heading": "FAQ's",
+        "open_first": false,
+        "custom_width": 1540,
+        "padding_top": 84,
+        "padding_bottom": 100,
+        "background": "#f9f5ef",
+        "text_color": "#314116",
+        "line_color": "#80353a"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,14 +1,17 @@
 {
   "sections": {
     "main": {
-      "type": "os-location-page-metaobject",
-      "settings": {}
+      "type": "os-location-page",
+      "settings": {
+        "collection": "shopify://collections/all",
+        "locations_menu": "delivery-locations"
+      }
     },
     "newsletter": {
       "type": "os-newsletter",
       "settings": {
         "eyebrow": "Christchurch, in bloom",
-        "heading": "Local flowers and thoughtful notes, <em>straight to your inbox.</em>",
+        "heading": "Fresh flowers and local updates, <em>straight to your inbox.</em>",
         "background": "#efc9c5",
         "text_color": "#193e36"
       }

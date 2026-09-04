@@ -1,0 +1,217 @@
+<section
+  class="db-hero db-hero--{{ section.settings.layout }} db-hero--pos-{{ section.settings.campaign_position }} db-hero--text-{{ section.settings.text_alignment }} db-hero--valign-{{ section.settings.content_vertical }} db-hero--m-{{ section.settings.mobile_content_layout }} db-hero--m-badge-{{ section.settings.badge_position_mobile }} {% if section.settings.media_position == 'left' %}db-hero--media-left{% endif %} {% if section.settings.mobile_stack == 'content-first' %}db-hero--stack-content{% endif %} {% unless section.settings.show_copy_mobile %}db-hero--hide-copy-mobile{% endunless %} {% unless section.settings.show_badge_mobile %}db-hero--hide-badge-mobile{% endunless %} full-width"
+  style="--db-hero-height:{{ section.settings.desktop_height }}px;--db-hero-height-mobile:{{ section.settings.mobile_height }}px;--db-hero-title-size:{{ section.settings.heading_size }}px;--db-hero-title-mobile:{{ section.settings.heading_size_mobile }}px;--db-hero-overlay-pct:{{ section.settings.overlay_opacity }}%;--db-hero-overlay-color:{{ section.settings.overlay_color }};--db-hero-overlay-text:{{ section.settings.overlay_text }};--db-hero-media-pos:{{ section.settings.image_position }};--db-hero-mobile-bg:{{ section.settings.mobile_content_bg }};--db-hero-peek:{{ section.settings.peek_overlap }};--db-hero-badge-mobile:{{ section.settings.badge_size_mobile }}px;background:{{ section.settings.background }};color:{{ section.settings.text_color }};--db-hero-text:{{ section.settings.text_color }}"
+>
+  {%- if section.settings.layout == 'campaign' -%}
+    <div class="db-hero__campaign-media">
+      {%- if section.settings.video != blank -%}
+        {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'db-hero__video db-hero__video--desktop', image_size: '2400x' }}
+        {%- if section.settings.mobile_video != blank -%}{{ section.settings.mobile_video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'db-hero__video db-hero__video--mobile', image_size: '1000x' }}{%- endif -%}
+      {%- elsif section.settings.image -%}
+        <picture>{%- if section.settings.mobile_image -%}<source media="(max-width:749px)" srcset="{{ section.settings.mobile_image | image_url: width: 1000 }}">{%- endif -%}{{ section.settings.image | image_url: width: 2400 | image_tag: widths: '800,1200,1600,2000,2400', sizes: '100vw', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt }}</picture>
+      {%- else -%}{{ 'lifestyle-2' | placeholder_svg_tag: 'db-hero__placeholder' }}{%- endif -%}
+      {%- if section.settings.show_badge and section.settings.badge != blank -%}<span class="db-hero__badge db-hero__badge--{{ section.settings.badge_position }}">{{ section.settings.badge }}</span>{%- endif -%}
+    </div>
+    <div class="db-hero__campaign-shade" aria-hidden="true"></div>
+    {%- if section.settings.show_content -%}
+      <div class="db-hero__campaign-wrap">
+        <div class="db-hero__campaign-content">
+          {%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}
+          {%- if section.settings.heading != blank -%}<h1 class="db-title db-hero__title">{{ section.settings.heading }}</h1>{%- endif -%}
+          {%- if section.settings.copy != blank -%}<div class="db-copy db-hero__copy">{{ section.settings.copy }}</div>{%- endif -%}
+          {%- if section.settings.button_label != blank or section.settings.button2_label != blank -%}
+            <div class="db-hero__buttons">
+              {%- if section.settings.button_label != blank -%}<a class="db-hero__campaign-button db-hero__button db-hero__button--{{ section.settings.button_style }}" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>{%- endif -%}
+              {%- if section.settings.button2_label != blank -%}<a class="db-hero__campaign-button db-hero__button db-hero__button--{{ section.settings.button2_style }}" href="{{ section.settings.button2_link | default: routes.all_products_collection_url }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- else -%}
+      <h1 class="visually-hidden">{{ section.settings.heading | strip_html }}</h1>
+      {%- if section.settings.button_label != blank or section.settings.button2_label != blank -%}
+        <div class="db-hero__button-bar">
+          {%- if section.settings.button_label != blank -%}<a class="db-hero__campaign-button db-hero__button db-hero__button--bar db-hero__button--{{ section.settings.button_style }}" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>{%- endif -%}
+          {%- if section.settings.button2_label != blank -%}<a class="db-hero__campaign-button db-hero__button db-hero__button--bar db-hero__button--{{ section.settings.button2_style }}" href="{{ section.settings.button2_link | default: routes.all_products_collection_url }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+    {%- comment -%}Badge lives inside campaign-media so it stays pinned to the image in stacked mobile modes.{%- endcomment -%}
+  {%- else -%}
+    <div class="db-hero__grid">
+      <div class="db-hero__content">
+        {%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h1 class="db-title db-hero__title">{{ section.settings.heading }}</h1>{%- endif -%}
+        {%- if section.settings.copy != blank -%}<div class="db-copy db-hero__copy">{{ section.settings.copy }}</div>{%- endif -%}
+        {%- if section.settings.button_label != blank or section.settings.button2_label != blank -%}
+          <div class="db-hero__buttons">
+            {%- if section.settings.button_label != blank -%}<a class="db-button{% if section.settings.button_style == 'outline' %} db-button--outline{% elsif section.settings.button_style == 'light' %} db-button--light{% endif %} db-hero__button" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }} {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</a>{%- endif -%}
+            {%- if section.settings.button2_label != blank -%}<a class="db-button{% if section.settings.button2_style == 'outline' %} db-button--outline{% elsif section.settings.button2_style == 'light' %} db-button--light{% endif %} db-hero__button" href="{{ section.settings.button2_link | default: routes.all_products_collection_url }}">{{ section.settings.button2_label }}</a>{%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="db-hero__media">
+        {%- if section.settings.video != blank -%}
+          {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'db-hero__video db-hero__video--desktop', image_size: '1800x' }}
+          {%- if section.settings.mobile_video != blank -%}{{ section.settings.mobile_video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'db-hero__video db-hero__video--mobile', image_size: '1000x' }}{%- endif -%}
+        {%- elsif section.settings.image -%}
+          <picture>{%- if section.settings.mobile_image -%}<source media="(max-width:749px)" srcset="{{ section.settings.mobile_image | image_url: width: 1000 }}">{%- endif -%}{{ section.settings.image | image_url: width: 2200 | image_tag: widths: '800,1200,1600,2200', sizes: '(min-width:750px) 50vw, 100vw', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt }}</picture>
+        {%- else -%}{{ 'lifestyle-2' | placeholder_svg_tag: 'db-hero__placeholder' }}{%- endif -%}
+        {%- if section.settings.show_badge and section.settings.badge != blank -%}<span class="db-hero__badge db-hero__badge--{{ section.settings.badge_position }}">{{ section.settings.badge }}</span>{%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+{% schema %}
+{
+  "name": "Bloom hero",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "select", "id": "layout", "label": "Layout", "default": "campaign", "options": [{ "value": "campaign", "label": "Full-width campaign" }, { "value": "split", "label": "Split editorial" }] },
+    {
+      "type": "select",
+      "id": "campaign_position",
+      "label": "Campaign content placement",
+      "default": "bottom-left",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-center", "label": "Top center" },
+        { "value": "top-right", "label": "Top right" },
+        { "value": "middle-left", "label": "Middle left" },
+        { "value": "middle-center", "label": "Middle center" },
+        { "value": "middle-right", "label": "Middle right" },
+        { "value": "bottom-left", "label": "Bottom left" },
+        { "value": "bottom-center", "label": "Bottom center" },
+        { "value": "bottom-right", "label": "Bottom right" }
+      ],
+      "visible_if": "{{ section.settings.layout == 'campaign' }}"
+    },
+    { "type": "select", "id": "text_alignment", "label": "Text alignment", "default": "left", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Editorial media position",
+      "default": "right",
+      "options": [{ "value": "right", "label": "Media right" }, { "value": "left", "label": "Media left" }],
+      "visible_if": "{{ section.settings.layout == 'split' }}"
+    },
+    {
+      "type": "select",
+      "id": "content_vertical",
+      "label": "Editorial vertical alignment",
+      "default": "center",
+      "options": [{ "value": "top", "label": "Top" }, { "value": "center", "label": "Center" }, { "value": "bottom", "label": "Bottom" }],
+      "visible_if": "{{ section.settings.layout == 'split' }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_stack",
+      "label": "Mobile stacking (editorial)",
+      "default": "media-first",
+      "options": [{ "value": "media-first", "label": "Media first" }, { "value": "content-first", "label": "Content first" }],
+      "visible_if": "{{ section.settings.layout == 'split' }}"
+    },
+    { "type": "header", "content": "Media" },
+    { "type": "video", "id": "video", "label": "Desktop video", "info": "Use a short, muted, owned or licensed Shopify-hosted video. Works in both layouts." },
+    { "type": "video", "id": "mobile_video", "label": "Mobile video", "info": "Optional portrait crop. The desktop video is used when this is empty." },
+    { "type": "image_picker", "id": "image", "label": "Desktop image" },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile image", "info": "Optional portrait crop for phones." },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image focal point",
+      "default": "center",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    { "type": "range", "id": "desktop_height", "label": "Desktop height", "min": 400, "max": 1000, "step": 20, "unit": "px", "default": 720 },
+    { "type": "range", "id": "mobile_height", "label": "Mobile height", "min": 400, "max": 800, "step": 20, "unit": "px", "default": 560 },
+    {
+      "type": "select",
+      "id": "mobile_content_layout",
+      "label": "Mobile content layout (campaign)",
+      "default": "overlap",
+      "options": [
+        { "value": "overlap", "label": "Overlap on image" },
+        { "value": "below", "label": "Below image" },
+        { "value": "peek", "label": "Partial overlap (fade)" }
+      ],
+      "info": "Below stacks content on a solid card. Partial overlap pulls the card up over a 25% bottom fade.",
+      "visible_if": "{{ section.settings.layout == 'campaign' }}"
+    },
+    { "type": "color", "id": "mobile_content_bg", "label": "Mobile content background", "default": "#fffaf3", "info": "Used for Below and Partial overlap on mobile.", "visible_if": "{{ section.settings.layout == 'campaign' }}" },
+    { "type": "range", "id": "peek_overlap", "label": "Partial overlap amount", "min": 10, "max": 60, "step": 5, "unit": "%", "default": 25, "info": "How far the card pulls up over the image in Partial overlap mode.", "visible_if": "{{ section.settings.layout == 'campaign' }}" },
+    { "type": "range", "id": "overlay_opacity", "label": "Image overlay", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 10, "visible_if": "{{ section.settings.layout == 'campaign' }}" },
+    { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#0f2520", "visible_if": "{{ section.settings.layout == 'campaign' }}" },
+    { "type": "text", "id": "image_alt", "label": "Image description", "default": "Seasonal flowers arranged by hand" },
+    { "type": "header", "content": "Content" },
+    { "type": "checkbox", "id": "show_content", "label": "Show heading and text over image", "default": true, "visible_if": "{{ section.settings.layout == 'campaign' }}" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Made fresh every day" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Beautiful flowers for <em>every occasion.</em>" },
+    { "type": "richtext", "id": "copy", "label": "Text", "default": "<p>Thoughtful seasonal blooms, handcrafted by local florists and delivered with care.</p>" },
+    { "type": "checkbox", "id": "show_copy_mobile", "label": "Show text on mobile", "default": true, "visible_if": "{{ section.settings.layout == 'campaign' }}" },
+    { "type": "range", "id": "heading_size", "label": "Heading size (desktop)", "min": 28, "max": 100, "step": 2, "unit": "px", "default": 72 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size (mobile)", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 44 },
+    { "type": "color", "id": "background", "label": "Background (editorial)", "default": "#efc9c5", "visible_if": "{{ section.settings.layout == 'split' }}" },
+    { "type": "color", "id": "text_color", "label": "Text (editorial)", "default": "#193e36", "visible_if": "{{ section.settings.layout == 'split' }}" },
+    { "type": "color", "id": "overlay_text", "label": "Text over image (campaign)", "default": "#ffffff", "visible_if": "{{ section.settings.layout == 'campaign' }}" },
+    { "type": "header", "content": "Buttons" },
+    { "type": "text", "id": "button_label", "label": "Primary button label", "default": "Shop all blooms" },
+    { "type": "url", "id": "button_link", "label": "Primary button link" },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Primary button style",
+      "default": "solid",
+      "options": [{ "value": "solid", "label": "Solid" }, { "value": "outline", "label": "Outline" }, { "value": "light", "label": "Light" }]
+    },
+    { "type": "text", "id": "button2_label", "label": "Secondary button label" },
+    { "type": "url", "id": "button2_link", "label": "Secondary button link" },
+    {
+      "type": "select",
+      "id": "button2_style",
+      "label": "Secondary button style",
+      "default": "outline",
+      "options": [{ "value": "solid", "label": "Solid" }, { "value": "outline", "label": "Outline" }, { "value": "light", "label": "Light" }]
+    },
+    { "type": "header", "content": "Badge" },
+    { "type": "checkbox", "id": "show_badge", "label": "Show image badge", "default": true },
+    { "type": "text", "id": "badge", "label": "Image badge", "default": "Handmade by local florists", "visible_if": "{{ section.settings.show_badge == true }}" },
+    {
+      "type": "select",
+      "id": "badge_position",
+      "label": "Badge position (desktop)",
+      "default": "bottom-right",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-right", "label": "Top right" },
+        { "value": "bottom-left", "label": "Bottom left" },
+        { "value": "bottom-right", "label": "Bottom right" }
+      ],
+      "visible_if": "{{ section.settings.show_badge == true }}"
+    },
+    { "type": "header", "content": "Badge on mobile" },
+    { "type": "checkbox", "id": "show_badge_mobile", "label": "Show badge on mobile", "default": true, "visible_if": "{{ section.settings.show_badge == true }}" },
+    {
+      "type": "select",
+      "id": "badge_position_mobile",
+      "label": "Badge position (mobile)",
+      "default": "bottom-right",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-right", "label": "Top right" },
+        { "value": "bottom-left", "label": "Bottom left" },
+        { "value": "bottom-right", "label": "Bottom right" }
+      ],
+      "visible_if": "{{ section.settings.show_badge == true }}"
+    },
+    { "type": "range", "id": "badge_size_mobile", "label": "Badge size (mobile)", "min": 60, "max": 120, "step": 4, "unit": "px", "default": 88, "visible_if": "{{ section.settings.show_badge == true }}" }
+  ],
+  "presets": [{ "name": "Bloom hero" }]
+}
+{% endschema %}

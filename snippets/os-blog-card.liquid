@@ -1,0 +1,68 @@
+{%- liquid
+  comment
+    Blog article card for os-blog-feature.
+    Expects: article, section, variant ('lead', 'row', 'card'),
+    image_loading, image_fetchpriority, image_sizes
+  endcomment
+  assign s = section.settings
+  assign words = article.content | strip_html | number_of_words | default: 0
+  assign read_mins = words | divided_by: 200 | at_least: 1
+  assign card_tag = article.tags.first | default: ''
+  assign card_alt = article.image.alt | default: article.title | escape
+-%}
+<article class="os-blog__card os-blog__card--{{ variant | default: 'card' }}">
+  <a class="os-blog__media" href="{{ article.url }}" tabindex="-1" aria-hidden="true" focusable="false">
+    {%- if article.image -%}
+      {{
+        article.image
+        | image_url: width: 1600
+        | image_tag:
+          widths: '480, 720, 960, 1200, 1600',
+          sizes: image_sizes,
+          loading: image_loading,
+          fetchpriority: image_fetchpriority,
+          alt: card_alt
+      }}
+    {%- else -%}
+      {{ 'image' | placeholder_svg_tag }}
+    {%- endif -%}
+    {%- if variant == 'lead' and s.featured_badge_label != blank -%}
+      <span class="os-blog__flag">{{ s.featured_badge_label | escape }}</span>
+    {%- endif -%}
+    <span class="os-blog__media-arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+    </span>
+  </a>
+  <div class="os-blog__body">
+    {%- if s.show_tags and card_tag != blank or s.show_date or s.show_read_time -%}
+      <p class="os-blog__meta">
+        {%- if s.show_tags and card_tag != blank -%}
+          <span class="os-blog__tag">{{ card_tag | escape }}</span>
+        {%- endif -%}
+        {%- if s.show_date -%}
+          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+            {{- article.published_at | date: s.date_format -}}
+          </time>
+        {%- endif -%}
+        {%- if s.show_read_time -%}
+          <span>{{ read_mins }} min read</span>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+    <h3 class="os-blog__title">
+      <a class="os-blog__title-link" href="{{ article.url }}">{{ article.title }}</a>
+    </h3>
+    {%- if s.show_excerpt and variant != 'row' -%}
+      <p class="os-blog__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: s.excerpt_words }}</p>
+    {%- endif -%}
+    <div class="os-blog__foot">
+      {%- if s.show_author and article.author != blank -%}
+        <span class="os-blog__author">By {{ article.author | escape }}</span>
+      {%- endif -%}
+      <span class="os-blog__readmore" aria-hidden="true">
+        {{- s.read_label | escape -}}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </span>
+    </div>
+  </div>
+</article>

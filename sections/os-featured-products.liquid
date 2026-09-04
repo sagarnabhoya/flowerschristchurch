@@ -1,12 +1,60 @@
-{% render 'db-section-style', section: section %}
+{% render 'os-section-style', section: section %}
 {%- assign featured_collection = section.settings.collection | default: collections.all -%}
 <section id="os-product-carousel-{{ section.id }}" class="os-product-spotlight full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
  <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}"><os-product-carousel class="os-product-carousel" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}" data-initial-index="{{ section.settings.initial_slide | minus: 1 }}">
   <div class="os-product-carousel__track" data-product-carousel-track>
    {%- for product in featured_collection.products limit: section.settings.products_to_show -%}
     {%- assign product_image_loading = 'lazy' -%}{%- if forloop.first -%}{%- assign product_image_loading = 'eager' -%}{%- endif -%}
+    {%- liquid
+      assign spotlight_badge_text = product.metafields.custom.card_badge.value | default: product.metafields.custom.card_badge
+      assign spotlight_badge_type = product.metafields.custom.card_badge_type.value | default: product.metafields.custom.card_badge_type | downcase | strip
+      assign spotlight_badge_svg = product.metafields.custom.card_badge_svg.value | default: product.metafields.custom.card_badge_svg
+      assign spotlight_local_tag = settings.card_badge_local_tag | downcase | strip
+      assign spotlight_new_tag = settings.card_badge_new_tag | downcase | strip
+      if spotlight_badge_svg != blank
+        assign spotlight_badge_type = 'custom'
+      endif
+      if spotlight_badge_text == blank
+        for product_tag in product.tags
+          assign normalized_spotlight_tag = product_tag | downcase
+          assign spotlight_mapping_found = false
+          for mapping_index in (1..5)
+            assign mapping_tag_key = 'card_badge_map_' | append: mapping_index | append: '_tag'
+            assign mapping_label_key = 'card_badge_map_' | append: mapping_index | append: '_label'
+            assign mapping_svg_key = 'card_badge_map_' | append: mapping_index | append: '_svg'
+            assign mapping_tag = settings[mapping_tag_key] | downcase | strip
+            if mapping_tag != blank and normalized_spotlight_tag == mapping_tag
+              assign spotlight_badge_text = settings[mapping_label_key] | default: product_tag
+              assign spotlight_badge_svg = settings[mapping_svg_key]
+              if spotlight_badge_svg != blank
+                assign spotlight_badge_type = 'custom'
+              endif
+              assign spotlight_mapping_found = true
+              break
+            endif
+          endfor
+          if spotlight_mapping_found
+            break
+          elsif spotlight_local_tag != blank and normalized_spotlight_tag == spotlight_local_tag
+            assign spotlight_badge_text = 'Locally grown'
+            assign spotlight_badge_type = 'locally-grown'
+            break
+          elsif spotlight_new_tag != blank and normalized_spotlight_tag == spotlight_new_tag
+            assign spotlight_badge_text = 'New!'
+            assign spotlight_badge_type = 'new'
+            break
+          elsif normalized_spotlight_tag contains 'badge:'
+            assign spotlight_badge_text = product_tag | split: ':' | last | strip
+            break
+          endif
+        endfor
+      endif
+      if spotlight_badge_text == blank and section.settings.badge_label != blank
+        assign spotlight_badge_text = section.settings.badge_label
+      endif
+    -%}
     <article class="os-product-slide" data-product-carousel-slide>
-      <a class="os-product-slide__media" href="{{ product.url }}">{{ product.featured_image | image_url: width: 1400 | image_tag: widths: '400,600,800,1100,1400', sizes: '(min-width: 750px) 28vw, 65vw', loading: product_image_loading, alt: product.featured_image.alt | default: product.title }}{%- if section.settings.badge_label != blank -%}<span class="os-product-slide__badge">{{ section.settings.badge_label }}</span>{%- endif -%}</a>
+      <a class="os-product-slide__media" href="{{ product.url }}">{{ product.featured_image | image_url: width: 1400 | image_tag: widths: '400,600,800,1100,1400', sizes: '(min-width: 750px) 28vw, 65vw', loading: product_image_loading, alt: product.featured_image.alt | default: product.title }}{%- if spotlight_badge_text != blank or spotlight_badge_svg != blank -%}<span class="db-product-card__flower-badge{% if spotlight_badge_type == 'new' or spotlight_badge_type == 'locally-grown' or spotlight_badge_type == 'custom' %} db-product-card__flower-badge--svg{% endif %} db-product-card__flower-badge--{{ settings.card_badge_position }}" style="--db-card-badge-size:{{ settings.card_badge_size }}px;--db-card-badge-text:{{ settings.card_badge_text_color }};--db-card-badge:{{ settings.card_badge_color }}" role="img" aria-label="{{ spotlight_badge_text | default: 'Product badge' | escape }}">{%- if spotlight_badge_type == 'custom' and spotlight_badge_svg != blank -%}{{ spotlight_badge_svg }}{%- elsif spotlight_badge_type == 'locally-grown' -%}{%- if settings.card_badge_local_svg != blank -%}{{ settings.card_badge_local_svg }}{%- else -%}{% render 'os-badge-locally-grown' %}{%- endif -%}{%- elsif spotlight_badge_type == 'new' -%}{%- if settings.card_badge_new_svg != blank -%}{{ settings.card_badge_new_svg }}{%- else -%}{% render 'os-badge-new' %}{%- endif -%}{%- else -%}<span>{{ spotlight_badge_text }}</span>{%- endif -%}</span>{%- endif -%}</a>
       <div class="os-product-slide__content"><div><h2>{{ product.title }}</h2>{%- if section.settings.show_description and product.description != blank -%}<div class="os-product-slide__description">{{ product.description | strip_html | truncatewords: 28 }}</div>{%- endif -%}<p class="os-product-slide__price">{% if product.price_varies %}From {% endif %}{{ product.price | money }}</p><a class="os-product-slide__button" href="{{ product.url }}">{{ section.settings.button_label }}</a></div></div>
     </article>
    {%- else -%}
@@ -21,7 +69,7 @@
  "name": "Product spotlight slider",
  "settings": [
   { "type": "collection", "id": "collection", "label": "Collection" }, { "type": "range", "id": "products_to_show", "label": "Products", "min": 2, "max": 12, "step": 1, "default": 8 },
-  { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true }, { "type": "text", "id": "button_label", "label": "Button label", "default": "Order Now" }, { "type": "text", "id": "badge_label", "label": "Image badge", "default": "DB LOVES!" },
+  { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true }, { "type": "text", "id": "button_label", "label": "Button label", "default": "Order Now" }, { "type": "text", "id": "badge_label", "label": "Image badge", "default": "LOCAL FAVOURITE" },
   { "type": "range", "id": "initial_slide", "label": "Initial slide", "min": 1, "max": 12, "step": 1, "default": 1 }, { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": false }, { "type": "range", "id": "interval", "label": "Autoplay interval", "min": 3, "max": 10, "step": 1, "unit": "s", "default": 6 },
   { "type": "color", "id": "background", "label": "Section background", "default": "#fffbf6" }, { "type": "color", "id": "text_color", "label": "Text", "default": "#41511d" },
   { "type": "header", "content": "Section layout" }, { "type": "select", "id": "content_width", "label": "Content width", "default": "full", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },

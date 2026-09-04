@@ -38,7 +38,7 @@
       }
     },
     "newsletter": {
-      "type": "db-newsletter",
+      "type": "os-newsletter",
       "settings": {
         "eyebrow": "Stay in bloom",
         "heading": "A little delight, <em>straight to your inbox.</em>",
