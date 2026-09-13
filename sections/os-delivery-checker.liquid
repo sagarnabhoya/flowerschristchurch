@@ -1,4 +1,6 @@
-<section class="os-delivery-page full-width" style="--os-delivery-bg:{{ section.settings.background }};--os-delivery-color:{{ section.settings.text_color }};--os-delivery-accent:{{ section.settings.accent }};--os-delivery-soft:{{ section.settings.soft_background }};--os-delivery-width:{{ section.settings.custom_width }}px;--os-delivery-top:{{ section.settings.padding_top }}px;--os-delivery-bottom:{{ section.settings.padding_bottom }}px">
+{% render 'os-section-style', section: section %}
+<section class="os-delivery-page full-width db-section-layout" style="--os-delivery-bg:{{ section.settings.background }};--os-delivery-color:{{ section.settings.text_color }};--os-delivery-accent:{{ section.settings.accent }};--os-delivery-soft:{{ section.settings.soft_background }};--os-delivery-width:{{ section.settings.custom_width }}px;--os-delivery-top:var(--db-section-pad-top);--os-delivery-bottom:var(--db-section-pad-bottom)">
+  {% render 'os-section-background', section: section %}
   <os-delivery-checker class="os-delivery-page__inner" data-storage-key="os-delivery-area-{{ shop.id }}" data-not-found="{{ section.settings.not_found | escape }}">
     <header><h1>{{ section.settings.heading | default: page.title }}</h1></header>
     <div class="os-delivery-page__content">
@@ -27,6 +29,19 @@
     </div>
   </os-delivery-checker>
 </section>
+{% stylesheet %}
+.os-delivery-page{background:var(--os-delivery-bg);color:var(--os-delivery-color);padding-block:var(--os-delivery-top) var(--os-delivery-bottom)}
+.os-delivery-page__inner{display:grid;gap:70px;grid-template-columns:minmax(240px,2fr) minmax(0,3fr);margin-inline:auto;max-width:var(--os-delivery-width);padding-inline:30px;width:100%}
+.os-delivery-page h1{font-family:var(--db-display);font-size:40px;font-weight:400;letter-spacing:-.02em;line-height:1.3;margin:0}
+.os-delivery-page__intro{font-size:16px;line-height:1.5;margin-bottom:18px}
+@media (max-width: 749px) {
+  .os-delivery-page{padding-block:var(--os-delivery-top) var(--os-delivery-bottom)}
+  .os-delivery-page__inner{gap:26px;grid-template-columns:1fr;padding-inline:20px}
+  .os-delivery-page h1{font-size:32px}
+  .os-delivery-page__intro{font-size:15px}
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "OS delivery checker",
@@ -41,7 +56,7 @@
     { "type": "text", "id": "not_found", "label": "Not-found message", "default": "Sorry, we currently don't deliver to that postcode or suburb." },
     { "type": "range", "id": "custom_width", "label": "Content width", "min": 1000, "max": 1800, "step": 20, "unit": "px", "default": 1540 },
     { "type": "range", "id": "padding_top", "label": "Desktop top spacing", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 84 },
-    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom spacing", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 84 },
+    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom spacing", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 84 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":56},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":84},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
     { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
     { "type": "color", "id": "text_color", "label": "Text colour", "default": "#314116" },
     { "type": "color", "id": "accent", "label": "Accent", "default": "#80233a" },

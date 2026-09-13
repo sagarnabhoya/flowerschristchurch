@@ -1,4 +1,6 @@
-<section class="os-events full-width" style="--os-events-bg:{{ section.settings.background }};--os-events-soft:{{ section.settings.soft_background }};--os-events-text:{{ section.settings.text_color }};--os-events-accent:{{ section.settings.accent }};--os-events-width:{{ section.settings.content_width }}px">
+{% render 'os-section-style', section: section %}
+<section class="os-events full-width db-section-layout" style="--os-events-bg:{{ section.settings.background }};--os-events-soft:{{ section.settings.soft_background }};--os-events-text:{{ section.settings.text_color }};--os-events-accent:{{ section.settings.accent }};--os-events-width:{{ section.settings.content_width }}px;padding-block:var(--db-section-pad-top) var(--db-section-pad-bottom)">
+  {% render 'os-section-background', section: section %}
   <div class="os-events__hero">
     <div class="os-events__hero-copy"><h1>{{ section.settings.heading }}</h1><p>{{ section.settings.subheading }}</p></div>
     <picture class="os-events__hero-media">
@@ -11,8 +13,41 @@
   <div class="os-events__services">{%- for block in section.blocks -%}{%- if block.type == 'service' -%}<a class="os-events__service" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{%- if block.settings.image != blank -%}{{ block.settings.image | image_url: width: 900 | image_tag: widths: '360,540,720,900', sizes: '(min-width:990px) 25vw, (min-width:600px) 50vw, 100vw', loading: 'lazy', alt: block.settings.heading }}{%- else -%}<span class="os-events__placeholder"></span>{%- endif -%}<h3>{{ block.settings.heading }}</h3><div class="db-rte">{{ block.settings.text }}</div></a>{%- endif -%}{%- endfor -%}</div>
   {%- if section.settings.button_label != blank -%}<div class="os-events__cta"><a href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a></div>{%- endif -%}
 </section>
+{% stylesheet %}
+.os-events{background:var(--os-events-bg);color:var(--os-events-text)}
+.os-events__hero{background:#eadce8;display:grid;grid-template-columns:1fr 1fr;min-height:250px}
+.os-events__hero-copy{align-self:center;padding:45px max(40px,calc((100vw - var(--os-events-width))/2))}
+.os-events__hero h1{color:#ed412f;font-family:var(--db-display);font-size:46px;font-weight:400;margin:0 0 14px}
+.os-events__hero-copy p{color:#ed412f;font-size:18px;margin:0}
+.os-events__hero-media,.os-events__hero-media img,.os-events__placeholder{display:block;height:100%;min-height:250px;width:100%}
+.os-events__hero-media img{object-fit:cover}
+.os-events__placeholder{background:linear-gradient(135deg,#efdfe9,#f7cdd8)}
+.os-events__ready{margin:auto;max-width:1120px;padding:80px 24px 150px;text-align:center}
+.os-events h2{color:var(--os-events-accent);font-family:var(--db-display);font-size:32px;font-weight:400;margin:0 0 16px}
+.os-events__products{display:grid;gap:22px;grid-template-columns:repeat(3,1fr);margin-top:36px;text-align:left}
+.os-events__bespoke-head{padding:0 24px 45px;text-align:center}
+.os-events__services{background:var(--os-events-soft);display:grid;gap:70px;grid-template-columns:repeat(4,minmax(0,1fr));padding:70px max(40px,calc((100vw - var(--os-events-width))/2)) 55px}
+.os-events__service{color:inherit;min-width:0;text-align:center;text-decoration:none}
+.os-events__service img,.os-events__service>.os-events__placeholder{aspect-ratio:.78;border-radius:48% 48% 0 0;min-height:0;object-fit:cover;width:100%}
+.os-events__service h3{font-family:var(--db-display);font-size:21px;margin:24px 0 12px}
+.os-events__service .db-rte{line-height:1.7}
+.os-events__cta{background:var(--os-events-soft);padding:20px 24px 85px;text-align:center}
+.os-events__cta a{background:var(--os-events-accent);border-radius:8px;color:#fff;display:inline-block;font-family:var(--db-display);font-size:19px;min-width:300px;padding:18px 32px;text-decoration:none}
+@media (max-width: 749px) {
+  .os-events__hero{grid-template-columns:1fr}
+  .os-events__hero-copy{padding:36px 20px}
+  .os-events__hero h1{font-size:38px}
+  .os-events__hero-media,.os-events__hero-media img,.os-events__placeholder{min-height:230px}
+  .os-events__ready{padding:55px 18px 80px}
+  .os-events__products{grid-template-columns:1fr}
+  .os-events__services{gap:40px;grid-template-columns:1fr;padding:50px 24px}
+  .os-events__service img,.os-events__service>.os-events__placeholder{aspect-ratio:.9}
+  .os-events__cta a{min-width:min(300px,100%)}
+}
+{% endstylesheet %}
+
 {% schema %}
 {"name":"OS events page","settings":[
-{"type":"text","id":"heading","label":"Hero heading","default":"Bespoke Events"},{"type":"text","id":"subheading","label":"Hero subheading","default":"Bring your next event to life with beautiful blooms"},{"type":"image_picker","id":"hero","label":"Desktop hero image"},{"type":"image_picker","id":"mobile_hero","label":"Mobile hero image","info":"Falls back to the desktop image."},{"type":"text","id":"ready_heading","label":"Products heading","default":"Ready to Order"},{"type":"richtext","id":"ready_text","label":"Products introduction"},{"type":"collection","id":"collection","label":"Event products"},{"type":"range","id":"product_limit","label":"Products shown","min":2,"max":4,"step":1,"default":3},{"type":"text","id":"bespoke_heading","label":"Bespoke heading","default":"Bespoke Events"},{"type":"richtext","id":"bespoke_text","label":"Bespoke introduction"},{"type":"text","id":"button_label","label":"Button label","default":"Enquire Now"},{"type":"url","id":"button_link","label":"Button link"},{"type":"range","id":"content_width","label":"Content width","min":1000,"max":1800,"step":20,"unit":"px","default":1600},{"type":"color","id":"background","label":"Background","default":"#fbf4ef"},{"type":"color","id":"soft_background","label":"Service background","default":"#f8e3e4"},{"type":"color","id":"text_color","label":"Text","default":"#404d1c"},{"type":"color","id":"accent","label":"Accent","default":"#8f2343"}],
+{"type":"text","id":"heading","label":"Hero heading","default":"Bespoke Events"},{"type":"text","id":"subheading","label":"Hero subheading","default":"Bring your next event to life with beautiful blooms"},{"type":"image_picker","id":"hero","label":"Desktop hero image"},{"type":"image_picker","id":"mobile_hero","label":"Mobile hero image","info":"Falls back to the desktop image."},{"type":"text","id":"ready_heading","label":"Products heading","default":"Ready to Order"},{"type":"richtext","id":"ready_text","label":"Products introduction"},{"type":"collection","id":"collection","label":"Event products"},{"type":"range","id":"product_limit","label":"Products shown","min":2,"max":4,"step":1,"default":3},{"type":"text","id":"bespoke_heading","label":"Bespoke heading","default":"Bespoke Events"},{"type":"richtext","id":"bespoke_text","label":"Bespoke introduction"},{"type":"text","id":"button_label","label":"Button label","default":"Enquire Now"},{"type":"url","id":"button_link","label":"Button link"},{"type":"range","id":"content_width","label":"Content width","min":1000,"max":1800,"step":20,"unit":"px","default":1600},{"type":"color","id":"background","label":"Background","default":"#fbf4ef"},{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"padding_top","label":"Desktop top padding","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"padding_bottom","label":"Desktop bottom padding","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"color","id":"soft_background","label":"Service background","default":"#f8e3e4"},{"type":"color","id":"text_color","label":"Text","default":"#404d1c"},{"type":"color","id":"accent","label":"Accent","default":"#8f2343"}],
 "blocks":[{"type":"service","name":"Event service","settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"text","id":"heading","label":"Heading","default":"Event service"},{"type":"richtext","id":"text","label":"Description"},{"type":"url","id":"link","label":"Link"}]}],"max_blocks":4,"presets":[{"name":"OS events page"}]}
 {% endschema %}

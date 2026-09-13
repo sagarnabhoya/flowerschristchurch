@@ -1,5 +1,6 @@
 {% render 'os-section-style', section: section %}
-<section class="db-marquee full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }};--os-marquee-text-case:{{ section.settings.text_case }}" aria-label="{{ section.settings.accessibility_label | escape }}">
+<section class="db-marquee full-width db-section-layout" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }};--os-marquee-text-case:{{ section.settings.text_case }}" aria-label="{{ section.settings.accessibility_label | escape }}">
+  {% render 'os-section-background', section: section %}
  <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}">
   <div class="db-marquee__track{% if section.settings.pause_hover %} db-marquee__track--pause{% endif %}" style="--db-marquee-speed:{{ section.settings.speed }}s;--db-marquee-gap:{{ section.settings.gap }}px;{% if section.settings.direction == 'right' %}animation-direction:reverse{% endif %}">
     {%- for repeat in (1..2) -%}
@@ -32,7 +33,7 @@
     { "type": "select", "id": "content_width", "label": "Content width", "default": "full", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
     { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1440 },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
     { "type": "color", "id": "background", "label": "Background", "default": "#efc9c5" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#123f37" }
   ],

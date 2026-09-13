@@ -1,5 +1,6 @@
 {% render 'os-section-style', section: section %}
-<section id="os-occasion-banner-{{ section.id }}" class="os-occasion-banner full-width" style="background:{{ section.settings.background }}">
+<section id="os-occasion-banner-{{ section.id }}" class="os-occasion-banner full-width db-section-layout" style="background:{{ section.settings.background }}">
+  {% render 'os-section-background', section: section %}
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'full' }}">
     <a class="os-occasion-banner__link" href="{{ section.settings.link | default: routes.all_products_collection_url }}" aria-label="{{ section.settings.accessibility_label | escape }}" style="--os-banner-height:{{ section.settings.desktop_height }}px;--os-banner-mobile-height:{{ section.settings.mobile_height }}px;--os-banner-position:{{ section.settings.desktop_position }};--os-banner-mobile-position:{{ section.settings.mobile_position }}">
       {%- if section.settings.desktop_image != blank -%}
@@ -41,7 +42,7 @@
     { "type": "select", "id": "content_width", "label": "Content width", "default": "full", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
     { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1600 },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 }
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0}
   ],
   "presets": [{ "name": "Occasion image banner" }]
 }

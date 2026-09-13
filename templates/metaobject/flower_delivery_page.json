@@ -3,16 +3,9 @@
     "main": {
       "type": "os-location-page-metaobject",
       "settings": {}
-    },
-    "newsletter": {
-      "type": "os-newsletter",
-      "settings": {
-        "eyebrow": "Christchurch, in bloom",
-        "heading": "Local flowers and thoughtful notes, <em>straight to your inbox.</em>",
-        "background": "#efc9c5",
-        "text_color": "#193e36"
-      }
     }
   },
-  "order": ["main", "newsletter"]
+  "order": [
+    "main"
+  ]
 }

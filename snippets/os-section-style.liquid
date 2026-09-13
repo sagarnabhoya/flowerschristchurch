@@ -1,8 +1,24 @@
-{%- assign custom_width = section.settings.custom_width | default: 1200 -%}
+{%- assign custom_width = section.settings.custom_width | default: section.settings.content_width | default: 1200 -%}
+{%- assign mobile_pad_top = section.settings.mobile_padding_top | default: section.settings.padding_top_mobile | default: section.settings.padding_top | default: 0 -%}
+{%- assign mobile_pad_bottom = section.settings.mobile_padding_bottom | default: section.settings.padding_bottom_mobile | default: section.settings.padding_bottom | default: 0 -%}
 <style>
+  #shopify-section-{{ section.id }} > .db-section-layout {
+    --db-section-margin-top: {{ section.settings.margin_top | default: 0 }}px;
+    --db-section-margin-bottom: {{ section.settings.margin_bottom | default: 0 }}px;
+  }
   #shopify-section-{{ section.id }} .db-section-shell {
     --db-section-custom-width: {{ custom_width }}px;
     --db-section-pad-top: {{ section.settings.padding_top | default: 0 }}px;
     --db-section-pad-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+  }
+  @media (max-width: 749px) {
+    #shopify-section-{{ section.id }} > .db-section-layout {
+      --db-section-margin-top: {{ section.settings.mobile_margin_top | default: section.settings.margin_top | default: 0 }}px;
+      --db-section-margin-bottom: {{ section.settings.mobile_margin_bottom | default: section.settings.margin_bottom | default: 0 }}px;
+    }
+    #shopify-section-{{ section.id }} .db-section-shell {
+      --db-section-pad-top: {{ mobile_pad_top }}px;
+      --db-section-pad-bottom: {{ mobile_pad_bottom }}px;
+    }
   }
 </style>

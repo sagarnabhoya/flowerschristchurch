@@ -1,7 +1,9 @@
 <section
-  class="db-hero db-hero--{{ section.settings.layout }} db-hero--pos-{{ section.settings.campaign_position }} db-hero--text-{{ section.settings.text_alignment }} db-hero--valign-{{ section.settings.content_vertical }} db-hero--m-{{ section.settings.mobile_content_layout }} db-hero--m-badge-{{ section.settings.badge_position_mobile }} {% if section.settings.media_position == 'left' %}db-hero--media-left{% endif %} {% if section.settings.mobile_stack == 'content-first' %}db-hero--stack-content{% endif %} {% unless section.settings.show_copy_mobile %}db-hero--hide-copy-mobile{% endunless %} {% unless section.settings.show_badge_mobile %}db-hero--hide-badge-mobile{% endunless %} full-width"
-  style="--db-hero-height:{{ section.settings.desktop_height }}px;--db-hero-height-mobile:{{ section.settings.mobile_height }}px;--db-hero-title-size:{{ section.settings.heading_size }}px;--db-hero-title-mobile:{{ section.settings.heading_size_mobile }}px;--db-hero-overlay-pct:{{ section.settings.overlay_opacity }}%;--db-hero-overlay-color:{{ section.settings.overlay_color }};--db-hero-overlay-text:{{ section.settings.overlay_text }};--db-hero-media-pos:{{ section.settings.image_position }};--db-hero-mobile-bg:{{ section.settings.mobile_content_bg }};--db-hero-peek:{{ section.settings.peek_overlap }};--db-hero-badge-mobile:{{ section.settings.badge_size_mobile }}px;background:{{ section.settings.background }};color:{{ section.settings.text_color }};--db-hero-text:{{ section.settings.text_color }}"
+  class="db-hero db-hero--{{ section.settings.layout }} db-hero--pos-{{ section.settings.campaign_position }} db-hero--text-{{ section.settings.text_alignment }} db-hero--valign-{{ section.settings.content_vertical }} db-hero--m-{{ section.settings.mobile_content_layout }} db-hero--m-badge-{{ section.settings.badge_position_mobile }} {% if section.settings.media_position == 'left' %}db-hero--media-left{% endif %} {% if section.settings.mobile_stack == 'content-first' %}db-hero--stack-content{% endif %} {% unless section.settings.show_copy_mobile %}db-hero--hide-copy-mobile{% endunless %} {% unless section.settings.show_badge_mobile %}db-hero--hide-badge-mobile{% endunless %} full-width db-section-layout db-section-layout--content-{{ section.settings.content_width }}"
+  style="--db-hero-height:{{ section.settings.desktop_height }}px;--db-hero-height-mobile:{{ section.settings.mobile_height }}px;--db-hero-title-size:{{ section.settings.heading_size }}px;--db-hero-title-mobile:{{ section.settings.heading_size_mobile }}px;--db-hero-overlay-pct:{{ section.settings.overlay_opacity }}%;--db-hero-overlay-color:{{ section.settings.overlay_color }};--db-hero-overlay-text:{{ section.settings.overlay_text }};--db-hero-media-pos:{{ section.settings.image_position }};--db-hero-mobile-bg:{{ section.settings.mobile_content_bg }};--db-hero-peek:{{ section.settings.peek_overlap }};--db-hero-badge-mobile:{{ section.settings.badge_size_mobile }}px;background:{{ section.settings.background }};color:{{ section.settings.text_color }};--db-hero-text:{{ section.settings.text_color }};padding-block:var(--db-section-pad-top) var(--db-section-pad-bottom)"
 >
+  {% render 'os-section-style', section: section %}
+  {% render 'os-section-background', section: section %}
   {%- if section.settings.layout == 'campaign' -%}
     <div class="db-hero__campaign-media">
       {%- if section.settings.video != blank -%}
@@ -158,6 +160,18 @@
     { "type": "range", "id": "heading_size", "label": "Heading size (desktop)", "min": 28, "max": 100, "step": 2, "unit": "px", "default": 72 },
     { "type": "range", "id": "heading_size_mobile", "label": "Heading size (mobile)", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 44 },
     { "type": "color", "id": "background", "label": "Background (editorial)", "default": "#efc9c5", "visible_if": "{{ section.settings.layout == 'split' }}" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image" },
+    { "type": "image_picker", "id": "mobile_background_image", "label": "Mobile background image", "info": "Uses the desktop background image when empty." },
+    { "type": "select", "id": "content_width", "label": "Content width", "default": "full", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
+    { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1600 },
+    { "type": "range", "id": "padding_top", "label": "Desktop top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_padding_top", "label": "Mobile top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_padding_bottom", "label": "Mobile bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_top", "label": "Desktop top margin", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "label": "Desktop bottom margin", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_margin_top", "label": "Mobile top margin", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_margin_bottom", "label": "Mobile bottom margin", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
     { "type": "color", "id": "text_color", "label": "Text (editorial)", "default": "#193e36", "visible_if": "{{ section.settings.layout == 'split' }}" },
     { "type": "color", "id": "overlay_text", "label": "Text over image (campaign)", "default": "#ffffff", "visible_if": "{{ section.settings.layout == 'campaign' }}" },
     { "type": "header", "content": "Buttons" },

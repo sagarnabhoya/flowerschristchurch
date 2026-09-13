@@ -1,7 +1,8 @@
 {% render 'os-section-style', section: section %}
 {%- assign social_desktop_gap_total = section.settings.desktop_columns | minus: 1 | times: section.settings.desktop_gap -%}
 {%- assign social_mobile_gap_total = section.settings.mobile_columns | minus: 1 | times: section.settings.mobile_gap -%}
-<section id="os-social-gallery-{{ section.id }}" class="os-social-section full-width" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
+<section id="os-social-gallery-{{ section.id }}" class="os-social-section full-width db-section-layout" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
+  {% render 'os-section-background', section: section %}
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'full' }}">
     <os-social-gallery class="os-social-gallery{% if section.settings.show_mobile_arrows %} os-social-gallery--mobile-arrows{% endif %}" style="--os-social-card-width:calc((100% - {{ social_desktop_gap_total }}px)/{{ section.settings.desktop_columns }});--os-social-mobile-card-width:calc((100% - {{ social_mobile_gap_total }}px)/{{ section.settings.mobile_columns }});--os-social-gap:{{ section.settings.desktop_gap }}px;--os-social-mobile-gap:{{ section.settings.mobile_gap }}px;--os-social-modal-width:{{ section.settings.modal_width }}px;--os-social-modal-height:{{ section.settings.modal_height }}vh" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}" data-autoplay-video="{{ section.settings.autoplay_video }}">
       {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
@@ -123,7 +124,7 @@
     { "type": "select", "id": "content_width", "label": "Content width", "default": "full", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
     { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1600 },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 32 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 }
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":32},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":48},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0}
   ],
   "blocks": [{
     "type": "post",

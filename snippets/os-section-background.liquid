@@ -1,0 +1,8 @@
+{%- if section.settings.background_image != blank -%}
+  <picture class="db-section-background" aria-hidden="true">
+    {%- if section.settings.mobile_background_image != blank -%}
+      <source media="(max-width: 749px)" srcset="{{ section.settings.mobile_background_image | image_url: width: 1000 }}">
+    {%- endif -%}
+    {{ section.settings.background_image | image_url: width: 2400 | image_tag: widths: '750,1100,1500,2000,2400', sizes: '100vw', loading: 'lazy', alt: '' }}
+  </picture>
+{%- endif -%}

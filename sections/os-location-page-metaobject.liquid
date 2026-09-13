@@ -3,7 +3,9 @@
   assign hero_image = section.settings.image | default: collections.all.products.first.featured_image
   assign featured_collection = section.settings.collection | default: collections['view-all'] | default: collections.all
 -%}
-<article class="db-location-page full-width">
+{% render 'os-section-style', section: section %}
+<article class="db-location-page full-width db-section-layout db-section-layout--content-{{ section.settings.content_width }}" style="background:{{ section.settings.background }};padding-block:var(--db-section-pad-top) var(--db-section-pad-bottom)">
+  {% render 'os-section-background', section: section %}
   <header class="db-location-hero">
     <div class="db-page db-location-hero__grid">
       <div class="db-location-hero__content"><p class="db-kicker">Local delivery, made personal</p><h1 class="db-title">Flower delivery to <em>{{ location_name }}.</em></h1>{%- if metaobject.subtitle != blank -%}<div class="db-copy">{{ metaobject.subtitle | metafield_tag }}</div>{%- else -%}<p class="db-copy">Fresh, thoughtful flowers arranged locally in Christchurch and delivered with care.</p>{%- endif -%}<a class="db-button" href="{{ featured_collection.url }}">Shop flowers {% render 'icon', name: 'arrow', class: 'db-header__icon' %}</a></div>
@@ -26,7 +28,7 @@
 {
   "name": "Location delivery page",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Hero image" },
+    { "type": "image_picker", "id": "image", "label": "Hero image" },{"type":"color","id":"background","label":"Section background","default":"#fffaf3"},{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"select","id":"content_width","label":"Content width","default":"contained","options":[{"value":"contained","label":"Container"},{"value":"fluid","label":"Container fluid"},{"value":"full","label":"Full width"},{"value":"custom","label":"Custom width"}]},{"type":"range","id":"custom_width","label":"Custom width","min":600,"max":2000,"step":20,"unit":"px","default":1440},{"type":"range","id":"padding_top","label":"Desktop top padding","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"padding_bottom","label":"Desktop bottom padding","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
     { "type": "collection", "id": "collection", "label": "Featured flowers" }
   ]
 }

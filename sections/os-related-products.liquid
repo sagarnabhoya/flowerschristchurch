@@ -1,7 +1,9 @@
 {%- assign source_collection = product.collections.first -%}
 {%- if source_collection != blank -%}
-  <section class="db-section full-width" style="background:{{ section.settings.background }}">
-    <div class="db-page">
+  {% render 'os-section-style', section: section %}
+  <section class="db-section full-width db-section-layout" style="background:{{ section.settings.background }};padding-block:0">
+    {% render 'os-section-background', section: section %}
+    <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
       <div class="db-section-head"><div><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2></div><div class="db-section-head__aside db-copy">{{ section.settings.copy }}</div></div>
       <ul class="db-product-grid" role="list">
         {%- assign shown = 0 -%}
@@ -24,7 +26,7 @@
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "You may also <em>love.</em>" },
     { "type": "richtext", "id": "copy", "label": "Text", "default": "<p>A few more florist-made favourites worth sending.</p>" },
     { "type": "range", "id": "products_to_show", "label": "Products", "min": 2, "max": 4, "step": 1, "default": 4 },
-    { "type": "color", "id": "background", "label": "Background", "default": "#f7f0e7" }
+    { "type": "color", "id": "background", "label": "Background", "default": "#f7f0e7" },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"select","id":"content_width","label":"Content width","default":"contained","options":[{"value":"contained","label":"Container"},{"value":"fluid","label":"Container fluid"},{"value":"full","label":"Full width"},{"value":"custom","label":"Custom width"}]},{"type":"range","id":"custom_width","label":"Custom width","min":600,"max":2000,"step":20,"unit":"px","default":1440},{"type":"range","id":"padding_top","label":"Desktop top padding","min":0,"max":160,"step":4,"unit":"px","default":96},{"type":"range","id":"padding_bottom","label":"Desktop bottom padding","min":0,"max":160,"step":4,"unit":"px","default":96},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":60},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":60},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0}
   ],
   "presets": [{ "name": "Related blooms" }]
 }

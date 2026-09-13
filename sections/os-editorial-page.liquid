@@ -7,9 +7,11 @@
   endif
 -%}
 <section
-  class="os-editorial-page os-editorial-page--{{ section.settings.layout }} full-width"
+  class="os-editorial-page os-editorial-page--{{ section.settings.layout }} full-width db-section-layout"
   style="--os-page-bg:{{ section.settings.background }};--os-page-color:{{ section.settings.text_color }};--os-page-width:{{ content_width }}px;--os-page-pad-top:{{ section.settings.padding_top }}px;--os-page-pad-bottom:{{ section.settings.padding_bottom }}px;--os-page-pad-top-mobile:{{ section.settings.padding_top_mobile }}px;--os-page-pad-bottom-mobile:{{ section.settings.padding_bottom_mobile }}px;"
 >
+  {% render 'os-section-style', section: section %}
+  {% render 'os-section-background', section: section %}
   <div class="os-editorial-page__inner">
     {%- if section.settings.show_title -%}
       <h1>{{ section.settings.heading | default: page.title }}</h1>
@@ -61,7 +63,7 @@
     { "type": "range", "id": "padding_top", "min": 20, "max": 180, "step": 4, "unit": "px", "label": "Desktop top spacing", "default": 80 },
     { "type": "range", "id": "padding_bottom", "min": 20, "max": 180, "step": 4, "unit": "px", "label": "Desktop bottom spacing", "default": 96 },
     { "type": "range", "id": "padding_top_mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "label": "Mobile top spacing", "default": 48 },
-    { "type": "range", "id": "padding_bottom_mobile", "min": 16, "max": 120, "step": 4, "unit": "px", "label": "Mobile bottom spacing", "default": 64 },
+    { "type": "range", "id": "padding_bottom_mobile", "min": 16, "max": 120, "step": 4, "unit": "px", "label": "Mobile bottom spacing", "default": 64 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
     { "type": "header", "content": "Colours" },
     { "type": "color", "id": "background", "label": "Section background", "default": "#f9f5ef" },
     { "type": "color", "id": "text_color", "label": "Text colour", "default": "#314116" },

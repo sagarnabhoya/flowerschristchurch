@@ -40,13 +40,14 @@
 
 <os-blog-section
   id="os-blog-{{ section.id }}"
-  class="os-blog os-blog--{{ layout }} os-blog--mobile-{{ mobile_layout }} full-width"
+  class="os-blog os-blog--{{ layout }} os-blog--mobile-{{ mobile_layout }} full-width db-section-layout"
   data-layout="{{ layout }}"
   data-autoplay="{{ section.settings.autoplay }}"
   data-interval="{{ section.settings.interval | default: 5 | times: 1000 }}"
   data-dots-enabled="{{ section.settings.show_dots }}"
   style="--os-blog-bg: {{ section.settings.background }}; --os-blog-ink: {{ section.settings.text_color }}; --os-blog-surface: {{ section.settings.surface }}; --os-blog-gap: {{ card_gap }}px; --os-blog-radius: {{ card_radius }}px; --os-blog-inner-radius: {{ inner_radius }}px; --os-blog-cols: {{ desktop_columns }}; --os-blog-mobile-cols: {{ section.settings.mobile_columns }}; --os-blog-cell: calc((100% - {{ gap_total }}px) / {{ desktop_columns }}); --os-blog-ratio: {{ image_ratio }}; --os-blog-title-size: {{ title_size }};"
 >
+  {% render 'os-section-background', section: section %}
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
     <header class="os-blog__head">
       <div class="os-blog__head-copy">
@@ -720,7 +721,7 @@
     },
     { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1540 },
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 88 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 88 }
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 88 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":88},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":88},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0}
   ],
   "blocks": [
     {

@@ -1,3 +1,29 @@
+function beginPending(control, label) {
+  if (!control || control.dataset.requestPending === 'true') return;
+  control.dataset.requestPending = 'true';
+  control.dataset.pendingWasDisabled = String(control.disabled);
+  control.dataset.pendingLabel = control.textContent;
+  control.disabled = true;
+  if (label) control.textContent = label;
+}
+
+function endPending(control) {
+  if (!control || control.dataset.requestPending !== 'true') return;
+  control.disabled = control.dataset.pendingWasDisabled === 'true';
+  if (control.dataset.pendingLabel !== undefined) control.textContent = control.dataset.pendingLabel;
+  delete control.dataset.requestPending;
+  delete control.dataset.pendingWasDisabled;
+  delete control.dataset.pendingLabel;
+}
+
+function resetTransientUi() {
+  document.querySelectorAll('[data-request-pending="true"]').forEach(endPending);
+  document.querySelectorAll('.is-loading').forEach((element) => element.classList.remove('is-loading'));
+  document.body.classList.remove('no-scroll');
+}
+
+window.addEventListener('pageshow', resetTransientUi);
+
 class BloomDialog {
   constructor(trigger) {
     this.trigger = trigger;
@@ -145,7 +171,7 @@ function openCartDrawer() {
 document.addEventListener('change', (event) => {
   const select = event.target.closest('[data-variant-select]');
   if (!select) return;
-  const option = select.selectedOptions[0];
+  const option = select.selectedOptions?.[0] || select;
   const form = select.closest('[data-product-builder-form]');
   const available = option.dataset.available === 'true';
   const price = document.querySelector('[data-product-price]');
@@ -174,15 +200,15 @@ document.addEventListener('submit', async (event) => {
     builderForm.querySelectorAll('[data-addon-variant]:checked').forEach((input) => items.push({ id: Number(input.value), quantity: 1, properties: { _Bundle: bundleId, _Add_on: 'true' } }));
     const errorBox = builderForm.querySelector('[data-product-error]');
     if (errorBox) errorBox.hidden = true;
-    if (button) { button.disabled = true; button.textContent = 'Adding your selections…'; }
+    beginPending(button, 'Adding your selections…');
     try {
       const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
       if (!response.ok) { const detail = await response.json().catch(() => ({})); throw new Error(detail.description || 'One of these selections is no longer available.'); }
       await refreshCartDrawer(); if (!openCartDrawer()) { window.location.assign(`${window.Shopify.routes.root}cart`); return; }
-      if (button) { button.disabled = false; button.textContent = 'Added to cart'; setTimeout(() => { button.textContent = originalLabel; }, 1800); }
+      if (button) { endPending(button); button.textContent = 'Added to cart'; setTimeout(() => { button.textContent = originalLabel; }, 1800); }
     } catch (error) {
       if (errorBox) { errorBox.textContent = error.message; errorBox.hidden = false; } else alert(error.message);
-      if (button) { button.disabled = false; button.textContent = originalLabel; }
+      endPending(button);
     }
     return;
   }
@@ -192,15 +218,15 @@ document.addEventListener('submit', async (event) => {
   event.preventDefault();
   const button = form.querySelector('[type="submit"]');
   const label = button?.textContent;
-  if (button) { button.disabled = true; button.textContent = 'Adding…'; }
+  beginPending(button, 'Adding…');
   try {
     const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) });
     if (!response.ok) throw new Error('Unable to add this item.');
     await refreshCartDrawer(); if (!openCartDrawer()) { window.location.assign(`${window.Shopify.routes.root}cart`); return; }
-    if (button) { button.disabled = false; button.textContent = label; }
+    endPending(button);
   } catch (error) {
     alert(error.message);
-    if (button) { button.disabled = false; button.textContent = label; }
+    endPending(button);
   }
 });
 
@@ -228,26 +254,24 @@ document.addEventListener('click', async (event) => {
 
   const removeButton = event.target.closest('[data-cart-remove]');
   if (removeButton) {
-    removeButton.disabled = true;
+    beginPending(removeButton);
     const response = await fetch(`${window.Shopify.routes.root}cart/change.js`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ id: removeButton.dataset.cartRemove, quantity: 0 }) });
     if (response.ok) await refreshCartDrawer();
-    else removeButton.disabled = false;
+    else endPending(removeButton);
     return;
   }
 
   const giftButton = event.target.closest('[data-cart-addon]');
   if (!giftButton || !window.fetch) return;
   const originalLabel = giftButton.textContent;
-  giftButton.disabled = true;
-  giftButton.textContent = 'Adding…';
+  beginPending(giftButton, 'Adding…');
   try {
     const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ items: [{ id: Number(giftButton.dataset.cartAddon), quantity: 1 }] }) });
     if (!response.ok) throw new Error('This gift is no longer available.');
     window.location.reload();
   } catch (error) {
     alert(error.message);
-    giftButton.disabled = false;
-    giftButton.textContent = originalLabel;
+    endPending(giftButton);
   }
 });
 
@@ -583,7 +607,7 @@ class OsCartPage extends HTMLElement {
     const remove = event.target.closest('[data-cart-remove]');
     if (remove) { const item = remove.closest('[data-cart-line]'); if (item) { await this.persistDetails(); await this.request('cart/change.js', { line: Number(item.dataset.cartLine), quantity: 0 }); } return; }
     const addon = event.target.closest('button[data-cart-addon]');
-    if (addon) { addon.disabled = true; await this.persistDetails(); await this.request('cart/add.js', { items: [{ id: Number(addon.dataset.cartAddon), quantity: 1 }] }); return; }
+    if (addon) { beginPending(addon); await this.persistDetails(); await this.request('cart/add.js', { items: [{ id: Number(addon.dataset.cartAddon), quantity: 1 }] }); return; }
     const emoji = event.target.closest('[data-message-emoji]');
     if (emoji && this.message) { const start = this.message.selectionStart, end = this.message.selectionEnd; this.message.setRangeText(emoji.dataset.messageEmoji, start, end, 'end'); this.message.dispatchEvent(new Event('input')); this.message.focus(); return; }
     if (event.target.closest('[data-message-helper]')) { this.message?.focus(); this.message?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
@@ -591,15 +615,15 @@ class OsCartPage extends HTMLElement {
   async onChange(event) {
     const checkbox = event.target.closest('input[data-cart-addon]');
     if (!checkbox) return;
-    checkbox.disabled = true;
+    beginPending(checkbox);
     await this.persistDetails();
     if (checkbox.checked) await this.request('cart/add.js', { items: [{ id: Number(checkbox.dataset.cartAddon), quantity: 1 }] });
     else {
       try {
         const cart = await fetch(`${window.Shopify.routes.root}cart.js`).then((response) => response.json());
         const item = cart.items.find((entry) => entry.variant_id === Number(checkbox.dataset.cartAddon));
-        if (item) await this.request('cart/change.js', { id: item.key, quantity: 0 }); else checkbox.disabled = false;
-      } catch (error) { if (this.status) this.status.textContent = 'Unable to update your cart.'; checkbox.disabled = false; }
+        if (item) await this.request('cart/change.js', { id: item.key, quantity: 0 }); else endPending(checkbox);
+      } catch (error) { if (this.status) this.status.textContent = 'Unable to update your cart.'; endPending(checkbox); }
     }
   }
   updateMessage() {

@@ -36,6 +36,16 @@
         "heading_size": 72,
         "heading_size_mobile": 44,
         "background": "#efc9c5",
+        "content_width": "full",
+        "custom_width": 1600,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 0,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0,
         "text_color": "#193e36",
         "overlay_text": "#ffffff",
         "button_label": "SHOP ALL BLOOMS",
@@ -45,8 +55,8 @@
         "button2_link": "",
         "button2_style": "outline",
         "show_badge": true,
-        "badge": "Handmade by local florists",
-        "badge_position": "bottom-right",
+        "badge": "Free Someday Flower Delivery",
+        "badge_position": "top-right",
         "show_badge_mobile": false,
         "badge_position_mobile": "bottom-right",
         "badge_size_mobile": 88
@@ -140,6 +150,12 @@
         "custom_width": 1440,
         "padding_top": 20,
         "padding_bottom": 24,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 0,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0,
         "background": "#fffaf3",
         "text_color": "#ef3d32"
       }
@@ -185,7 +201,13 @@
         "content_width": "full",
         "custom_width": 1440,
         "padding_top": 84,
-        "padding_bottom": 68
+        "padding_bottom": 68,
+        "mobile_padding_top": 48,
+        "mobile_padding_bottom": 60,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
       }
     },
     "benefits": {
@@ -236,7 +258,13 @@
         "content_width": "contained",
         "custom_width": 1280,
         "padding_top": 44,
-        "padding_bottom": 40
+        "padding_bottom": 40,
+        "mobile_padding_top": 48,
+        "mobile_padding_bottom": 48,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
       }
     },
     "products": {
@@ -255,7 +283,13 @@
         "content_width": "full",
         "custom_width": 1600,
         "padding_top": 0,
-        "padding_bottom": 0
+        "padding_bottom": 0,
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
       }
     },
     "why_choose": {
@@ -317,6 +351,12 @@
         "custom_width": 1540,
         "padding_top": 88,
         "padding_bottom": 88,
+        "mobile_padding_top": 88,
+        "mobile_padding_bottom": 88,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0,
         "eyebrow": "The local difference",
         "heading": "Why Christchurch chooses us.",
         "intro": "<p>Thoughtful flowers should feel personal. From the market to their doorstep, our local team handles every order with care.</p>",
@@ -343,7 +383,13 @@
         "content_width": "full",
         "custom_width": 1600,
         "padding_top": 0,
-        "padding_bottom": 0
+        "padding_bottom": 0,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 0,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
       }
     },
     "locations": {
@@ -541,6 +587,12 @@
         "custom_width": 1540,
         "padding_top": 88,
         "padding_bottom": 88,
+        "mobile_padding_top": 88,
+        "mobile_padding_bottom": 88,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0,
         "eyebrow": "Flower Shop Christchurch",
         "heading": "Flowers across Christchurch.",
         "intro": "<p>Handmade locally and delivered with care throughout Christchurch and nearby suburbs.</p>",
@@ -560,32 +612,67 @@
     },
     "blog_feature": {
       "type": "os-blog-feature",
+      "blocks": {
+        "article_iWekFb": {
+          "type": "article",
+          "settings": {
+            "article": "news/who-is-the-best-florist-in-christchurch-a-complete-guide-to-choosing-a-trusted-local-flower-shop"
+          }
+        },
+        "article_hQgMAq": {
+          "type": "article",
+          "settings": {
+            "article": "fresh-flowers/best-flowers-for-every-occasion-christchurch"
+          }
+        }
+      },
+      "block_order": [
+        "article_iWekFb",
+        "article_hQgMAq"
+      ],
       "settings": {
+        "eyebrow": "Fresh from our studio",
+        "heading": "From Our Blog",
+        "heading_size": "medium",
+        "intro": "",
+        "show_view_all": true,
+        "view_all_label": "View all stories",
+        "blog": "news",
+        "posts_to_show": 3,
+        "layout": "slider",
+        "desktop_columns": 3,
+        "image_ratio": "4 / 3",
+        "card_gap": 24,
+        "card_radius": 14,
+        "mobile_layout": "swipe",
+        "mobile_columns": "1",
+        "show_tags": true,
+        "show_date": true,
+        "date_format": "%d %B %Y",
+        "show_read_time": true,
+        "show_author": false,
+        "show_excerpt": true,
+        "excerpt_words": 20,
+        "featured_badge_label": "Featured",
+        "read_label": "Read story",
+        "show_arrows": true,
+        "show_progress": true,
+        "show_dots": false,
+        "autoplay": false,
+        "interval": 5,
+        "background": "#f2c8c6",
+        "text_color": "#193e36",
+        "surface": "#fffdf9",
         "content_width": "custom",
         "custom_width": 1540,
         "padding_top": 88,
         "padding_bottom": 88,
-        "eyebrow": "Fresh from our studio",
-        "heading": "From Our Blog",
-        "intro": "<p>Flower care, gifting advice and inspiration from our team of Christchurch florists.</p>",
-        "blog": "news",
-        "posts_to_show": 3,
-        "layout": "editorial",
-        "desktop_columns": 3,
-        "mobile_columns": "1",
-        "card_gap": 24,
-        "card_radius": 14,
-        "show_arrows": true,
-        "show_dots": false,
-        "autoplay": false,
-        "interval": 5,
-        "show_excerpt": true,
-        "excerpt_words": 20,
-        "date_format": "%d %B %Y",
-        "view_all_label": "View all stories",
-        "read_label": "Read story",
-        "background": "#f2c8c6",
-        "text_color": "#193e36"
+        "mobile_padding_top": 88,
+        "mobile_padding_bottom": 88,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
       }
     },
     "social": {
@@ -692,7 +779,13 @@
         "content_width": "full",
         "custom_width": 1600,
         "padding_top": 32,
-        "padding_bottom": 48
+        "padding_bottom": 48,
+        "mobile_padding_top": 32,
+        "mobile_padding_bottom": 48,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
       }
     },
     "seo": {
@@ -704,7 +797,13 @@
         "content_width": "custom",
         "custom_width": 960,
         "padding_top": 36,
-        "padding_bottom": 72
+        "padding_bottom": 72,
+        "mobile_padding_top": 20,
+        "mobile_padding_bottom": 64,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
       }
     }
   },

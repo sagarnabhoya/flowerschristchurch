@@ -4,7 +4,9 @@
     assign legal_title = page.title
   endif
 -%}
-<article class="os-policy full-width" style="--os-policy-bg:{{ section.settings.background }};--os-policy-text:{{ section.settings.text_color }};--os-policy-accent:{{ section.settings.accent }};--os-policy-width:{{ section.settings.content_width }}px;--os-policy-top:{{ section.settings.padding_top }}px;--os-policy-bottom:{{ section.settings.padding_bottom }}px">
+{% render 'os-section-style', section: section %}
+<article class="os-policy full-width db-section-layout" style="--os-policy-bg:{{ section.settings.background }};--os-policy-text:{{ section.settings.text_color }};--os-policy-accent:{{ section.settings.accent }};--os-policy-width:{{ section.settings.content_width }}px;--os-policy-top:var(--db-section-pad-top);--os-policy-bottom:var(--db-section-pad-bottom)">
+  {% render 'os-section-background', section: section %}
   <div class="os-policy__inner">
     <header class="os-policy__header"><h1>{{ legal_title }}</h1>{%- if section.settings.last_updated != blank -%}<p>{{ section.settings.last_updated_label }} {{ section.settings.last_updated }}</p>{%- endif -%}</header>
     {%- if section.settings.show_navigation and section.blocks.size > 0 -%}<nav class="os-policy__nav" aria-label="{{ section.settings.navigation_label }}"><strong>{{ section.settings.navigation_label }}</strong><ul>{%- for block in section.blocks -%}<li><a href="#PolicyPart-{{ section.id }}-{{ block.id }}">{{ block.settings.heading }}</a></li>{%- endfor -%}</ul></nav>{%- endif -%}
@@ -19,6 +21,31 @@
     {%- if section.settings.contact_text != blank -%}<footer class="os-policy__contact db-rte">{{ section.settings.contact_text }}</footer>{%- endif -%}
   </div>
 </article>
+{% stylesheet %}
+.os-policy{background:var(--os-policy-bg);color:var(--os-policy-text);padding:var(--os-policy-top) 24px var(--os-policy-bottom)}
+.os-policy__inner{margin:auto;max-width:var(--os-policy-width)}
+.os-policy__header{text-align:center}
+.os-policy__header h1{font-family:var(--db-display);font-size:44px;font-weight:400;line-height:1.1;margin:0 0 18px}
+.os-policy__header p{font-size:13px;margin:0}
+.os-policy__nav{border-bottom:1px solid rgba(64,77,28,.25);border-top:1px solid rgba(64,77,28,.25);margin:38px 0;padding:22px 0}
+.os-policy__nav ul{display:flex;flex-wrap:wrap;gap:8px 24px;list-style:none;margin:12px 0 0;padding:0}
+.os-policy__nav a{color:inherit;text-underline-offset:4px}
+.os-policy__body{font-size:15px;line-height:1.75;margin-top:55px}
+.os-policy__body h2,.os-policy__body h3,.os-policy__body strong{color:var(--os-policy-text)}
+.os-policy__body h2{font-family:var(--db-display);font-size:25px;font-weight:700;margin:42px 0 12px;text-transform:uppercase}
+.os-policy__body h3{font-size:17px;margin:30px 0 9px;text-transform:uppercase}
+.os-policy__body p{margin:0 0 20px}
+.os-policy__body ul,.os-policy__body ol{margin:0 0 24px;padding-left:22px}
+.os-policy__part{scroll-margin-top:30px}
+.os-policy__contact{border-top:1px solid rgba(64,77,28,.25);margin-top:55px;padding-top:28px;text-align:center}
+@media (max-width: 749px) {
+  .os-policy{padding:var(--os-policy-top) 20px var(--os-policy-bottom)}
+  .os-policy__header h1{font-size:36px}
+  .os-policy__body{font-size:14px;margin-top:38px}
+  .os-policy__nav ul{display:grid;gap:8px}
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "OS legal policy",
@@ -36,7 +63,7 @@
     { "type": "richtext", "id": "contact_text", "label": "Contact note" },
     { "type": "range", "id": "content_width", "label": "Content width", "min": 600, "max": 1400, "step": 20, "unit": "px", "default": 1000 },
     { "type": "range", "id": "padding_top", "label": "Top spacing", "min": 30, "max": 160, "step": 5, "unit": "px", "default": 75 },
-    { "type": "range", "id": "padding_bottom", "label": "Bottom spacing", "min": 30, "max": 180, "step": 5, "unit": "px", "default": 100 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom spacing", "min": 30, "max": 180, "step": 5, "unit": "px", "default": 100 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":56},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":100},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
     { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#404d1c" },
     { "type": "color", "id": "accent", "label": "Accent", "default": "#8f2343" }

@@ -1,6 +1,8 @@
 {%- for block in section.blocks -%}{%- if block.type == '@app' -%}{% render block %}{%- endif -%}{%- endfor -%}
 {%- if section.settings.show_fallback -%}
-<section class="os-loyalty full-width" style="--os-loyalty-bg:{{ section.settings.background }};--os-loyalty-color:{{ section.settings.text_color }};--os-loyalty-accent:{{ section.settings.accent }};--os-loyalty-soft:{{ section.settings.soft_background }}">
+{% render 'os-section-style', section: section %}
+<section class="os-loyalty full-width db-section-layout" style="--os-loyalty-bg:{{ section.settings.background }};--os-loyalty-color:{{ section.settings.text_color }};--os-loyalty-accent:{{ section.settings.accent }};--os-loyalty-soft:{{ section.settings.soft_background }};padding-block:var(--db-section-pad-top) var(--db-section-pad-bottom)">
+  {% render 'os-section-background', section: section %}
   <div class="os-loyalty-hero">
     <picture class="os-loyalty-hero__media">
       {%- if section.settings.hero_mobile != blank -%}<source media="(max-width:749px)" srcset="{{ section.settings.hero_mobile | image_url: width: 900 }}">{%- endif -%}
@@ -24,6 +26,64 @@
   <section class="os-loyalty-section os-loyalty-faq"><h2>{{ section.settings.faq_heading }}</h2><div>{%- for block in section.blocks -%}{%- if block.type == 'faq' -%}<details class="os-faq-item" {{ block.shopify_attributes }}><summary><span>{{ block.settings.question }}</span><span class="os-faq-item__icon" aria-hidden="true"></span></summary>{%- if block.settings.answer != blank -%}<div class="os-faq-item__answer db-rte">{{ block.settings.answer }}</div>{%- endif -%}</details>{%- endif -%}{%- endfor -%}</div></section>
 </section>
 {%- endif -%}
+{% stylesheet %}
+.os-loyalty{background:var(--os-loyalty-bg);color:var(--os-loyalty-color)}
+.os-loyalty-hero{background:var(--os-loyalty-soft);display:grid;grid-template-columns:3fr 2fr;min-height:720px}
+.os-loyalty-hero__media{display:block;min-height:720px}
+.os-loyalty-hero__media img,.os-loyalty-placeholder{display:block;height:100%;object-fit:cover;width:100%}
+.os-loyalty-placeholder{background:linear-gradient(135deg,#d4c0ed,#eadff7)}
+.os-loyalty-hero__content{align-self:center;padding:70px clamp(40px,8vw,140px) 70px clamp(40px,6vw,110px)}
+.os-loyalty h1,.os-loyalty h2{font-family:var(--db-display);font-size:42px;font-style:italic;font-weight:400;line-height:1.05;margin:0 0 20px}
+.os-loyalty-hero h1{color:var(--os-loyalty-accent)}
+.os-loyalty-actions{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:42px}
+.os-loyalty-actions a,.os-loyalty-button{background:var(--os-loyalty-accent);border:1px solid var(--os-loyalty-accent);color:#fff;display:inline-flex;font-family:var(--db-display);font-size:18px;justify-content:center;padding:18px 24px;text-align:center;text-decoration:none}
+.os-loyalty-section{margin-inline:auto;max-width:var(--db-section-custom-width,1500px);padding:60px 30px}
+.os-loyalty-how{text-align:center}
+.os-loyalty-how__grid{display:grid;gap:40px;grid-template-columns:repeat(3,1fr);margin-top:42px}
+.os-loyalty-how article strong{align-items:center;background:var(--os-loyalty-accent);border-radius:50%;color:#fff;display:flex;font-family:var(--db-display);font-size:24px;height:54px;justify-content:center;margin:0 auto 16px;width:54px}
+.os-loyalty-how h3,.os-loyalty-card h3,.os-loyalty-tier h3{font-family:var(--db-display);font-size:22px;font-weight:400;margin:0 0 7px}
+.os-loyalty-how p,.os-loyalty-card p,.os-loyalty-tier p{margin:0}
+.os-loyalty-profile{background:var(--os-loyalty-soft);padding:80px 30px;text-align:center}
+.os-loyalty-profile .os-loyalty-button{margin-top:25px;min-width:220px}
+.os-loyalty-card-grid{display:grid;gap:28px;margin-top:42px}
+.os-loyalty-card-grid--earn{grid-template-columns:repeat(4,1fr)}
+.os-loyalty-card-grid--rewards{grid-template-columns:repeat(3,1fr)}
+.os-loyalty-card{text-align:center}
+.os-loyalty-card img{aspect-ratio:1;border-radius:12px;margin-bottom:18px;object-fit:cover;width:100%}
+.os-loyalty-card--placeholder{background:var(--os-loyalty-soft);border-radius:12px;display:flex;flex-direction:column;justify-content:center;min-height:230px;padding:30px}
+.os-loyalty-tier-grid{display:grid;gap:1px;grid-template-columns:repeat(4,1fr);margin-top:42px}
+.os-loyalty-tier{background:var(--os-loyalty-soft);min-height:390px;padding:34px 24px;text-align:center}
+.os-loyalty-tier img{height:110px;object-fit:contain;width:100%}
+.os-loyalty-tier>strong{display:block;font-family:var(--db-display);font-size:20px;margin:32px 0 20px}
+.os-loyalty-refer{background:var(--os-loyalty-color);color:#fff;display:grid;grid-template-columns:1fr 1fr;min-height:620px}
+.os-loyalty-refer__media img{height:100%;object-fit:cover;width:100%}
+.os-loyalty-refer__content{align-self:center;padding:70px clamp(40px,8vw,130px)}
+.os-loyalty-referral{display:grid;margin-top:36px}
+.os-loyalty-referral label{margin-bottom:8px}
+.os-loyalty-referral input{background:transparent;border:0;border-bottom:1px solid currentColor;color:inherit;font:inherit;padding:12px 0}
+.os-loyalty-referral button{background:#fff;border:0;color:var(--os-loyalty-color);cursor:pointer;font:inherit;margin-top:22px;padding:15px}
+.os-loyalty-faq{display:grid;gap:70px;grid-template-columns:2fr 3fr}
+@media (max-width: 749px) {
+  .os-loyalty-hero{display:flex;flex-direction:column;min-height:0}
+  .os-loyalty-hero__media{min-height:430px;order:0}
+  .os-loyalty-hero__content{order:1;padding:42px 20px 50px;text-align:center}
+  .os-loyalty h1,.os-loyalty h2{font-size:34px}
+  .os-loyalty-actions{margin-top:28px}
+  .os-loyalty-actions a{font-size:16px;padding:14px 12px}
+  .os-loyalty-section{padding:48px 20px}
+  .os-loyalty-how__grid{gap:30px;grid-template-columns:1fr;margin-top:30px}
+  .os-loyalty-card-grid--earn{grid-template-columns:repeat(2,1fr)}
+  .os-loyalty-card-grid--rewards{grid-template-columns:1fr}
+  .os-loyalty-card--placeholder{min-height:170px;padding:20px 12px}
+  .os-loyalty-tier-grid{grid-template-columns:repeat(2,1fr)}
+  .os-loyalty-tier{min-height:320px;padding:26px 14px}
+  .os-loyalty-refer{grid-template-columns:1fr;min-height:0}
+  .os-loyalty-refer__media img{max-height:470px}
+  .os-loyalty-refer__content{padding:50px 20px}
+  .os-loyalty-faq{gap:24px;grid-template-columns:1fr}
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "OS Petal Perks",
@@ -52,7 +112,7 @@
     { "type": "text", "id": "email_label", "label": "Email label", "default": "Your Email" },
     { "type": "text", "id": "referral_button", "label": "Referral button", "default": "Next" },
     { "type": "text", "id": "faq_heading", "label": "FAQ heading", "default": "Frequently asked questions" },
-    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },{"type":"range","id":"custom_width","label":"Content width","min":600,"max":2000,"step":20,"unit":"px","default":1500},{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"padding_top","label":"Desktop top padding","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"padding_bottom","label":"Desktop bottom padding","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
     { "type": "color", "id": "text_color", "label": "Text", "default": "#404d1c" },
     { "type": "color", "id": "accent", "label": "Accent", "default": "#80233a" },
     { "type": "color", "id": "soft_background", "label": "Soft background", "default": "#e3d8f5" }

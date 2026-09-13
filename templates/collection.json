@@ -1,23 +1,43 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
       "type": "collection",
       "blocks": {
-        "handmade": { "type": "promise", "settings": { "icon": "✿", "text": "Handmade by local florists, different daily" } },
-        "delivery": { "type": "promise", "settings": { "icon": "◎", "text": "Same-day Christchurch delivery" } },
-        "packaging": { "type": "promise", "settings": { "icon": "◇", "text": "Premium blooms, thoughtfully packaged" } },
-        "gifts": { "type": "promise", "settings": { "icon": "♡", "text": "Thoughtful treats from local makers" } }
+        "handmade": {
+          "type": "promise",
+          "settings": {
+            "icon": "✿",
+            "text": "Handmade by local florists, different daily"
+          }
+        },
+        "delivery": {
+          "type": "promise",
+          "settings": {
+            "icon": "◎",
+            "text": "Same-day Christchurch delivery"
+          }
+        },
+        "packaging": {
+          "type": "promise",
+          "settings": {
+            "icon": "◇",
+            "text": "Premium blooms, thoughtfully packaged"
+          }
+        },
+        "gifts": {
+          "type": "promise",
+          "settings": {
+            "icon": "♡",
+            "text": "Thoughtful treats from local makers"
+          }
+        }
       },
-      "block_order": ["handmade", "delivery", "packaging", "gifts"],
+      "block_order": [
+        "handmade",
+        "delivery",
+        "packaging",
+        "gifts"
+      ],
       "settings": {
         "eyebrow": "Freshly curated",
         "show_image": true,
@@ -36,19 +56,9 @@
         "new_badge_label": "New!",
         "badge_color": "#ef5a59"
       }
-    },
-    "newsletter": {
-      "type": "os-newsletter",
-      "settings": {
-        "eyebrow": "Stay in bloom",
-        "heading": "A little delight, <em>straight to your inbox.</em>",
-        "background": "#efc9c5",
-        "text_color": "#193e36"
-      }
     }
   },
   "order": [
-    "main",
-    "newsletter"
+    "main"
   ]
 }

@@ -3,7 +3,9 @@
 {%- endfor -%}
 
 {%- if section.settings.show_fallback -%}
-  <section class="os-reviews full-width" style="--os-reviews-bg:{{ section.settings.background }};--os-reviews-card:{{ section.settings.card_background }};--os-reviews-text:{{ section.settings.text_color }};--os-reviews-accent:{{ section.settings.accent }};--os-reviews-width:{{ section.settings.content_width }}px">
+  {% render 'os-section-style', section: section %}
+  <section class="os-reviews full-width db-section-layout" style="--os-reviews-bg:{{ section.settings.background }};--os-reviews-card:{{ section.settings.card_background }};--os-reviews-text:{{ section.settings.text_color }};--os-reviews-accent:{{ section.settings.accent }};--os-reviews-width:{{ section.settings.content_width }}px">
+    {% render 'os-section-background', section: section %}
     <div class="os-reviews__inner">
       <h1>{{ section.settings.heading | default: page.title }}</h1>
 
@@ -61,6 +63,49 @@
   </section>
 {%- endif -%}
 
+{% stylesheet %}
+.os-reviews{background:var(--os-reviews-bg);color:var(--os-reviews-text);padding:var(--db-section-pad-top) 30px var(--db-section-pad-bottom)}
+.os-reviews__inner{margin:auto;max-width:var(--os-reviews-width)}
+.os-reviews h1{font-family:var(--db-display);font-size:42px;font-weight:400;margin:0 0 72px;text-align:center}
+.os-reviews__summary{align-items:start;display:grid;gap:70px;grid-template-columns:1.15fr .8fr 1fr}
+.os-reviews__rating>p{align-items:center;display:flex;gap:12px;margin:0 0 28px}
+.os-reviews__rating>p strong,.os-reviews__recommend strong{font-size:20px}
+.os-reviews__stars{color:var(--os-reviews-accent);font-size:24px;letter-spacing:1px}
+.os-reviews__bars{display:grid;gap:9px}
+.os-reviews__bars>div{align-items:center;display:grid;gap:10px;grid-template-columns:34px 1fr 52px}
+.os-reviews__bars i{background:#f4f1ef;display:block;height:6px}
+.os-reviews__bars b{background:var(--os-reviews-accent);display:block;height:100%}
+.os-reviews__recommend{margin:8px 0}
+.os-reviews__gallery{display:grid;gap:4px;grid-template-columns:repeat(5,1fr)}
+.os-reviews__gallery img{aspect-ratio:1;border-radius:9px;object-fit:cover;width:100%}
+.os-reviews__ai-summary{margin:50px auto 38px;max-width:1050px;text-align:center}
+.os-reviews__ai-summary>strong{display:block;margin-bottom:12px}
+.os-reviews__toolbar{align-items:end;border-bottom:1px solid var(--os-reviews-accent);display:flex;justify-content:space-between;padding-bottom:8px}
+.os-reviews__toolbar>div{display:flex;gap:28px}
+.os-reviews__toolbar strong{border-bottom:4px solid var(--os-reviews-accent);padding-bottom:14px}
+.os-reviews__button{background:var(--os-reviews-accent);border-radius:8px;color:#fff;font-weight:700;padding:14px 28px;text-decoration:none;text-transform:uppercase}
+.os-reviews__list{display:grid;gap:18px;margin-top:32px}
+.os-review{background:var(--os-reviews-card);display:grid;gap:24px;grid-template-columns:260px 1fr auto;padding:28px 12px}
+.os-review__author{border-right:1px solid var(--os-reviews-accent);display:flex;flex-direction:column;gap:7px;padding:0 28px 0 0}
+.os-review__author span{color:var(--os-reviews-accent);font-weight:700}
+.os-review__author small{font-weight:700;margin-top:12px}
+.os-review__author p{margin:0}
+.os-review__body{display:flex;flex-direction:column;gap:12px}
+.os-review__body .db-rte p{margin:0}
+.os-review time{white-space:nowrap}
+@media (max-width: 749px) {
+  .os-reviews{padding:42px 18px 64px}
+  .os-reviews h1{font-size:34px;margin-bottom:42px}
+  .os-reviews__summary{gap:36px;grid-template-columns:1fr}
+  .os-reviews__gallery{grid-template-columns:repeat(5,1fr)}
+  .os-reviews__toolbar{align-items:stretch;flex-direction:column;gap:22px}
+  .os-reviews__button{text-align:center}
+  .os-review{grid-template-columns:1fr;padding:24px 18px}
+  .os-review__author{border-bottom:1px solid var(--os-reviews-accent);border-right:0;padding:0 0 18px}
+  .os-review time{grid-row:1;justify-self:end}
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "OS reviews page",
@@ -95,7 +140,7 @@
     { "type": "text", "id": "recommend_label", "label": "Recommendation label", "default": "I recommend this product" },
     { "type": "header", "content": "Layout and colours" },
     { "type": "range", "id": "content_width", "label": "Content width", "min": 900, "max": 1700, "step": 20, "unit": "px", "default": 1320 },
-    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"padding_top","label":"Desktop top padding","min":0,"max":160,"step":4,"unit":"px","default":64},{"type":"range","id":"padding_bottom","label":"Desktop bottom padding","min":0,"max":160,"step":4,"unit":"px","default":92},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":48},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":64},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
     { "type": "color", "id": "card_background", "label": "Review card background", "default": "#fbf0f1" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#404d1c" },
     { "type": "color", "id": "accent", "label": "Accent", "default": "#8f2343" }

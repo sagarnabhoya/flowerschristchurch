@@ -1,5 +1,7 @@
-<section class="db-section full-width" style="background:{{ section.settings.background }}">
-  <div class="db-page">
+{% render 'os-section-style', section: section %}
+<section class="db-section full-width db-section-layout" style="background:{{ section.settings.background }};padding-block:0">
+  {% render 'os-section-background', section: section %}
+  <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
     <div class="db-section-head"><div><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2></div>{%- if section.settings.copy != blank -%}<div class="db-section-head__aside db-copy">{{ section.settings.copy }}</div>{%- endif -%}</div>
     <div class="db-category-grid">
       {%- for block in section.blocks -%}
@@ -29,7 +31,7 @@
     { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Find their favourite" },
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Something lovely, <em>for every moment.</em>" },
     { "type": "richtext", "id": "copy", "label": "Text", "default": "<p>Fresh flowers, thoughtful hampers and locally made gifts for every kind of day.</p>" },
-    { "type": "color", "id": "background", "label": "Background", "default": "#fffaf3" }
+    { "type": "color", "id": "background", "label": "Background", "default": "#fffaf3" },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"select","id":"content_width","label":"Content width","default":"contained","options":[{"value":"contained","label":"Container"},{"value":"fluid","label":"Container fluid"},{"value":"full","label":"Full width"},{"value":"custom","label":"Custom width"}]},{"type":"range","id":"custom_width","label":"Custom width","min":600,"max":2000,"step":20,"unit":"px","default":1440},{"type":"range","id":"padding_top","label":"Desktop top padding","min":0,"max":160,"step":4,"unit":"px","default":96},{"type":"range","id":"padding_bottom","label":"Desktop bottom padding","min":0,"max":160,"step":4,"unit":"px","default":96},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":60},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":60},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0}
   ],
   "blocks": [{ "type": "category", "name": "Category", "settings": [
     { "type": "collection", "id": "collection", "label": "Collection" }, { "type": "image_picker", "id": "image", "label": "Custom image" },
