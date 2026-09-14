@@ -12,10 +12,12 @@
     "hero": {
       "type": "os-hero",
       "settings": {
-        "layout": "campaign",
+        "layout": "split",
+        "desktop_content_side": "right",
         "campaign_position": "bottom-center",
         "text_alignment": "center",
         "media_position": "right",
+        "editorial_split": "20-80",
         "content_vertical": "center",
         "mobile_stack": "media-first",
         "video": "shopify://files/videos/Create_a_10-second_seamless_looping_202609042005.mp4",
@@ -29,7 +31,7 @@
         "overlay_color": "#000000",
         "image_alt": "Seasonal flowers arranged by hand",
         "show_content": true,
-        "eyebrow": "Made fresh every day",
+        "eyebrow": "Florist in Christchurch",
         "heading": "Fresh flowers delivered with care",
         "copy": "<p>Thoughtful seasonal blooms, handcrafted by local florists and delivered with care.</p>",
         "show_copy_mobile": true,
@@ -48,9 +50,9 @@
         "mobile_margin_bottom": 0,
         "text_color": "#193e36",
         "overlay_text": "#ffffff",
-        "button_label": "SHOP ALL BLOOMS",
+        "button_label": "SHOP ALL FLOWERS",
         "button_link": "shopify://collections/all",
-        "button_style": "solid",
+        "button_style": "light",
         "button2_label": "",
         "button2_link": "",
         "button2_style": "outline",
@@ -70,8 +72,8 @@
           "settings": {
             "image_width": 120,
             "font_size": 16,
-            "wordmark_style": "serif",
-            "text": "FLOWERS ACROSS CHRISTCHURCH"
+            "wordmark_style": "sans",
+            "text": "Freshest Flower delivery across Christchurch"
           }
         },
         "timeout": {
@@ -80,7 +82,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "FRESH FLOWERS MADE DAILY"
+            "text": "Same-day delivery available"
           }
         },
         "urban": {
@@ -88,8 +90,8 @@
           "settings": {
             "image_width": 120,
             "font_size": 16,
-            "wordmark_style": "bold",
-            "text": "LOCAL CHRISTCHURCH DELIVERY"
+            "wordmark_style": "sans",
+            "text": "Freshness guaranteed"
           }
         },
         "nine": {
@@ -98,7 +100,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "WEEKEND DELIVERY"
+            "text": "Weekend Delivery"
           }
         },
         "journal": {
@@ -106,8 +108,8 @@
           "settings": {
             "image_width": 120,
             "font_size": 16,
-            "wordmark_style": "small",
-            "text": "555 COLOMBO STREET"
+            "wordmark_style": "sans",
+            "text": "Thoughtful Handcrafted"
           }
         },
         "trusted": {
@@ -116,16 +118,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "THOUGHTFULLY HANDCRAFTED"
-          }
-        },
-        "broadsheet": {
-          "type": "message",
-          "settings": {
-            "image_width": 120,
-            "font_size": 16,
-            "wordmark_style": "serif",
-            "text": "FLOWERS & GIFTS"
+            "text": "Made by Local Florist"
           }
         }
       },
@@ -135,11 +128,10 @@
         "urban",
         "nine",
         "journal",
-        "trusted",
-        "broadsheet"
+        "trusted"
       ],
       "settings": {
-        "accessibility_label": "Featured in",
+        "accessibility_label": "Delivery and flower promises",
         "separator": "",
         "speed": 24,
         "gap": 56,
@@ -160,45 +152,181 @@
         "text_color": "#ef3d32"
       }
     },
+    "os_product_grid_slider_WTz7r3": {
+      "type": "os-product-grid-slider",
+      "name": "Product grid / slider",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Flowers for every occasion",
+        "copy": "",
+        "heading_size": 56,
+        "heading_alignment": "center",
+        "heading_layout": "stacked",
+        "product_source": "collection",
+        "collection": "",
+        "products_to_show": 5,
+        "desktop_layout": "grid",
+        "desktop_columns": 5,
+        "desktop_slides": 4,
+        "desktop_gap": 24,
+        "desktop_centered": false,
+        "mobile_layout": "slider",
+        "mobile_columns": 2,
+        "mobile_slides": 1.7,
+        "mobile_gap": 16,
+        "mobile_centered": true,
+        "navigation_position": "edges",
+        "desktop_navigation": true,
+        "mobile_navigation": false,
+        "desktop_progress": false,
+        "mobile_progress": true,
+        "autoplay": false,
+        "interval": 6,
+        "background": "#fffbf6",
+        "text_color": "#41511d",
+        "content_width": "contained",
+        "custom_width": 1440,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "mobile_padding_top": 52,
+        "mobile_padding_bottom": 52,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
+      }
+    },
     "promotions": {
       "type": "os-promo-carousel",
       "blocks": {
         "hampers": {
           "type": "slide",
           "settings": {
-            "title": "Flower and gift hampers",
-            "button_label": "Shop Flower & Gift Hampers",
-            "link": "shopify://collections/all"
+            "product": "",
+            "collection": "birthday-collection",
+            "title": "",
+            "button_label": "",
+            "link": ""
           }
         },
-        "limited": {
+        "slide_CyEXKA": {
           "type": "slide",
           "settings": {
-            "title": "Limited edition blooms",
-            "button_label": "Shop Limited Edition Blooms",
-            "link": "shopify://collections/all"
+            "product": "",
+            "collection": "annivery-flowers",
+            "title": "",
+            "button_label": "",
+            "link": ""
           }
         },
-        "blooms": {
+        "slide_7YC68x": {
           "type": "slide",
           "settings": {
-            "title": "All blooms",
-            "button_label": "Shop All Blooms",
-            "link": "shopify://collections/all"
+            "product": "",
+            "collection": "sympathy-flowers",
+            "title": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_DzPHBq": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "thank-you-flowers",
+            "title": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_yJghqa": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "get-well-soon",
+            "title": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_cNHBtW": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "new-baby-flowers",
+            "title": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_YkT6r9": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "graduation-flowers-range",
+            "title": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_8nfcDU": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "just-for-you-collection-1",
+            "title": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_CRyfKe": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "mothers-day-collection",
+            "title": "",
+            "button_label": "",
+            "link": ""
           }
         }
       },
       "block_order": [
         "hampers",
-        "limited",
-        "blooms"
+        "slide_CyEXKA",
+        "slide_7YC68x",
+        "slide_DzPHBq",
+        "slide_yJghqa",
+        "slide_cNHBtW",
+        "slide_YkT6r9",
+        "slide_8nfcDU",
+        "slide_CRyfKe"
       ],
       "settings": {
-        "autoplay": false,
-        "interval": 5,
+        "autoplay": true,
+        "interval": 3,
+        "eyebrow": "Shop by Occasion",
+        "heading": "<strong>Fresh Flowers for Life’s Every Moment</strong>",
+        "copy": "",
+        "heading_size": 56,
+        "mobile_heading_size": 36,
+        "heading_font": "display",
+        "heading_alignment": "center",
+        "heading_layout": "stacked",
+        "desktop_slides": 3,
+        "desktop_centered": false,
+        "mobile_slides": 1.4,
+        "mobile_centered": true,
+        "slide_gap": 20,
+        "navigation_position": "edges",
+        "desktop_navigation": true,
+        "mobile_navigation": true,
+        "desktop_progress": false,
+        "mobile_progress": false,
+        "desktop_counter": false,
+        "mobile_counter": false,
         "background": "#f8e5e8",
         "text_color": "#ef3d32",
-        "content_width": "full",
+        "content_width": "fluid",
         "custom_width": 1440,
         "padding_top": 84,
         "padding_bottom": 68,
@@ -269,15 +397,84 @@
     },
     "products": {
       "type": "os-featured-products",
+      "blocks": {
+        "slide_KwkiDc": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "flower-bouquet",
+            "title": "",
+            "description": "",
+            "price": "",
+            "button_label": "See All",
+            "link": ""
+          }
+        },
+        "slide_fE3dE9": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "flower-arrangement-in-oasis",
+            "title": "",
+            "description": "",
+            "price": "",
+            "button_label": "See All",
+            "link": ""
+          }
+        },
+        "slide_Kj8GWm": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "flower-arrangement-in-water-box",
+            "title": "",
+            "description": "",
+            "price": "",
+            "button_label": "See All",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_KwkiDc",
+        "slide_fE3dE9",
+        "slide_Kj8GWm"
+      ],
       "settings": {
+        "eyebrow": " Shop by Collection / Style",
+        "heading": "Beautiful Flowers for Every Style",
+        "copy": "",
+        "heading_size": 56,
+        "mobile_heading_size": 36,
+        "heading_font": "display",
+        "heading_alignment": "center",
+        "heading_layout": "stacked",
+        "product_source": "manual",
         "collection": "shopify://collections/all",
         "products_to_show": 8,
+        "truncate_slide_title": false,
+        "slide_title_lines": 2,
+        "truncate_slide_description": true,
+        "slide_description_lines": 3,
+        "show_title": true,
         "show_description": true,
+        "show_price": true,
         "button_label": "Order Now",
-        "badge_label": "LOCAL FAVOURITE",
-        "initial_slide": 1,
+        "desktop_slides": 2,
+        "desktop_gap": 16,
+        "desktop_centered": false,
+        "mobile_slides": 1.7,
+        "mobile_gap": 12,
+        "mobile_centered": true,
+        "navigation_position": "edges",
+        "desktop_navigation": true,
+        "mobile_navigation": false,
+        "desktop_progress": false,
+        "mobile_progress": true,
         "autoplay": false,
         "interval": 6,
+        "slide_content_gap": 16,
+        "mobile_slide_content_gap": 16,
         "background": "#fffbf6",
         "text_color": "#41511d",
         "content_width": "full",
@@ -286,11 +483,33 @@
         "padding_bottom": 0,
         "mobile_padding_top": 40,
         "mobile_padding_bottom": 40,
-        "margin_top": 0,
+        "margin_top": 40,
         "margin_bottom": 0,
         "mobile_margin_top": 0,
         "mobile_margin_bottom": 0
       }
+    },
+    "178941491212dfe306": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_medals_eQbrP7": {
+          "type": "shopify://apps/judge-me-reviews/blocks/medals/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        },
+        "shophaus_google_reviews_google_rating_R9E7jf": {
+          "type": "shopify://apps/shophaus-google-reviews/blocks/google_rating/d8d9cba2-5617-4812-8d88-2ff6a1364233",
+          "settings": {
+            "horizontal_alignment": "center",
+            "bg_color": "#F7F0E7",
+            "font_color": "#656565"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_medals_eQbrP7",
+        "shophaus_google_reviews_google_rating_R9E7jf"
+      ],
+      "settings": {}
     },
     "why_choose": {
       "type": "os-why-choose-us",
@@ -810,9 +1029,11 @@
   "order": [
     "hero",
     "press_marquee",
+    "os_product_grid_slider_WTz7r3",
     "promotions",
     "benefits",
     "products",
+    "178941491212dfe306",
     "why_choose",
     "occasion",
     "locations",

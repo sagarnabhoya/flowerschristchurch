@@ -2,23 +2,40 @@
 <section id="os-promo-carousel-{{ section.id }}" class="os-promo-section full-width db-section-layout" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
   {% render 'os-section-background', section: section %}
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'contained' }}">
-    <os-image-carousel class="os-promo-carousel" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}">
-      <div class="os-promo-carousel__track" data-carousel-track>
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.copy != blank -%}
+      <header class="os-carousel-section-head os-carousel-section-head--{{ section.settings.heading_alignment }} os-carousel-section-head--{{ section.settings.heading_layout }} os-carousel-section-head--{{ section.settings.heading_font }}" style="--os-heading-size:{{ section.settings.heading_size }}px;--os-heading-mobile-size:{{ section.settings.mobile_heading_size }}px">
+        <div class="os-carousel-section-head__title">{%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}{%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}</div>
+        {%- if section.settings.copy != blank -%}<div class="os-carousel-section-head__copy">{{ section.settings.copy }}</div>{%- endif -%}
+      </header>
+    {%- endif -%}
+    <os-image-carousel class="os-promo-carousel os-promo-carousel--nav-{{ section.settings.navigation_position }}" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}" data-desktop-centered="{{ section.settings.desktop_centered }}" data-mobile-centered="{{ section.settings.mobile_centered }}" data-desktop-navigation="{{ section.settings.desktop_navigation }}" data-mobile-navigation="{{ section.settings.mobile_navigation }}" data-desktop-progress="{{ section.settings.desktop_progress }}" data-mobile-progress="{{ section.settings.mobile_progress }}" data-desktop-counter="{{ section.settings.desktop_counter }}" data-mobile-counter="{{ section.settings.mobile_counter }}" style="--os-desktop-slides:{{ section.settings.desktop_slides }};--os-mobile-slides:{{ section.settings.mobile_slides }};--os-carousel-gap:{{ section.settings.slide_gap }}px">
+      <div id="os-promo-carousel-track-{{ section.id }}" class="os-promo-carousel__track" data-carousel-track>
         {%- for block in section.blocks -%}
-          {%- assign fallback_promo_image = collections.all.products[forloop.index0].featured_image | default: collections.all.products.first.featured_image -%}
+          {%- assign selected_product = block.settings.product -%}
+          {%- assign selected_collection = block.settings.collection -%}
+          {%- assign source_title = block.settings.title | default: selected_product.title | default: selected_collection.title | default: 'our flowers' -%}
+          {%- assign source_url = block.settings.link | default: selected_product.url | default: selected_collection.url | default: routes.all_products_collection_url -%}
+          {%- assign collection_product_image = selected_collection.products.first.featured_image -%}
+          {%- assign fallback_promo_image = block.settings.image | default: selected_product.featured_image | default: selected_collection.image | default: collection_product_image | default: collections.all.products[forloop.index0].featured_image | default: collections.all.products.first.featured_image -%}
+          {%- assign button_label = block.settings.button_label -%}
+          {%- if button_label == blank -%}{%- assign button_label = 'Shop ' | append: source_title -%}{%- endif -%}
           <article class="os-promo-card" data-carousel-slide {{ block.shopify_attributes }}>
-            <a href="{{ block.settings.link | default: routes.all_products_collection_url }}" aria-label="{{ block.settings.button_label | default: block.settings.title | escape }}">
-              {%- if block.settings.image != blank -%}
-                <picture>{%- if block.settings.mobile_image != blank -%}<source media="(max-width:749px)" srcset="{{ block.settings.mobile_image | image_url: width: 900 }}">{%- endif -%}{{ block.settings.image | image_url: width: 1800 | image_tag: widths: '600,900,1200,1800', sizes: '(min-width: 990px) 42vw, 82vw', loading: 'lazy', alt: block.settings.image.alt | default: block.settings.title }}</picture>
-              {%- elsif fallback_promo_image != blank -%}{{ fallback_promo_image | image_url: width: 1800 | image_tag: widths: '600,900,1200,1800', sizes: '(min-width: 990px) 42vw, 82vw', loading: 'eager', alt: block.settings.title }}{%- else -%}{{ 'lifestyle-1' | placeholder_svg_tag }}{%- endif -%}
-              {%- if block.settings.button_label != blank -%}<span class="os-promo-card__button">{{ block.settings.button_label }}</span>{%- endif -%}
+            <a href="{{ source_url }}" aria-label="{{ button_label | escape }}">
+              {%- if fallback_promo_image != blank -%}
+                <picture>{%- if block.settings.mobile_image != blank -%}<source media="(max-width:749px)" srcset="{{ block.settings.mobile_image | image_url: width: 900 }}">{%- endif -%}{{ fallback_promo_image | image_url: width: 1800 | image_tag: widths: '600,900,1200,1800', sizes: '(min-width: 990px) 42vw, 82vw', loading: 'lazy', alt: fallback_promo_image.alt | default: source_title }}</picture>
+              {%- else -%}{{ 'lifestyle-1' | placeholder_svg_tag }}{%- endif -%}
+              <span class="os-promo-card__button">{{ button_label }}</span>
             </a>
           </article>
         {%- endfor -%}
       </div>
       {%- if section.blocks.size > 1 -%}
-        <button class="os-carousel-arrow os-carousel-arrow--prev" type="button" data-carousel-prev aria-label="Previous slide"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10 3-5 5 5 5"/></svg></button>
-        <button class="os-carousel-arrow os-carousel-arrow--next" type="button" data-carousel-next aria-label="Next slide"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+        <button class="os-carousel-arrow os-carousel-arrow--prev" type="button" data-carousel-prev aria-controls="os-promo-carousel-track-{{ section.id }}" aria-label="Previous promotion"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10 3-5 5 5 5"/></svg></button>
+        <button class="os-carousel-arrow os-carousel-arrow--next" type="button" data-carousel-next aria-controls="os-promo-carousel-track-{{ section.id }}" aria-label="Next promotion"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+        <div class="os-promo-carousel__meta" aria-live="polite">
+          <span class="os-promo-carousel__progress" aria-hidden="true"><span data-carousel-progress></span></span>
+          <span class="os-promo-carousel__status"><b data-carousel-current>1</b> / {{ section.blocks.size }}</span>
+        </div>
       {%- endif -%}
     </os-image-carousel>
   </div>
@@ -29,6 +46,30 @@
   "settings": [
     { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true },
     { "type": "range", "id": "interval", "label": "Autoplay interval", "min": 3, "max": 10, "step": 1, "unit": "s", "default": 6 },
+    { "type": "header", "content": "Section heading" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Fresh from the studio" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Flowers for every moment" },
+    { "type": "richtext", "id": "copy", "label": "Supporting text", "default": "<p>Thoughtful, seasonal flowers made to brighten the everyday and mark the memorable.</p>" },
+    { "type": "range", "id": "heading_size", "label": "Desktop heading size", "min": 28, "max": 96, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "mobile_heading_size", "label": "Mobile heading size", "min": 24, "max": 64, "step": 2, "unit": "px", "default": 36 },
+    { "type": "select", "id": "heading_font", "label": "Heading style", "default": "display", "options": [{ "value": "display", "label": "Display" }, { "value": "body", "label": "Sans serif" }] },
+    { "type": "select", "id": "heading_alignment", "label": "Heading alignment", "default": "left", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+    { "type": "select", "id": "heading_layout", "label": "Heading layout", "default": "split", "options": [{ "value": "split", "label": "Title and text side by side" }, { "value": "stacked", "label": "Title above text" }] },
+    { "type": "header", "content": "Desktop slider" },
+    { "type": "range", "id": "desktop_slides", "label": "Slides per view", "min": 1, "max": 5, "step": 0.1, "default": 1.9 },
+    { "type": "checkbox", "id": "desktop_centered", "label": "Center active slide", "default": true },
+    { "type": "header", "content": "Mobile slider" },
+    { "type": "range", "id": "mobile_slides", "label": "Slides per view", "min": 1, "max": 3, "step": 0.1, "default": 1.3 },
+    { "type": "checkbox", "id": "mobile_centered", "label": "Center active slide", "default": true },
+    { "type": "range", "id": "slide_gap", "label": "Space between slides", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 20 },
+    { "type": "header", "content": "Carousel controls" },
+    { "type": "select", "id": "navigation_position", "label": "Navigation position", "default": "active", "options": [{ "value": "active", "label": "Beside centered slide" }, { "value": "edges", "label": "Section edges" }] },
+    { "type": "checkbox", "id": "desktop_navigation", "label": "Show navigation on desktop", "default": true },
+    { "type": "checkbox", "id": "mobile_navigation", "label": "Show navigation on mobile", "default": false },
+    { "type": "checkbox", "id": "desktop_progress", "label": "Show progress bar on desktop", "default": false },
+    { "type": "checkbox", "id": "mobile_progress", "label": "Show progress bar on mobile", "default": true },
+    { "type": "checkbox", "id": "desktop_counter", "label": "Show slide counter on desktop", "default": false },
+    { "type": "checkbox", "id": "mobile_counter", "label": "Show slide counter on mobile", "default": true },
     { "type": "color", "id": "background", "label": "Section background", "default": "#f8e5e8" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#ef3d32" },
     { "type": "header", "content": "Section layout" },
@@ -37,7 +78,7 @@
     { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 48 },
     { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 60 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":48},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":60},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0}
   ],
-  "blocks": [{ "type": "slide", "name": "Promotion", "settings": [{ "type": "image_picker", "id": "image", "label": "Desktop image" }, { "type": "image_picker", "id": "mobile_image", "label": "Mobile image" }, { "type": "text", "id": "title", "label": "Accessible title", "default": "Shop flowers" }, { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop all blooms" }, { "type": "url", "id": "link", "label": "Link" }] }],
+  "blocks": [{ "type": "slide", "name": "Promotion", "settings": [{ "type": "header", "content": "Content source" }, { "type": "product", "id": "product", "label": "Product", "info": "Used first when both a product and collection are selected." }, { "type": "collection", "id": "collection", "label": "Collection", "info": "Uses the collection image, or its first product image when no collection image is set." }, { "type": "header", "content": "Overrides" }, { "type": "image_picker", "id": "image", "label": "Desktop image override" }, { "type": "image_picker", "id": "mobile_image", "label": "Mobile image override" }, { "type": "text", "id": "title", "label": "Title override", "info": "Used for the accessible label and default button text." }, { "type": "text", "id": "button_label", "label": "Button label override" }, { "type": "url", "id": "link", "label": "Link override" }] }],
   "presets": [{ "name": "Promotional carousel", "blocks": [{ "type": "slide" }, { "type": "slide" }, { "type": "slide" }] }]
 }
 {% endschema %}

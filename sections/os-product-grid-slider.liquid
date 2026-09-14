@@ -1,0 +1,99 @@
+{% render 'os-section-style', section: section %}
+{%- assign manual_products = section.blocks | where: 'type', 'product' -%}
+{%- assign use_manual_products = false -%}
+{%- if section.settings.product_source == 'manual' and manual_products.size > 0 -%}
+  {%- assign use_manual_products = true -%}
+{%- endif -%}
+<section class="os-product-grid-slider full-width db-section-layout" style="--os-desktop-columns:{{ section.settings.desktop_columns }};--os-mobile-columns:{{ section.settings.mobile_columns }};--os-desktop-slides:{{ section.settings.desktop_slides }};--os-mobile-slides:{{ section.settings.mobile_slides }};--os-desktop-gap:{{ section.settings.desktop_gap }}px;--os-mobile-gap:{{ section.settings.mobile_gap }}px;--os-heading-size:{{ section.settings.heading_size }}px;background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
+  {% render 'os-section-background', section: section %}
+  <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.copy != blank -%}
+      <div class="os-product-grid-slider__head os-product-grid-slider__head--{{ section.settings.heading_alignment }} os-product-grid-slider__head--{{ section.settings.heading_layout }}">
+        <div class="os-product-grid-slider__title">{%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}{%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}</div>
+        {%- if section.settings.copy != blank -%}<div class="os-product-grid-slider__copy">{{ section.settings.copy }}</div>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <os-product-carousel class="os-product-carousel os-product-grid-slider__carousel os-product-carousel--nav-{{ section.settings.navigation_position }}" data-desktop-layout="{{ section.settings.desktop_layout }}" data-mobile-layout="{{ section.settings.mobile_layout }}" data-desktop-centered="{{ section.settings.desktop_centered }}" data-mobile-centered="{{ section.settings.mobile_centered }}" data-desktop-navigation="{{ section.settings.desktop_navigation }}" data-mobile-navigation="{{ section.settings.mobile_navigation }}" data-desktop-progress="{{ section.settings.desktop_progress }}" data-mobile-progress="{{ section.settings.mobile_progress }}" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}" data-initial-index="0">
+      <ul class="os-product-carousel__track" data-product-carousel-track role="list">
+        {%- if use_manual_products -%}
+          {%- for block in manual_products -%}
+            <li class="os-product-grid-slider__item" data-product-carousel-slide {{ block.shopify_attributes }}>
+              {% render 'product-card', product: block.settings.product %}
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign selected_collection = section.settings.collection | default: collections.all -%}
+          {%- for product in selected_collection.products limit: section.settings.products_to_show -%}
+            <li class="os-product-grid-slider__item" data-product-carousel-slide>
+              {% render 'product-card', product: product %}
+            </li>
+          {%- else -%}
+            <li class="os-product-grid-slider__item" data-product-carousel-slide>{% render 'product-card', product: blank %}</li>
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+      <button class="os-product-carousel__arrow os-product-carousel__arrow--prev" type="button" data-product-carousel-prev aria-label="Previous products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+      <button class="os-product-carousel__arrow os-product-carousel__arrow--next" type="button" data-product-carousel-next aria-label="Next products"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+      <div class="os-product-carousel__progress" data-product-carousel-progress aria-hidden="true"><span></span></div>
+    </os-product-carousel>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Product grid / slider",
+  "max_blocks": 16,
+  "settings": [
+    {"type":"header","content":"Content"},
+    {"type":"text","id":"eyebrow","label":"Eyebrow","default":"Fresh from the studio"},
+    {"type":"inline_richtext","id":"heading","label":"Heading","default":"Flowers for every occasion"},
+    {"type":"richtext","id":"copy","label":"Text","default":"<p>Browse our latest florist-made favourites.</p>"},
+    {"type":"header","content":"Heading design"},
+    {"type":"range","id":"heading_size","label":"Desktop heading size","min":28,"max":96,"step":2,"unit":"px","default":56},
+    {"type":"select","id":"heading_alignment","label":"Heading alignment","default":"left","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},
+    {"type":"select","id":"heading_layout","label":"Heading layout","default":"split","options":[{"value":"split","label":"Title and text side by side"},{"value":"stacked","label":"Title above text"}]},
+    {"type":"header","content":"Products"},
+    {"type":"select","id":"product_source","label":"Product source","default":"collection","options":[{"value":"collection","label":"Collection"},{"value":"manual","label":"Manual product selection"}]},
+    {"type":"collection","id":"collection","label":"Collection","info":"Used when Product source is Collection."},
+    {"type":"range","id":"products_to_show","label":"Products to show","min":2,"max":16,"step":1,"default":8,"visible_if":"{{ section.settings.product_source == 'collection' }}"},
+    {"type":"header","content":"Desktop layout"},
+    {"type":"select","id":"desktop_layout","label":"Layout","default":"grid","options":[{"value":"grid","label":"Grid"},{"value":"slider","label":"Slider"}]},
+    {"type":"range","id":"desktop_columns","label":"Grid columns","min":2,"max":5,"step":1,"default":4,"visible_if":"{{ section.settings.desktop_layout == 'grid' }}"},
+    {"type":"range","id":"desktop_slides","label":"Slides per view","min":1,"max":4,"step":0.1,"default":4,"visible_if":"{{ section.settings.desktop_layout == 'slider' }}"},
+    {"type":"range","id":"desktop_gap","label":"Space between products","min":0,"max":80,"step":4,"unit":"px","default":24},
+    {"type":"checkbox","id":"desktop_centered","label":"Center active slide","default":false,"visible_if":"{{ section.settings.desktop_layout == 'slider' }}"},
+    {"type":"header","content":"Mobile layout"},
+    {"type":"select","id":"mobile_layout","label":"Layout","default":"slider","options":[{"value":"grid","label":"Grid"},{"value":"slider","label":"Slider"}]},
+    {"type":"range","id":"mobile_columns","label":"Grid columns","min":1,"max":3,"step":1,"default":2,"visible_if":"{{ section.settings.mobile_layout == 'grid' }}"},
+    {"type":"range","id":"mobile_slides","label":"Slides per view","min":1,"max":2,"step":0.1,"default":1.2,"visible_if":"{{ section.settings.mobile_layout == 'slider' }}"},
+    {"type":"range","id":"mobile_gap","label":"Space between products","min":0,"max":40,"step":2,"unit":"px","default":16},
+    {"type":"checkbox","id":"mobile_centered","label":"Center active slide","default":false,"visible_if":"{{ section.settings.mobile_layout == 'slider' }}"},
+    {"type":"header","content":"Carousel controls"},
+    {"type":"select","id":"navigation_position","label":"Navigation position","default":"edges","options":[{"value":"active","label":"Beside active slide"},{"value":"edges","label":"Section edges"}]},
+    {"type":"checkbox","id":"desktop_navigation","label":"Show navigation on desktop","default":true},
+    {"type":"checkbox","id":"mobile_navigation","label":"Show navigation on mobile","default":false},
+    {"type":"checkbox","id":"desktop_progress","label":"Show progress on desktop","default":false},
+    {"type":"checkbox","id":"mobile_progress","label":"Show progress on mobile","default":true},
+    {"type":"checkbox","id":"autoplay","label":"Autoplay","default":false},
+    {"type":"range","id":"interval","label":"Autoplay interval","min":3,"max":10,"step":1,"unit":"s","default":6},
+    {"type":"header","content":"Section style"},
+    {"type":"color","id":"background","label":"Section background","default":"#fffbf6"},
+    {"type":"color","id":"text_color","label":"Text","default":"#41511d"},
+    {"type":"image_picker","id":"background_image","label":"Background image"},
+    {"type":"image_picker","id":"mobile_background_image","label":"Mobile background image"},
+    {"type":"select","id":"content_width","label":"Content width","default":"contained","options":[{"value":"contained","label":"Container"},{"value":"fluid","label":"Container fluid"},{"value":"full","label":"Full width"},{"value":"custom","label":"Custom width"}]},
+    {"type":"range","id":"custom_width","label":"Custom width","min":600,"max":2000,"step":20,"unit":"px","default":1440},
+    {"type":"range","id":"padding_top","label":"Desktop top padding","min":0,"max":160,"step":4,"unit":"px","default":80},
+    {"type":"range","id":"padding_bottom","label":"Desktop bottom padding","min":0,"max":160,"step":4,"unit":"px","default":80},
+    {"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":52},
+    {"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":52},
+    {"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},
+    {"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},
+    {"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},
+    {"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0}
+  ],
+  "blocks": [
+    {"type":"product","name":"Product","settings":[{"type":"product","id":"product","label":"Product"}]}
+  ],
+  "presets":[{"name":"Product grid / slider"}]
+}
+{% endschema %}

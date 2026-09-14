@@ -1,6 +1,14 @@
+{%- assign editorial_split = '1fr 1fr' -%}
+{%- assign editorial_split_reverse = '1fr 1fr' -%}
+{%- case section.settings.editorial_split -%}
+  {%- when '20-80' -%}{%- assign editorial_split = '20fr 80fr' -%}{%- assign editorial_split_reverse = '80fr 20fr' -%}
+  {%- when '25-75' -%}{%- assign editorial_split = '25fr 75fr' -%}{%- assign editorial_split_reverse = '75fr 25fr' -%}
+  {%- when '33-67' -%}{%- assign editorial_split = '33fr 67fr' -%}{%- assign editorial_split_reverse = '67fr 33fr' -%}
+  {%- when '40-60' -%}{%- assign editorial_split = '40fr 60fr' -%}{%- assign editorial_split_reverse = '60fr 40fr' -%}
+{%- endcase -%}
 <section
-  class="db-hero db-hero--{{ section.settings.layout }} db-hero--pos-{{ section.settings.campaign_position }} db-hero--text-{{ section.settings.text_alignment }} db-hero--valign-{{ section.settings.content_vertical }} db-hero--m-{{ section.settings.mobile_content_layout }} db-hero--m-badge-{{ section.settings.badge_position_mobile }} {% if section.settings.media_position == 'left' %}db-hero--media-left{% endif %} {% if section.settings.mobile_stack == 'content-first' %}db-hero--stack-content{% endif %} {% unless section.settings.show_copy_mobile %}db-hero--hide-copy-mobile{% endunless %} {% unless section.settings.show_badge_mobile %}db-hero--hide-badge-mobile{% endunless %} full-width db-section-layout db-section-layout--content-{{ section.settings.content_width }}"
-  style="--db-hero-height:{{ section.settings.desktop_height }}px;--db-hero-height-mobile:{{ section.settings.mobile_height }}px;--db-hero-title-size:{{ section.settings.heading_size }}px;--db-hero-title-mobile:{{ section.settings.heading_size_mobile }}px;--db-hero-overlay-pct:{{ section.settings.overlay_opacity }}%;--db-hero-overlay-color:{{ section.settings.overlay_color }};--db-hero-overlay-text:{{ section.settings.overlay_text }};--db-hero-media-pos:{{ section.settings.image_position }};--db-hero-mobile-bg:{{ section.settings.mobile_content_bg }};--db-hero-peek:{{ section.settings.peek_overlap }};--db-hero-badge-mobile:{{ section.settings.badge_size_mobile }}px;background:{{ section.settings.background }};color:{{ section.settings.text_color }};--db-hero-text:{{ section.settings.text_color }};padding-block:var(--db-section-pad-top) var(--db-section-pad-bottom)"
+  class="db-hero db-hero--{{ section.settings.layout }} db-hero--pos-{{ section.settings.campaign_position }} db-hero--content-side-{{ section.settings.desktop_content_side }} db-hero--text-{{ section.settings.text_alignment }} db-hero--valign-{{ section.settings.content_vertical }} db-hero--m-{{ section.settings.mobile_content_layout }} db-hero--m-badge-{{ section.settings.badge_position_mobile }} {% if section.settings.media_position == 'left' %}db-hero--media-left{% endif %} {% if section.settings.mobile_stack == 'content-first' %}db-hero--stack-content{% endif %} {% unless section.settings.show_copy_mobile %}db-hero--hide-copy-mobile{% endunless %} {% unless section.settings.show_badge_mobile %}db-hero--hide-badge-mobile{% endunless %} full-width db-section-layout db-section-layout--content-{{ section.settings.content_width }}"
+  style="--db-hero-height:{{ section.settings.desktop_height }}px;--db-hero-height-mobile:{{ section.settings.mobile_height }}px;--db-hero-title-size:{{ section.settings.heading_size }}px;--db-hero-title-mobile:{{ section.settings.heading_size_mobile }}px;--db-hero-overlay-pct:{{ section.settings.overlay_opacity }}%;--db-hero-overlay-color:{{ section.settings.overlay_color }};--db-hero-overlay-text:{{ section.settings.overlay_text }};--db-hero-media-pos:{{ section.settings.image_position }};--db-hero-mobile-bg:{{ section.settings.mobile_content_bg }};--db-hero-peek:{{ section.settings.peek_overlap }};--db-hero-badge-mobile:{{ section.settings.badge_size_mobile }}px;--db-hero-editorial-split:{{ editorial_split }};--db-hero-editorial-split-reverse:{{ editorial_split_reverse }};background:{{ section.settings.background }};color:{{ section.settings.text_color }};--db-hero-text:{{ section.settings.text_color }};padding-block:var(--db-section-pad-top) var(--db-section-pad-bottom)"
 >
   {% render 'os-section-style', section: section %}
   {% render 'os-section-background', section: section %}
@@ -70,6 +78,7 @@
   "settings": [
     { "type": "header", "content": "Layout" },
     { "type": "select", "id": "layout", "label": "Layout", "default": "campaign", "options": [{ "value": "campaign", "label": "Full-width campaign" }, { "value": "split", "label": "Split editorial" }] },
+    { "type": "select", "id": "desktop_content_side", "label": "Desktop text panel side", "default": "right", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "info": "Sets which side of the full-width campaign hero contains the text panel.", "visible_if": "{{ section.settings.layout == 'campaign' }}" },
     {
       "type": "select",
       "id": "campaign_position",
@@ -97,6 +106,7 @@
       "options": [{ "value": "right", "label": "Media right" }, { "value": "left", "label": "Media left" }],
       "visible_if": "{{ section.settings.layout == 'split' }}"
     },
+    { "type": "select", "id": "editorial_split", "label": "Editorial text / media width", "default": "50-50", "options": [{ "value": "20-80", "label": "20% / 80%" }, { "value": "25-75", "label": "25% / 75%" }, { "value": "33-67", "label": "33% / 67%" }, { "value": "40-60", "label": "40% / 60%" }, { "value": "50-50", "label": "50% / 50%" }], "info": "Text width first, media width second. The values reverse automatically when media is placed left.", "visible_if": "{{ section.settings.layout == 'split' }}" },
     {
       "type": "select",
       "id": "content_vertical",

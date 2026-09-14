@@ -9,7 +9,7 @@
         {%- assign shown = 0 -%}
         {%- for related_product in source_collection.products -%}
           {%- unless related_product.id == product.id -%}
-            <li>{% render 'product-card', product: related_product, show_description: false, show_quick_add: true %}</li>
+            <li>{% render 'product-card', product: related_product %}</li>
             {%- assign shown = shown | plus: 1 -%}
             {%- if shown >= section.settings.products_to_show -%}{%- break -%}{%- endif -%}
           {%- endunless -%}

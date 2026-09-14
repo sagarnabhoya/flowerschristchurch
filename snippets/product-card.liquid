@@ -14,8 +14,26 @@
   if show_secondary_image == nil
     assign show_secondary_image = settings.card_show_secondary_image
   endif
+  if show_description == nil
+    assign show_description = settings.card_show_description
+  endif
+  if show_quick_add == nil
+    assign show_quick_add = settings.card_show_quick_add
+  endif
   if show_badges == nil
-    assign show_badges = true
+    assign show_badges = settings.card_show_badges
+  endif
+  if show_auto_new == nil
+    assign show_auto_new = settings.card_show_auto_new
+  endif
+  if new_product_days == nil
+    assign new_product_days = settings.card_new_product_days
+  endif
+  if new_badge_label == nil
+    assign new_badge_label = settings.card_new_badge_label
+  endif
+  if default_badge_label == nil
+    assign default_badge_label = settings.card_default_badge
   endif
   if show_badges and card_is_placeholder == false
     assign card_badge_text = card_product.metafields.custom.card_badge.value | default: card_product.metafields.custom.card_badge
@@ -89,7 +107,7 @@
     endif
   endif
 -%}
-<article class="db-product-card" style="--db-card-ratio:{{ card_image_ratio | default: settings.card_image_ratio | default: '0.77' }};--db-card-radius:{{ card_radius | default: settings.card_corner_radius | default: 10 }}px;--db-card-title-size:{{ card_title_size | default: settings.card_title_size | default: 20 }}px;--db-card-description-size:{{ card_description_size | default: settings.card_description_size | default: 14 }}px;--db-card-price-size:{{ card_price_size | default: settings.card_price_size | default: 16 }}px;--db-card-badge-size:{{ badge_size | default: settings.card_badge_size | default: 72 }}px;--db-card-badge-text:{{ badge_text_color | default: settings.card_badge_text_color | default: '#ffffff' }}">
+<article class="db-product-card db-product-card--{{ settings.card_style | default: 'editorial' }}" style="--db-card-ratio:{{ card_image_ratio | default: settings.card_image_ratio | default: '0.77' }};--db-card-fit:{{ settings.card_image_fit | default: 'cover' }};--db-card-radius:{{ card_radius | default: settings.card_corner_radius | default: 10 }}px;--db-card-title-size:{{ card_title_size | default: settings.card_title_size | default: 20 }}px;--db-card-title-lines:{{ settings.card_title_lines | default: 2 }};--db-card-description-size:{{ card_description_size | default: settings.card_description_size | default: 14 }}px;--db-card-description-lines:{{ settings.card_description_lines | default: 2 }};--db-card-price-size:{{ card_price_size | default: settings.card_price_size | default: 16 }}px;--db-card-badge-size:{{ badge_size | default: settings.card_badge_size | default: 72 }}px;--db-card-badge-text:{{ badge_text_color | default: settings.card_badge_text_color | default: '#ffffff' }}">
   <a class="db-product-card__media" href="{% if card_is_placeholder %}{{ routes.all_products_collection_url }}{% else %}{{ card_product.url }}{% endif %}">
     {%- if card_image != blank and card_image.width != blank -%}
       {{ card_image | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', sizes: '(min-width: 990px) 25vw, 50vw', loading: 'lazy', alt: card_image.alt | default: card_product.title }}
@@ -110,7 +128,7 @@
           {%- endif -%}
         </span>
       {%- else -%}
-        <span class="db-product-card__flower-badge db-product-card__flower-badge--{{ badge_position | default: settings.card_badge_position | default: 'right' }}" style="--db-card-badge:{{ badge_color | default: '#ef5a59' }}"><span>{{ card_badge_text }}</span></span>
+        <span class="db-product-card__flower-badge db-product-card__flower-badge--{{ badge_position | default: settings.card_badge_position | default: 'right' }}" style="--db-card-badge:{{ badge_color | default: settings.card_badge_color | default: '#ef5a59' }}"><span>{{ card_badge_text }}</span></span>
       {%- endif -%}
     {%- endif -%}
   </a>

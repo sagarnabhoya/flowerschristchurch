@@ -318,15 +318,38 @@ function initializeEditorialCarousel(carousel) {
 
 class OsImageCarousel extends HTMLElement {
   connectedCallback() {
-    if (this.flickity || !window.Flickity) return;
+    if (this.ready || !window.Flickity) return;
+    this.ready = true;
     this.track = this.querySelector('[data-carousel-track]');
     this.slides = [...this.querySelectorAll('[data-carousel-slide]')];
     if (!this.track || !this.slides.length) return;
+    this.previousButton = this.querySelector('[data-carousel-prev]');
+    this.nextButton = this.querySelector('[data-carousel-next]');
+    this.current = this.querySelector('[data-carousel-current]');
+    this.progress = this.querySelector('[data-carousel-progress]');
+    this.mediaQuery = matchMedia('(max-width: 749px)');
+    this.handleLayoutChange = () => this.updateLayout();
+    this.mediaQuery.addEventListener('change', this.handleLayoutChange);
+    this.previousButton?.addEventListener('click', () => this.flickity?.previous());
+    this.nextButton?.addEventListener('click', () => this.flickity?.next());
+    this.updateLayout();
+    this.querySelectorAll('img').forEach((image) => {
+      if (!image.complete) image.addEventListener('load', () => this.flickity?.resize(), { once: true });
+    });
+  }
+
+  updateLayout() {
+    const centered = this.mediaQuery.matches ? this.dataset.mobileCentered === 'true' : this.dataset.desktopCentered === 'true';
+    if (this.flickity && this.carouselMode === centered) return;
+    const selectedIndex = this.flickity?.selectedIndex || 0;
+    this.flickity?.destroy();
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.classList.toggle('is-centered', centered);
     this.flickity = new Flickity(this.track, {
       cellSelector: '[data-carousel-slide]',
-      cellAlign: 'center',
-      contain: false,
+      initialIndex: Math.min(selectedIndex, this.slides.length - 1),
+      cellAlign: centered ? 'center' : 'left',
+      contain: !centered,
       draggable: this.slides.length > 1,
       wrapAround: this.slides.length > 1,
       prevNextButtons: false,
@@ -336,14 +359,22 @@ class OsImageCarousel extends HTMLElement {
       pauseAutoPlayOnHover: true,
       accessibility: true
     });
-    this.querySelector('[data-carousel-prev]')?.addEventListener('click', () => this.flickity.previous());
-    this.querySelector('[data-carousel-next]')?.addEventListener('click', () => this.flickity.next());
-    this.querySelectorAll('img').forEach((image) => {
-      if (!image.complete) image.addEventListener('load', () => this.flickity?.resize(), { once: true });
-    });
+    this.carouselMode = centered;
+    this.flickity.on('change', (index) => this.updateControls(index));
+    this.updateControls(this.flickity.selectedIndex);
+  }
+
+  updateControls(index) {
+    const current = index + 1;
+    if (this.current) this.current.textContent = current;
+    if (this.progress) this.progress.style.transform = `scaleX(${current / this.slides.length})`;
+    const disabled = this.slides.length < 2;
+    if (this.previousButton) this.previousButton.disabled = disabled;
+    if (this.nextButton) this.nextButton.disabled = disabled;
   }
 
   disconnectedCallback() {
+    this.mediaQuery?.removeEventListener('change', this.handleLayoutChange);
     this.flickity?.destroy();
     this.flickity = null;
   }
@@ -353,17 +384,47 @@ if (!customElements.get('os-image-carousel')) customElements.define('os-image-ca
 
 class OsProductCarousel extends HTMLElement {
   connectedCallback() {
-    if (this.flickity || !window.Flickity) return;
     this.track = this.querySelector('[data-product-carousel-track]');
     this.slides = [...this.querySelectorAll('[data-product-carousel-slide]')];
     if (!this.track || !this.slides.length) return;
+    this.mediaQuery = window.matchMedia('(max-width: 749px)');
+    this.handleLayoutChange = () => this.updateLayout();
+    this.handleBlockSelect = (event) => {
+      const slide = event.target.closest('[data-product-carousel-slide]');
+      if (slide) this.flickity?.selectCell(slide);
+    };
+    this.mediaQuery.addEventListener('change', this.handleLayoutChange);
+    this.addEventListener('shopify:block:select', this.handleBlockSelect);
+    this.updateLayout();
+  }
+
+  updateLayout() {
+    const isMobile = this.mediaQuery.matches;
+    const layout = isMobile ? this.dataset.mobileLayout : this.dataset.desktopLayout;
+    const centered = isMobile ? this.dataset.mobileCentered === 'true' : this.dataset.desktopCentered === 'true';
+    this.classList.toggle('is-grid', layout === 'grid');
+    this.classList.toggle('is-slider', layout === 'slider');
+    this.classList.toggle('is-centered', centered);
+    const mode = `${layout}-${centered}`;
+    if (layout === 'grid') {
+      this.lastSelectedIndex = this.flickity?.selectedIndex ?? this.lastSelectedIndex;
+      this.flickity?.destroy();
+      this.flickity = null;
+      this.carouselMode = mode;
+      return;
+    }
+    if (this.flickity && this.carouselMode === mode) return;
+    this.lastSelectedIndex = this.flickity?.selectedIndex ?? this.lastSelectedIndex;
+    this.flickity?.destroy();
+    this.flickity = null;
+    if (!window.Flickity) return;
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const requestedIndex = Number(this.dataset.initialIndex) || 0;
+    const requestedIndex = this.lastSelectedIndex ?? (Number(this.dataset.initialIndex) || 0);
     this.flickity = new Flickity(this.track, {
       cellSelector: '[data-product-carousel-slide]',
       initialIndex: Math.min(Math.max(requestedIndex, 0), this.slides.length - 1),
-      cellAlign: 'center',
-      contain: false,
+      cellAlign: centered ? 'center' : 'left',
+      contain: !centered,
       draggable: this.slides.length > 1,
       wrapAround: this.slides.length > 1,
       prevNextButtons: false,
@@ -373,18 +434,35 @@ class OsProductCarousel extends HTMLElement {
       pauseAutoPlayOnHover: true,
       accessibility: true
     });
-    this.querySelector('[data-product-carousel-prev]')?.addEventListener('click', () => this.flickity.previous());
-    this.querySelector('[data-product-carousel-next]')?.addEventListener('click', () => this.flickity.next());
+    this.carouselMode = mode;
+    const previousButton = this.querySelector('[data-product-carousel-prev]');
+    const nextButton = this.querySelector('[data-product-carousel-next]');
+    if (previousButton) previousButton.onclick = () => this.flickity?.previous();
+    if (nextButton) nextButton.onclick = () => this.flickity?.next();
+    this.progress = this.querySelector('[data-product-carousel-progress] span');
+    this.updateProgress(this.flickity.selectedIndex);
+    this.updateNavigationState();
+    this.flickity.on('change', (index) => {
+      this.updateProgress(index);
+      this.updateNavigationState();
+    });
     this.querySelectorAll('img').forEach((image) => {
       if (!image.complete) image.addEventListener('load', () => this.flickity?.resize(), { once: true });
     });
-    this.addEventListener('shopify:block:select', (event) => {
-      const slide = event.target.closest('[data-product-carousel-slide]');
-      if (slide) this.flickity.selectCell(slide);
-    });
+  }
+
+  updateProgress(index) {
+    if (this.progress) this.progress.style.transform = `scaleX(${(index + 1) / this.slides.length})`;
+  }
+
+  updateNavigationState() {
+    const disabled = this.slides.length < 2;
+    this.querySelectorAll('[data-product-carousel-prev], [data-product-carousel-next]').forEach((button) => { button.disabled = disabled; });
   }
 
   disconnectedCallback() {
+    this.mediaQuery?.removeEventListener('change', this.handleLayoutChange);
+    this.removeEventListener('shopify:block:select', this.handleBlockSelect);
     this.flickity?.destroy();
     this.flickity = null;
   }
