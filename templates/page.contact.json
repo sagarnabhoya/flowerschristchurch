@@ -1,13 +1,46 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "os-contact-page",
       "settings": {
+        "eyebrow": "We are here to help",
+        "heading": "Contact Us",
+        "intro": "<p>We’d love to hear from you! Whether you have a question about an order, need help choosing the perfect bouquet, or just want to say hello — our friendly Christchurch team is here to help.</p>",
+        "details_heading": "Visit or contact our florist",
+        "business_name": "Flowers Across Christchurch",
+        "address": "555 Colombo Street\nChristchurch Central City\nChristchurch 8011",
+        "map_link": "https://www.google.com/maps/place/Flowers+Across+Christchurch/@-43.5385328,172.6326017,17z",
+        "phone": "03 9300145",
+        "email": "order.fach@gmail.com",
+        "hours": "Mon–Sat: 9:00 AM – 6:00 PM\nSun: 10:00 AM – 5:00 PM\nPublic holidays: 10:00 AM – 5:00 PM",
+        "form_heading": "Send us a message",
+        "button_label": "Send Message",
+        "more_heading": "More Than Flowers",
+        "more_text": "<p>Beyond bouquets, we create experiences — from lush floral arrangements to thoughtful gift hampers filled with chocolates, candles, and treats. Every order is carefully packaged and delivered with your personal touch, because we know it’s not just about the flowers — it’s about the feeling behind them.</p>",
         "background": "#fffaf3",
-        "text_color": "#193e36",
-        "map_link": "https://www.google.com/maps/place/Flowers+Across+Christchurch/@-43.5385328,172.6326017,17z"
+        "custom_width": 1440,
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "mobile_padding_top": 60,
+        "mobile_padding_bottom": 60,
+        "margin_top": 60,
+        "margin_bottom": 60,
+        "mobile_margin_top": 36,
+        "mobile_margin_bottom": 36,
+        "text_color": "#193e36"
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }

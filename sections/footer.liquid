@@ -47,6 +47,7 @@
         <ul>{%- for link in section.settings.menu_two.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}</ul>
       </nav>
 
+      {%- unless template.suffix == 'contact' -%}
       <div class="os-footer__signup">
         {%- if section.settings.newsletter_heading != blank -%}<p>{{ section.settings.newsletter_heading }}</p>{%- endif -%}
         {%- if section.settings.newsletter_form_mode == 'external' -%}
@@ -66,6 +67,7 @@
           {%- endform -%}
         {%- endif -%}
       </div>
+      {%- endunless -%}
     </div>
 
     <div class="os-footer__bottom">

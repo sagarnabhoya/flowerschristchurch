@@ -133,7 +133,11 @@ if (editorialHeader) {
   const updateHeader = () => {
     headerFrame = undefined;
     if (!condensed && window.scrollY > 220) condensed = true;
-    if (condensed && window.scrollY < 48) condensed = false;
+    // Collapsing the sticky header removes almost 200px of height and can move
+    // scrollY below a larger reset threshold without any user input. Resetting
+    // only at the document top prevents that layout shift from toggling the
+    // header open and closed in a continuous loop.
+    if (condensed && window.scrollY <= 1) condensed = false;
     editorialHeader.classList.toggle('is-condensed', condensed);
     headerShell?.classList.toggle('is-condensed', condensed);
   };
@@ -141,6 +145,39 @@ if (editorialHeader) {
   window.addEventListener('scroll', () => {
     if (!headerFrame) headerFrame = window.requestAnimationFrame(updateHeader);
   }, { passive: true });
+
+  const desktopNav = editorialHeader.querySelector('.db-nav');
+  const dropdownItems = desktopNav ? [...desktopNav.querySelectorAll(':scope > li')].filter((item) => item.querySelector(':scope > .db-nav__panel')) : [];
+  const closeDropdowns = (except) => dropdownItems.forEach((item) => {
+    if (item === except) return;
+    item.classList.remove('is-open');
+    item.querySelector(':scope > .db-nav__trigger')?.setAttribute('aria-expanded', 'false');
+  });
+
+  dropdownItems.forEach((item) => {
+    const trigger = item.querySelector(':scope > .db-nav__trigger');
+    trigger?.setAttribute('aria-expanded', 'false');
+    trigger?.addEventListener('click', (event) => {
+      event.preventDefault();
+      const willOpen = !item.classList.contains('is-open');
+      closeDropdowns(item);
+      item.classList.toggle('is-open', willOpen);
+      trigger.setAttribute('aria-expanded', String(willOpen));
+    });
+  });
+
+  desktopNav?.querySelectorAll(':scope > li').forEach((item) => {
+    item.addEventListener('pointerenter', () => closeDropdowns(item));
+  });
+  document.addEventListener('click', (event) => {
+    if (!desktopNav?.contains(event.target)) closeDropdowns();
+  });
+  editorialHeader.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeDropdowns();
+      document.activeElement?.blur();
+    }
+  });
 }
 
 const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' })[character]);

@@ -14,12 +14,11 @@
         {%- form 'contact', class: 'os-contact__form' -%}
           {%- if form.posted_successfully? -%}<p class="os-contact__success" tabindex="-1">Thanks for getting in touch. Our Christchurch team will reply as soon as possible.</p>{%- endif -%}
           {{ form.errors | default_errors }}
-          <div class="os-contact__fields"><label>Name<input name="contact[name]" value="{{ form.name }}" autocomplete="name"></label><label>Email *<input type="email" name="contact[email]" value="{{ form.email }}" autocomplete="email" required></label><label>Phone<input type="tel" name="contact[phone]" value="{{ form.phone }}" autocomplete="tel"></label><label>Subject<input name="contact[subject]" value="{{ form.subject }}"></label><label class="os-contact__message">Your message<textarea name="contact[body]" rows="7" required>{{ form.body }}</textarea></label></div>
+          <div class="os-contact__fields"><label>Name<input name="contact[name]" value="{{ form.name }}" autocomplete="name"></label><label>Email <span aria-hidden="true">*</span><span class="visually-hidden"> (required)</span><input type="email" name="contact[email]" value="{{ form.email }}" autocomplete="email" required></label><label>Phone<input type="tel" name="contact[phone]" value="{{ form.phone }}" autocomplete="tel"></label><label>Subject<input name="contact[subject]" value="{{ form.subject }}"></label><label class="os-contact__message">Your message <span aria-hidden="true">*</span><span class="visually-hidden"> (required)</span><textarea name="contact[body]" rows="7" required>{{ form.body }}</textarea></label></div>
           <button class="db-button" type="submit">{{ section.settings.button_label }}</button>
         {%- endform -%}
       </div>
     </div>
-    <div class="os-contact__more"><p class="db-kicker">Thoughtful gifting</p><h2>{{ section.settings.more_heading }}</h2><div class="db-rte">{{ section.settings.more_text }}</div></div>
   </div>
 </section>
 {% stylesheet %}
