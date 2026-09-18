@@ -89,6 +89,20 @@ class OsPredictiveSearch extends HTMLElement {
 }
 if (!customElements.get('os-predictive-search')) customElements.define('os-predictive-search', OsPredictiveSearch);
 
+class OsFaq extends HTMLElement {
+  connectedCallback() {
+    if (this.ready) return;
+    this.ready = true;
+    this.items = [...this.querySelectorAll('details')];
+    if (this.dataset.accordionMode !== 'single') return;
+    this.items.forEach((item) => item.addEventListener('toggle', () => {
+      if (!item.open) return;
+      this.items.forEach((other) => { if (other !== item) other.open = false; });
+    }));
+  }
+}
+if (!customElements.get('os-faq')) customElements.define('os-faq', OsFaq);
+
 document.querySelectorAll('[data-delivery-date]').forEach((input) => {
   const today = new Date();
   today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
@@ -168,18 +182,41 @@ function openCartDrawer() {
   return true;
 }
 
+function updateProductVariant(form, variant) {
+  if (!form) return;
+  const selectedVariant = form.querySelector('[data-selected-variant]');
+  const submit = form.querySelector('[data-product-submit]');
+  if (!variant) {
+    if (selectedVariant) selectedVariant.value = '';
+    if (submit) { submit.disabled = true; submit.textContent = 'Unavailable'; }
+    return;
+  }
+  const available = variant.available === true || variant.dataset?.available === 'true';
+  const price = form.closest('.db-product')?.querySelector('[data-product-price]') || document.querySelector('[data-product-price]');
+  if (selectedVariant) selectedVariant.value = variant.id || variant.value;
+  if (price) price.textContent = variant.price !== undefined ? formatCartMoney(variant.price, window.Shopify?.currency?.active || document.documentElement.dataset.currency || 'NZD') : variant.dataset?.price;
+  if (submit) { submit.disabled = !available; submit.textContent = available ? 'Add to cart' : 'Sold out'; }
+  const imageId = variant.featured_image?.id || variant.featured_media?.id || variant.dataset?.imageId;
+  if (imageId) document.querySelector(`[data-media-id="${CSS.escape(String(imageId))}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const variantId = variant.id || variant.value;
+  if (variantId) { const url = new URL(window.location.href); url.searchParams.set('variant', variantId); window.history.replaceState({}, '', url); }
+}
+
 document.addEventListener('change', (event) => {
+  const optionInput = event.target.closest('[data-product-option]');
+  if (optionInput) {
+    const form = optionInput.closest('[data-product-builder-form]');
+    let variants = [];
+    try { variants = JSON.parse(form?.querySelector('[data-product-variants]')?.textContent || '[]'); } catch (_) {}
+    const selectedOptions = [...form.querySelectorAll('[data-product-option]:checked')].map((input) => input.value);
+    const variant = variants.find((entry) => entry.options?.every((value, index) => value === selectedOptions[index]));
+    updateProductVariant(form, variant);
+    return;
+  }
   const select = event.target.closest('[data-variant-select]');
   if (!select) return;
   const option = select.selectedOptions?.[0] || select;
-  const form = select.closest('[data-product-builder-form]');
-  const available = option.dataset.available === 'true';
-  const price = document.querySelector('[data-product-price]');
-  const submit = form?.querySelector('[data-product-submit]');
-  if (price) price.textContent = option.dataset.price;
-  if (submit) { submit.disabled = !available; submit.textContent = available ? 'Add to cart' : 'Sold out'; }
-  if (option.dataset.imageId) document.querySelector(`[data-media-id="${CSS.escape(option.dataset.imageId)}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  const url = new URL(window.location.href); url.searchParams.set('variant', option.value); window.history.replaceState({}, '', url);
+  updateProductVariant(select.closest('[data-product-builder-form]'), option);
 });
 
 document.addEventListener('submit', async (event) => {

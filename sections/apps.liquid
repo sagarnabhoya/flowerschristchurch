@@ -1,0 +1,48 @@
+{% render 'os-section-style', section: section %}
+<section class="os-apps full-width db-section-layout" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }};--os-apps-heading-size:{{ section.settings.heading_size }}px;--os-apps-heading-mobile-size:{{ section.settings.mobile_heading_size }}px">
+  {% render 'os-section-background', section: section %}
+  <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.copy != blank -%}
+      <header class="os-apps__head os-apps__head--{{ section.settings.heading_alignment }} os-apps__head--{{ section.settings.heading_layout }}">
+        <div>{%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}{%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}</div>
+        {%- if section.settings.copy != blank -%}<div class="os-apps__copy">{{ section.settings.copy }}</div>{%- endif -%}
+      </header>
+    {%- endif -%}
+    <div class="os-apps__content">
+      {%- for block in section.blocks -%}{% render block %}{%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Apps",
+  "settings": [
+    { "type": "header", "content": "Section heading" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Your account" },
+    { "type": "richtext", "id": "copy", "label": "Supporting text" },
+    { "type": "range", "id": "heading_size", "label": "Desktop heading size", "min": 28, "max": 96, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "mobile_heading_size", "label": "Mobile heading size", "min": 24, "max": 64, "step": 2, "unit": "px", "default": 36 },
+    { "type": "select", "id": "heading_alignment", "label": "Heading alignment", "default": "left", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+    { "type": "select", "id": "heading_layout", "label": "Heading layout", "default": "split", "options": [{ "value": "split", "label": "Title and text side by side" }, { "value": "stacked", "label": "Title above text" }] },
+    { "type": "header", "content": "Section style" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#fffbf6" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#41511d" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image" },
+    { "type": "image_picker", "id": "mobile_background_image", "label": "Mobile background image" },
+    { "type": "select", "id": "content_width", "label": "Content width", "default": "contained", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
+    { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1440 },
+    { "type": "range", "id": "padding_top", "label": "Desktop top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "mobile_padding_top", "label": "Mobile top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "mobile_padding_bottom", "label": "Mobile bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "margin_top", "label": "Desktop top margin", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "label": "Desktop bottom margin", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_margin_top", "label": "Mobile top margin", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_margin_bottom", "label": "Mobile bottom margin", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "blocks": [{ "type": "@app" }],
+  "presets": [{ "name": "Apps" }]
+}
+{% endschema %}

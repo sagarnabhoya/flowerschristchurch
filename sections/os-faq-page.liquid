@@ -1,30 +1,56 @@
 {% render 'os-section-style', section: section %}
-<section class="os-faq-page full-width db-section-layout" style="--os-faq-bg:{{ section.settings.background }};--os-faq-color:{{ section.settings.text_color }};--os-faq-line:{{ section.settings.line_color }};--os-faq-width:{{ section.settings.custom_width }}px;--os-faq-top:var(--db-section-pad-top);--os-faq-bottom:var(--db-section-pad-bottom)">
+<section class="os-faq-page full-width db-section-layout" style="--os-faq-bg:{{ section.settings.background }};--os-faq-color:{{ section.settings.text_color }};--os-faq-line:{{ section.settings.line_color }};--os-faq-heading-size:{{ section.settings.heading_size }}px;--os-faq-heading-mobile-size:{{ section.settings.mobile_heading_size }}px;--os-faq-columns:{{ section.settings.question_columns }}">
   {% render 'os-section-background', section: section %}
-  <os-faq class="os-faq-page__inner">
-    <header><h1>{{ section.settings.heading | default: page.title }}</h1></header>
-    <div class="os-faq-page__list">
-      {%- for block in section.blocks -%}
-        <details class="os-faq-item" {{ block.shopify_attributes }}{% if section.settings.open_first and forloop.first %} open{% endif %}>
-          <summary><span>{{ block.settings.question }}</span><span class="os-faq-item__icon" aria-hidden="true"></span></summary>
-          {%- if block.settings.answer != blank -%}<div class="os-faq-item__answer db-rte">{{ block.settings.answer }}</div>{%- endif -%}
-        </details>
-      {%- endfor -%}
-    </div>
-  </os-faq>
+  <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
+    <os-faq class="os-faq-page__inner os-faq-page__inner--{{ section.settings.layout }}" data-accordion-mode="{{ section.settings.accordion_behavior }}">
+      <header class="os-faq-page__head os-faq-page__head--{{ section.settings.heading_alignment }}">
+        {%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h1>{{ section.settings.heading | default: page.title | default: "Frequently asked questions" }}</h1>
+        {%- if section.settings.copy != blank -%}<div class="os-faq-page__copy db-rte">{{ section.settings.copy }}</div>{%- endif -%}
+      </header>
+      <div class="os-faq-page__list">
+        {%- for block in section.blocks -%}
+          <details class="os-faq-item" {{ block.shopify_attributes }}{% if section.settings.open_first and forloop.first %} open{% endif %}>
+            <summary><span>{{ block.settings.question | default: 'Question' }}</span><span class="os-faq-item__icon" aria-hidden="true"></span></summary>
+            {%- if block.settings.answer != blank -%}<div class="os-faq-item__answer db-rte">{{ block.settings.answer }}</div>{%- endif -%}
+          </details>
+        {%- endfor -%}
+      </div>
+    </os-faq>
+  </div>
 </section>
 {% schema %}
 {
   "name": "OS FAQ page",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "FAQ's" },
+    { "type": "header", "content": "Section heading" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Frequently asked questions" },
+    { "type": "richtext", "id": "copy", "label": "Supporting text" },
+    { "type": "range", "id": "heading_size", "label": "Desktop heading size", "min": 28, "max": 96, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "mobile_heading_size", "label": "Mobile heading size", "min": 24, "max": 64, "step": 2, "unit": "px", "default": 36 },
+    { "type": "select", "id": "heading_alignment", "label": "Heading alignment", "default": "left", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+    { "type": "header", "content": "FAQ layout" },
+    { "type": "select", "id": "layout", "label": "Layout", "default": "split", "options": [{ "value": "split", "label": "Heading beside questions" }, { "value": "stacked", "label": "Heading above questions" }, { "value": "centered", "label": "Centered heading above questions" }] },
+    { "type": "select", "id": "question_columns", "label": "Desktop question columns", "default": "1", "options": [{ "value": "1", "label": "One column" }, { "value": "2", "label": "Two columns" }] },
+    { "type": "select", "id": "accordion_behavior", "label": "Question behaviour", "default": "multiple", "options": [{ "value": "multiple", "label": "Allow multiple open" }, { "value": "single", "label": "Keep one question open" }] },
     { "type": "checkbox", "id": "open_first", "label": "Open first question", "default": false },
-    { "type": "range", "id": "custom_width", "label": "Content width", "min": 1000, "max": 1800, "step": 20, "unit": "px", "default": 1540 },
-    { "type": "range", "id": "padding_top", "label": "Desktop top spacing", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 84 },
-    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom spacing", "min": 40, "max": 180, "step": 4, "unit": "px", "default": 100 },{"type":"image_picker","id":"background_image","label":"Background image"},{"type":"image_picker","id":"mobile_background_image","label":"Mobile background image","info":"Uses the desktop background image when empty."},{"type":"range","id":"mobile_padding_top","label":"Mobile top padding","min":0,"max":120,"step":4,"unit":"px","default":56},{"type":"range","id":"mobile_padding_bottom","label":"Mobile bottom padding","min":0,"max":120,"step":4,"unit":"px","default":100},{"type":"range","id":"margin_top","label":"Desktop top margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"margin_bottom","label":"Desktop bottom margin","min":0,"max":160,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_top","label":"Mobile top margin","min":0,"max":120,"step":4,"unit":"px","default":0},{"type":"range","id":"mobile_margin_bottom","label":"Mobile bottom margin","min":0,"max":120,"step":4,"unit":"px","default":0},
+    { "type": "header", "content": "Section style" },
     { "type": "color", "id": "background", "label": "Background", "default": "#f9f5ef" },
     { "type": "color", "id": "text_color", "label": "Text colour", "default": "#314116" },
-    { "type": "color", "id": "line_color", "label": "Divider colour", "default": "#80353a" }
+    { "type": "color", "id": "line_color", "label": "Divider colour", "default": "#80353a" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image" },
+    { "type": "image_picker", "id": "mobile_background_image", "label": "Mobile background image" },
+    { "type": "select", "id": "content_width", "label": "Content width", "default": "contained", "options": [{ "value": "contained", "label": "Container" }, { "value": "fluid", "label": "Container fluid" }, { "value": "full", "label": "Full width" }, { "value": "custom", "label": "Custom width" }] },
+    { "type": "range", "id": "custom_width", "label": "Custom width", "min": 600, "max": 2000, "step": 20, "unit": "px", "default": 1440 },
+    { "type": "range", "id": "padding_top", "label": "Desktop top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 84 },
+    { "type": "range", "id": "padding_bottom", "label": "Desktop bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 100 },
+    { "type": "range", "id": "mobile_padding_top", "label": "Mobile top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "mobile_padding_bottom", "label": "Mobile bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "margin_top", "label": "Desktop top margin", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "label": "Desktop bottom margin", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_margin_top", "label": "Mobile top margin", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "mobile_margin_bottom", "label": "Mobile bottom margin", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 }
   ],
   "blocks": [
     { "type": "question", "name": "Question", "settings": [

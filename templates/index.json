@@ -458,21 +458,21 @@
         "slide_description_lines": 3,
         "show_title": true,
         "show_description": true,
-        "show_price": true,
+        "show_price": false,
         "button_label": "Order Now",
         "desktop_slides": 2,
         "desktop_gap": 16,
         "desktop_centered": false,
         "mobile_slides": 1.7,
-        "mobile_gap": 12,
+        "mobile_gap": 0,
         "mobile_centered": true,
         "navigation_position": "edges",
         "desktop_navigation": true,
         "mobile_navigation": false,
         "desktop_progress": false,
-        "mobile_progress": true,
-        "autoplay": false,
-        "interval": 6,
+        "mobile_progress": false,
+        "autoplay": true,
+        "interval": 3,
         "slide_content_gap": 16,
         "mobile_slide_content_gap": 16,
         "background": "#fffbf6",
@@ -500,7 +500,7 @@
           "type": "shopify://apps/shophaus-google-reviews/blocks/google_rating/d8d9cba2-5617-4812-8d88-2ff6a1364233",
           "settings": {
             "horizontal_alignment": "center",
-            "bg_color": "#F7F0E7",
+            "bg_color": "#f7f0e7",
             "font_color": "#656565"
           }
         }
@@ -509,7 +509,27 @@
         "judge_me_reviews_medals_eQbrP7",
         "shophaus_google_reviews_google_rating_R9E7jf"
       ],
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": "Your account",
+        "copy": "",
+        "heading_size": 56,
+        "mobile_heading_size": 36,
+        "heading_alignment": "center",
+        "heading_layout": "split",
+        "background": "#fffbf6",
+        "text_color": "#41511d",
+        "content_width": "full",
+        "custom_width": 1440,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 0,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
+      }
     },
     "why_choose": {
       "type": "os-why-choose-us",
@@ -1009,6 +1029,7 @@
     },
     "seo": {
       "type": "os-rich-content",
+      "disabled": true,
       "settings": {
         "content": "<p><strong>Christchurch flowers, handcrafted locally.</strong></p><p>Flowers Across Christchurch brings fresh, thoughtfully arranged flowers to doorsteps across the city. From birthdays and anniversaries to sympathy flowers and spontaneous gestures, our local team prepares each order with care.</p><p><strong>Flower delivery across Christchurch</strong></p><p>Browse bouquets, roses, flower boxes, arrangements, plants and thoughtful extras online. Select the flowers for the moment, provide the recipient and delivery details, and our Christchurch team will take care of the rest.</p><p>Same-day and weekend availability depends on the suburb, selected product and order time. Current delivery choices and charges are confirmed during checkout.</p>",
         "background": "#fffaf3",
@@ -1019,6 +1040,63 @@
         "padding_bottom": 72,
         "mobile_padding_top": 20,
         "mobile_padding_bottom": 64,
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "mobile_margin_top": 0,
+        "mobile_margin_bottom": 0
+      }
+    },
+    "os_faq_page_rKPVP9": {
+      "type": "os-faq-page",
+      "blocks": {
+        "question_FtUQ6U": {
+          "type": "question",
+          "settings": {
+            "question": "How can we help?",
+            "answer": ""
+          }
+        },
+        "question_eDbcLU": {
+          "type": "question",
+          "settings": {
+            "question": "How can we help?",
+            "answer": ""
+          }
+        },
+        "question_yAhJJz": {
+          "type": "question",
+          "settings": {
+            "question": "How can we help?",
+            "answer": ""
+          }
+        }
+      },
+      "block_order": [
+        "question_FtUQ6U",
+        "question_eDbcLU",
+        "question_yAhJJz"
+      ],
+      "name": "OS FAQ page",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "copy": "",
+        "heading_size": 56,
+        "mobile_heading_size": 36,
+        "heading_alignment": "left",
+        "layout": "split",
+        "question_columns": "1",
+        "accordion_behavior": "multiple",
+        "open_first": true,
+        "background": "#FFFAF3",
+        "text_color": "#314116",
+        "line_color": "#80353a",
+        "content_width": "contained",
+        "custom_width": 1540,
+        "padding_top": 84,
+        "padding_bottom": 100,
+        "mobile_padding_top": 56,
+        "mobile_padding_bottom": 100,
         "margin_top": 0,
         "margin_bottom": 0,
         "mobile_margin_top": 0,
@@ -1039,6 +1117,7 @@
     "locations",
     "blog_feature",
     "social",
-    "seo"
+    "seo",
+    "os_faq_page_rKPVP9"
   ]
 }
