@@ -28,7 +28,7 @@
         "contact_link": "shopify://pages/contact",
         "utility_link_label": "Delivery info",
         "utility_link": "shopify://pages/delivery-informations",
-        "delivery_text": "<strong>Same-day local delivery when you order before 2pm Weekdays ( SAT 12 pm. SUN 10 am)</strong>"
+        "delivery_text": "<strong>Same-day local delivery when you order before 2pm Weekdays ( SAT 12 pm, SUN 10 am)</strong>"
       }
     }
   },

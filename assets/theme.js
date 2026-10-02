@@ -418,13 +418,66 @@ document.addEventListener('click', async (event) => {
   }
 });
 
+// Keep autoplay at the first slide until the carousel is actually in view.
+function createViewportAutoplay(element, advance, interval = 5000, viewport = element) {
+  let visible = false;
+  let hovered = false;
+  let focused = element.contains(document.activeElement);
+  let timer;
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const stop = () => { window.clearInterval(timer); timer = null; };
+  const sync = () => {
+    if (!visible || hovered || focused || document.hidden || motion.matches || !element.isConnected) {
+      stop();
+      return;
+    }
+    if (!timer) timer = window.setInterval(advance, interval);
+  };
+  const observer = new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting && entry.intersectionRatio >= .2;
+    sync();
+  }, { threshold: .2 });
+  const enter = (event) => { if (event.pointerType === 'touch') return; hovered = true; sync(); };
+  const leave = () => { hovered = false; sync(); };
+  const focusIn = () => { focused = true; sync(); };
+  const focusOut = (event) => { focused = element.contains(event.relatedTarget); sync(); };
+  const cleanup = () => {
+    stop();
+    observer.disconnect();
+    element.removeEventListener('pointerenter', enter);
+    element.removeEventListener('pointerleave', leave);
+    element.removeEventListener('focusin', focusIn);
+    element.removeEventListener('focusout', focusOut);
+    document.removeEventListener('visibilitychange', sync);
+    document.removeEventListener('shopify:section:unload', unload);
+    motion.removeEventListener('change', sync);
+  };
+  const unload = (event) => { if (event.target.contains(element)) cleanup(); };
+  element.addEventListener('pointerenter', enter);
+  element.addEventListener('pointerleave', leave);
+  element.addEventListener('focusin', focusIn);
+  element.addEventListener('focusout', focusOut);
+  document.addEventListener('visibilitychange', sync);
+  document.addEventListener('shopify:section:unload', unload);
+  motion.addEventListener('change', sync);
+  observer.observe(viewport);
+  return cleanup;
+}
+
+function initializeFlickityAutoplay(carousel, interval = 6000, enabled = carousel.dataset.autoplay === 'true') {
+  carousel.stopViewportAutoplay?.();
+  carousel.stopViewportAutoplay = null;
+  if (!enabled || carousel.flickity.cells.length < 2) return;
+  carousel.stopViewportAutoplay = createViewportAutoplay(carousel, () => carousel.flickity?.next(true), Number(carousel.dataset.interval) || interval, carousel.track);
+}
+
 function initializeEditorialCarousel(carousel) {
   if (carousel.dataset.carouselReady === 'true') return;
   carousel.dataset.carouselReady = 'true';
   const track = carousel.querySelector('[data-carousel-track]');
   const slides = [...carousel.querySelectorAll('[data-carousel-slide]')];
   if (!track || !slides.length) return;
-  const startIndex = Math.min(Number(carousel.dataset.startIndex) || 0, slides.length - 1);
+  const startIndex = window.matchMedia('(max-width: 749px)').matches ? 0 : Math.min(Number(carousel.dataset.startIndex) || 0, slides.length - 1);
   if (startIndex > 0) window.requestAnimationFrame(() => { track.scrollLeft = Math.max(0, slides[startIndex].offsetLeft - track.clientWidth * .13); });
   const nearestIndex = () => {
     const trackBox = track.getBoundingClientRect();
@@ -444,19 +497,7 @@ function initializeEditorialCarousel(carousel) {
   carousel.querySelector('[data-carousel-prev]')?.addEventListener('click', () => move(-1));
   carousel.querySelector('[data-carousel-next]')?.addEventListener('click', () => move(1));
   if (carousel.dataset.autoplay !== 'true' || slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let timer;
-  let visible = true;
-  let paused = false;
-  const schedule = () => {
-    window.clearInterval(timer);
-    if (visible && !paused) timer = window.setInterval(() => move(1), Number(carousel.dataset.interval) || 5000);
-  };
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }, { threshold: .2 }).observe(carousel);
-  carousel.addEventListener('mouseenter', () => { paused = true; schedule(); });
-  carousel.addEventListener('mouseleave', () => { paused = false; schedule(); });
-  carousel.addEventListener('focusin', () => { paused = true; schedule(); });
-  carousel.addEventListener('focusout', () => { paused = false; schedule(); });
-  schedule();
+  createViewportAutoplay(carousel, () => move(1), Number(carousel.dataset.interval) || 5000, track);
 }
 
 class OsImageCarousel extends HTMLElement {
@@ -485,8 +526,8 @@ class OsImageCarousel extends HTMLElement {
     const centered = this.mediaQuery.matches ? this.dataset.mobileCentered === 'true' : this.dataset.desktopCentered === 'true';
     if (this.flickity && this.carouselMode === centered) return;
     const selectedIndex = this.flickity?.selectedIndex || 0;
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.classList.toggle('is-centered', centered);
     this.flickity = new Flickity(this.track, {
       cellSelector: '[data-carousel-slide]',
@@ -498,10 +539,11 @@ class OsImageCarousel extends HTMLElement {
       prevNextButtons: false,
       pageDots: false,
       adaptiveHeight: false,
-      autoPlay: this.dataset.autoplay === 'true' && !reduceMotion ? Number(this.dataset.interval) || 6000 : false,
+      autoPlay: false,
       pauseAutoPlayOnHover: true,
       accessibility: true
     });
+    initializeFlickityAutoplay(this);
     this.carouselMode = centered;
     this.flickity.on('change', (index) => this.updateControls(index));
     this.updateControls(this.flickity.selectedIndex);
@@ -518,6 +560,7 @@ class OsImageCarousel extends HTMLElement {
 
   disconnectedCallback() {
     this.mediaQuery?.removeEventListener('change', this.handleLayoutChange);
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
     this.flickity = null;
   }
@@ -551,6 +594,7 @@ class OsProductCarousel extends HTMLElement {
     const mode = `${layout}-${centered}`;
     if (layout === 'grid') {
       this.lastSelectedIndex = this.flickity?.selectedIndex ?? this.lastSelectedIndex;
+      this.stopViewportAutoplay?.();
       this.flickity?.destroy();
       this.flickity = null;
       this.carouselMode = mode;
@@ -558,11 +602,11 @@ class OsProductCarousel extends HTMLElement {
     }
     if (this.flickity && this.carouselMode === mode) return;
     this.lastSelectedIndex = this.flickity?.selectedIndex ?? this.lastSelectedIndex;
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
     this.flickity = null;
     if (!window.Flickity) return;
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const requestedIndex = this.lastSelectedIndex ?? (Number(this.dataset.initialIndex) || 0);
+    const requestedIndex = this.lastSelectedIndex ?? (isMobile ? 0 : Number(this.dataset.initialIndex) || 0);
     this.flickity = new Flickity(this.track, {
       cellSelector: '[data-product-carousel-slide]',
       initialIndex: Math.min(Math.max(requestedIndex, 0), this.slides.length - 1),
@@ -573,10 +617,11 @@ class OsProductCarousel extends HTMLElement {
       prevNextButtons: false,
       pageDots: false,
       adaptiveHeight: false,
-      autoPlay: this.dataset.autoplay === 'true' && !reduceMotion ? Number(this.dataset.interval) || 6000 : false,
+      autoPlay: false,
       pauseAutoPlayOnHover: true,
       accessibility: true
     });
+    initializeFlickityAutoplay(this);
     this.carouselMode = mode;
     const previousButton = this.querySelector('[data-product-carousel-prev]');
     const nextButton = this.querySelector('[data-product-carousel-next]');
@@ -606,6 +651,7 @@ class OsProductCarousel extends HTMLElement {
   disconnectedCallback() {
     this.mediaQuery?.removeEventListener('change', this.handleLayoutChange);
     this.removeEventListener('shopify:block:select', this.handleBlockSelect);
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
     this.flickity = null;
   }
@@ -619,7 +665,6 @@ class OsBlogList extends HTMLElement {
     this.track = this.querySelector('[data-blog-track]');
     this.cards = [...this.querySelectorAll('[data-blog-card]')];
     if (!this.track || !this.cards.length) return;
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.flickity = new Flickity(this.track, {
       cellSelector: '[data-blog-card]',
       cellAlign: 'left',
@@ -630,10 +675,11 @@ class OsBlogList extends HTMLElement {
       pageDots: this.dataset.dots === 'true',
       imagesLoaded: true,
       adaptiveHeight: false,
-      autoPlay: this.dataset.autoplay === 'true' && !reduceMotion ? Number(this.dataset.interval) || 5000 : false,
+      autoPlay: false,
       pauseAutoPlayOnHover: true,
       accessibility: true
     });
+    initializeFlickityAutoplay(this, 5000);
     this.querySelector('[data-blog-prev]')?.addEventListener('click', () => this.flickity.previous());
     this.querySelector('[data-blog-next]')?.addEventListener('click', () => this.flickity.next());
     this.addEventListener('shopify:block:select', (event) => {
@@ -643,6 +689,7 @@ class OsBlogList extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
     this.flickity = null;
   }
@@ -688,7 +735,6 @@ class OsSocialGallery extends HTMLElement {
     this.modalSlides = [...this.querySelectorAll('[data-social-modal-slide]')];
     this.querySelectorAll('[data-social-gallery-prev], [data-social-gallery-next], [data-social-modal-prev], [data-social-modal-next]').forEach((button) => { button.hidden = this.cards.length < 2; });
     if (!this.cards.length) return;
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.flickity = new Flickity(this.track, {
       cellSelector: '[data-social-card]',
       cellAlign: 'left',
@@ -697,15 +743,17 @@ class OsSocialGallery extends HTMLElement {
       wrapAround: this.cards.length > 1,
       prevNextButtons: false,
       pageDots: false,
-      autoPlay: this.dataset.autoplay === 'true' && !reduceMotion ? Number(this.dataset.interval) || 6000 : false,
+      autoPlay: false,
       pauseAutoPlayOnHover: true,
       accessibility: true
     });
+    initializeFlickityAutoplay(this);
   }
 
   replacePosts(cards, slides) {
     if (this.modal.open) this.modal.close();
     this.closePost();
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
     this.flickity = null;
     this.track.replaceChildren(...cards);
@@ -832,6 +880,7 @@ class OsSocialGallery extends HTMLElement {
 
   disconnectedCallback() {
     this.galleryAbort?.abort();
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
     this.flickity = null;
     this.closePost();
@@ -926,6 +975,7 @@ class OsWhySlider extends HTMLElement {
       draggable: this.slides.length > 1, wrapAround: false,
       prevNextButtons: false, pageDots: false, accessibility: true
     });
+    initializeFlickityAutoplay(this, 5000, true);
     this.flickity.on('select', () => this.update());
     this.update();
   }
@@ -939,6 +989,7 @@ class OsWhySlider extends HTMLElement {
   }
 
   unmount() {
+    this.stopViewportAutoplay?.();
     this.flickity?.destroy();
     this.flickity = null;
   }
@@ -1210,7 +1261,6 @@ function initializeVerticalRotator(rotator) {
   const items = [...rotator.querySelectorAll('[data-rotator-item]')];
   if (items.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let current = 0;
-  let timer;
   const rotate = () => {
     const previous = items[current];
     current = (current + 1) % items.length;
@@ -1219,11 +1269,7 @@ function initializeVerticalRotator(rotator) {
     items[current].classList.add('is-active');
     window.setTimeout(() => previous.classList.remove('is-leaving'), 1100);
   };
-  const observer = new IntersectionObserver(([entry]) => {
-    window.clearInterval(timer);
-    if (entry.isIntersecting) timer = window.setInterval(rotate, Number(rotator.dataset.interval) || 4000);
-  }, { threshold: .3 });
-  observer.observe(rotator);
+  createViewportAutoplay(rotator, rotate, Number(rotator.dataset.interval) || 4000);
 }
 
 function initializeLocationRoute(section) {

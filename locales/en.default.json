@@ -57,5 +57,28 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "shopify": {
+    "checkout": {
+      "contact": {
+        "email_label": "Sender's Email",
+        "email_placeholder": "Sender's Email",
+        "email_or_phone_label": "Sender Contact Number / Email",
+        "email_or_phone_placeholder": "Sender Contact Number / Email",
+        "first_name_label": "Receiver's First Name",
+        "optional_first_name_label": "Receiver's First Name"
+      },
+      "wallets": {
+        "errors": {
+          "missing": {
+            "first_name": "Receiver's First Name"
+          }
+        }
+      },
+      "payment": {
+        "billing_address_title": "Sender’s Details",
+        "same_billing_address_checkbox_label": "Use shipping address as billing address (No bill will be sent.)"
+      }
+    }
   }
 }

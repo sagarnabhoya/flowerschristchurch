@@ -328,7 +328,10 @@ button.db-text-link { background: transparent; border-left: 0; border-right: 0; 
 .db-product__media { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; }
 .db-product__media img, .db-product__media svg { aspect-ratio: 1/1.08; background: var(--db-cream); height: auto; object-fit: cover; width: 100%; }
 .db-product__gallery-controls { align-items: center; bottom: 18px; display: flex; gap: 12px; justify-content: space-between; left: 18px; position: absolute; right: 18px; }
-.db-product__gallery-controls button { align-items: center; background: rgba(255,250,246,.9); border: 0; border-radius: 50%; color: var(--db-green); cursor: pointer; display: flex; font-size: 18px; height: 44px; justify-content: center; width: 44px; }
+.db-product__gallery-controls button { align-items: center; background: #92203c; border: 0; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,.2); color: #fff; cursor: pointer; display: flex; height: 44px; justify-content: center; padding: 0; transition: background .2s ease; width: 44px; }
+.db-product__gallery-controls button:hover { background: #681c2f; }
+.db-product__gallery-controls button:focus-visible { outline: 2px solid #92203c; outline-offset: 3px; }
+.db-product__gallery-controls button svg { fill: none; height: 18px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; width: 18px; }
 .db-product__gallery-controls span { background: rgba(255,250,246,.9); border-radius: 999px; font-size: 11px; padding: 8px 13px; }
 .db-product__badge { align-items: center; background: var(--db-red); border-radius: 50%; color: #fff; display: flex; font-size: 10px; font-weight: 800; height: 72px; justify-content: center; padding: 10px; position: absolute; right: 18px; text-align: center; text-transform: uppercase; top: 18px; width: 72px; z-index: 2; }
 .db-product__info { align-self: start; min-width: 0; }
@@ -580,7 +583,8 @@ button.db-text-link { background: transparent; border-left: 0; border-right: 0; 
   .db-location-hero__media { min-height: 58svh; }
   .db-location-stories__grid { grid-template-columns: 1fr; }
   .db-location-directory__grid { grid-template-columns: 1fr; }
-  .db-product__gallery-wrap, .db-product__info, .db-cart__summary, .db-help-card { position: static; }
+  .db-product__gallery-wrap { position: relative; top: auto; }
+  .db-product__info, .db-cart__summary, .db-help-card { position: static; }
   .db-rich-content__grid { grid-template-columns: 1fr; }
   .db-footer__top { grid-template-columns: 1.2fr .8fr .8fr; }
   .db-footer__newsletter { grid-column: 1/-1; }
@@ -682,8 +686,9 @@ button.db-text-link { background: transparent; border-left: 0; border-right: 0; 
   .db-product__gallery { border-radius: var(--db-radius); margin: 0; overflow-x: auto; }
   .db-product__media { flex: 0 0 100%; }
   .db-product__media img, .db-product__media svg { aspect-ratio: 4/5; }
-  .db-product__gallery-controls { bottom: 12px; left: 12px; right: 12px; }
-  .db-product__gallery-controls button { height: 40px; width: 40px; }
+  .db-product__gallery-controls { bottom: 12px; left: 12px; right: 12px; top: 12px; pointer-events: none; }
+  .db-product__gallery-controls button { height: 40px; width: 40px; pointer-events: auto; }
+  .db-product__gallery-controls > span { bottom: 0; left: 50%; position: absolute; transform: translateX(-50%); }
   .db-product__badge { height: 60px; right: 12px; top: 12px; width: 60px; }
   .db-product__title-row { gap: 12px; grid-template-columns: 1fr; }
   .db-product__info h1 { font-size: clamp(38px,11vw,50px); }

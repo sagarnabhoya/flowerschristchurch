@@ -31,9 +31,9 @@
         "overlay_color": "#000000",
         "image_alt": "Seasonal flowers arranged by hand",
         "show_content": true,
-        "eyebrow": "Florist in Christchurch",
+        "eyebrow": "best Florist in Christchurch",
         "heading": "Fresh Flowers Delivered With Care",
-        "copy": "<p>Thoughtful seasonal blooms, handcrafted by local florists and delivered with care.</p>",
+        "copy": "<h4>Thoughtful seasonal blooms, handcrafted by your local florists&nbsp;</h4>",
         "show_copy_mobile": true,
         "heading_size": 72,
         "heading_size_mobile": 44,
@@ -73,7 +73,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "Freshest Flower Delivery Across Christchurch"
+            "text": "Freshest Flower Delivery in Christchurch"
           }
         },
         "timeout": {
@@ -82,7 +82,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "Same-day Delivery Available"
+            "text": "Premium  floral desi"
           }
         },
         "urban": {
@@ -164,7 +164,7 @@
         "heading_layout": "stacked",
         "product_source": "collection",
         "collection": "",
-        "products_to_show": 5,
+        "products_to_show": 16,
         "desktop_layout": "grid",
         "desktop_columns": 5,
         "desktop_slides": 4,
@@ -1047,9 +1047,8 @@
     },
     "seo": {
       "type": "os-rich-content",
-      "disabled": true,
       "settings": {
-        "content": "<p><strong>Christchurch flowers, handcrafted locally.</strong></p><p>Flowers Across Christchurch brings fresh, thoughtfully arranged flowers to doorsteps across the city. From birthdays and anniversaries to sympathy flowers and spontaneous gestures, our local team prepares each order with care.</p><p><strong>Flower delivery across Christchurch</strong></p><p>Browse bouquets, roses, flower boxes, arrangements, plants and thoughtful extras online. Select the flowers for the moment, provide the recipient and delivery details, and our Christchurch team will take care of the rest.</p><p>Same-day and weekend availability depends on the suburb, selected product and order time. Current delivery choices and charges are confirmed during checkout.</p>",
+        "content": "<h1><strong>Christchurch flowers, handcrafted locally.</strong></h1><p>Flowers Across Christchurch brings fresh, thoughtfully arranged flowers to doorsteps across the city. From birthdays and anniversaries to sympathy flowers and spontaneous gestures, our local team prepares each order with care.</p><h1><strong>Christchurch Flower Delivery &nbsp;</strong></h1><p>Browse bouquets, roses, flower boxes, arrangements, plants and thoughtful extras online. Select the flowers for the moment, provide the recipient and delivery details, and our Christchurch team will take care of the rest.&nbsp;</p><p>Same-day and weekend availability depends on the suburb, selected product and order time. Current delivery choices and charges are confirmed during checkout.</p>",
         "background": "#fffaf3",
         "text_color": "#41511d",
         "content_width": "custom",
