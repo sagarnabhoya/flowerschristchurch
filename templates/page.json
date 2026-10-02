@@ -11,7 +11,23 @@
   "sections": {
     "main": {
       "type": "page",
-      "settings": {}
+      "settings": {
+        "show_header": true,
+        "eyebrow": "From our flower shop",
+        "contact_email": "",
+        "contact_phone": "",
+        "show_contact_form": false,
+        "contact_button_label": "Send enquiry",
+        "contact_width": 1740,
+        "contact_padding_top": 80,
+        "contact_padding_bottom": 112,
+        "contact_padding_top_mobile": 48,
+        "contact_padding_bottom_mobile": 64,
+        "contact_background": "#f9f5ef",
+        "contact_text_color": "#314116",
+        "help_label": "Contact our team",
+        "help_link": ""
+      }
     }
   },
   "order": [

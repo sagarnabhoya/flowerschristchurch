@@ -1,3 +1,4 @@
+{% comment %}Main product choices and optional extras share one product form.{% endcomment %}
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
   assign subtitle = product.metafields.custom.subtitle.value | default: section.settings.subtitle
@@ -11,7 +12,7 @@
     endfor
   endif
 -%}
-<section class="db-page db-product" data-product-section>
+<section class="db-page db-product" data-product-section data-initial-media-id="{{ current_variant.featured_image.id }}">
   <div class="db-product__gallery-wrap">
     {%- if badge != blank -%}<span class="db-product__badge">{{ badge }}</span>{%- endif -%}
     <div class="db-product__gallery" data-product-gallery>
@@ -44,15 +45,25 @@
           {%- for option in product.options_with_values -%}
             {%- assign option_name = option.name | downcase -%}
             {%- assign option_index = option.position | minus: 1 -%}
-            {%- assign is_colour_option = false -%}
-            {%- if option_name contains 'color' or option_name contains 'colour' -%}{%- assign is_colour_option = true -%}{%- endif -%}
+            {%- liquid
+              assign display_setting = 'option_' | append: option.position | append: '_display'
+              assign option_display = section.settings[display_setting] | default: 'auto'
+              assign show_option_images = false
+              if option_display == 'images'
+                assign show_option_images = true
+              elsif option_display == 'auto'
+                if option_name contains 'color' or option_name contains 'colour'
+                  assign show_option_images = true
+                endif
+              endif
+            -%}
             <fieldset class="db-product-option" data-product-option-group data-option-position="{{ option.position }}">
               <legend>{{ option.name }}</legend>
               <div class="db-product-option__values" role="radiogroup" aria-label="{{ option.name | escape }}">
                 {%- for value in option.values -%}
                   {%- assign option_id = 'Option-' | append: section.id | append: '-' | append: option.position | append: '-' | append: forloop.index -%}
                   {%- assign swatch_image = blank -%}
-                  {%- if is_colour_option -%}
+                  {%- if show_option_images -%}
                     {%- for variant in product.variants -%}
                       {%- if variant.options[option_index] == value and variant.featured_image != blank -%}
                         {%- assign swatch_image = variant.featured_image -%}
@@ -61,10 +72,23 @@
                     {%- endfor -%}
                   {%- endif -%}
                   {%- if swatch_image == blank -%}{%- assign swatch_image = value.swatch.image -%}{%- endif -%}
-                  <label class="db-product-option__value{% if is_colour_option and swatch_image != blank %} db-product-option__value--image{% endif %}" for="{{ option_id }}">
+                  {%- if show_option_images -%}
+                    {%- assign value_name = value | downcase -%}
+                    {%- for block in section.blocks -%}
+                      {%- if block.type == 'variant_image' -%}
+                        {%- assign override_option = block.settings.option_name | strip | downcase -%}
+                        {%- assign override_value = block.settings.option_value | strip | downcase -%}
+                        {%- if override_option == option_name and override_value == value_name and block.settings.image != blank -%}
+                          {%- assign swatch_image = block.settings.image -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                  <label class="db-product-option__value{% if show_option_images and swatch_image != blank %} db-product-option__value--image{% endif %}" for="{{ option_id }}">
                     <input id="{{ option_id }}" type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" data-product-option {% if option.selected_value == value %}checked{% endif %}>
-                    {%- if is_colour_option and swatch_image != blank -%}
-                      <span><span class="db-product-option__swatch-image">{{ swatch_image | image_url: width: 144 | image_tag: widths: '72,108,144', sizes: '72px', loading: 'lazy', alt: value }}</span><small>{{ value }}</small></span>
+                    {%- if show_option_images and swatch_image != blank -%}
+                      <span><span class="db-product-option__swatch-image">{{ swatch_image | image_url: width: 144 | image_tag: widths: '72,108,144', sizes: '72px', loading: 'lazy', alt: value, class: 'db-product-option__image' }}</span><small>{{ value }}</small></span>
                     {%- else -%}
                       <span>{{ value }}</span>
                     {%- endif -%}
@@ -78,22 +102,420 @@
         </fieldset>
           {%- assign step_number = step_number | plus: 1 -%}
         {%- else -%}<input type="hidden" name="id" value="{{ current_variant.id }}">{%- endunless -%}
-        {%- if section.settings.show_delivery_fields -%}
-          <fieldset class="db-product-step db-product-delivery"><legend><span>{{ step_number }}</span>{{ section.settings.delivery_step_heading }}</legend><div class="db-product-delivery__grid"><div><label for="DeliverySuburb-{{ section.id }}">Recipient suburb</label><input id="DeliverySuburb-{{ section.id }}" type="text" name="properties[Recipient suburb]" placeholder="e.g. Riccarton" required></div><div><label for="DeliveryDate-{{ section.id }}">Preferred delivery date</label><input id="DeliveryDate-{{ section.id }}" type="date" name="properties[Delivery date]" data-delivery-date required></div></div>{%- if section.settings.delivery_note != blank -%}<p class="db-product-step__note">{{ section.settings.delivery_note }}</p>{%- endif -%}</fieldset>
-          {%- assign step_number = step_number | plus: 1 -%}
+        {%- if section.settings.show_related_products -%}
+          {%- liquid
+            assign extra_products = recommendations.products | where: 'available', true
+            assign available_complementary_count = 0
+            for extra_product in extra_products
+              unless extra_product.id == product.id
+                assign available_complementary_count = available_complementary_count | plus: 1
+              endunless
+            endfor
+            if available_complementary_count == 0
+              assign extra_products = section.settings.complementary_fallback_products | where: 'available', true
+            endif
+            assign extra_products_count = 0
+            for extra_product in extra_products
+              unless extra_product.id == product.id
+                assign extra_products_count = extra_products_count | plus: 1
+              endunless
+            endfor
+          -%}
+          <db-product-recommendations
+            class="db-product-recommendations"
+            data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&amp;product_id={{ product.id }}&amp;limit={{ section.settings.related_products_limit }}&amp;intent=complementary"
+            hidden
+          >
+            {%- if extra_products_count > 0 -%}
+              <fieldset class="db-addon-picker" style="--db-extra-columns:{{ section.settings.related_products_columns }};--db-extra-radius:{{ section.settings.related_products_radius }}px">
+                <legend>{% if section.settings.related_products_show_step %}<span>{{ step_number }}</span>{% endif %}{{ section.settings.related_products_heading | escape }}</legend>
+                {%- if section.settings.related_products_text != blank -%}<div class="db-product-step__note db-rte">{{ section.settings.related_products_text }}</div>{%- endif -%}
+                <div class="db-addon-picker__grid">
+                  {%- assign extras_shown = 0 -%}
+                  {%- for related_product in extra_products -%}
+                    {%- if related_product.id == product.id -%}{%- continue -%}{%- endif -%}
+                    {%- assign addon_variant = related_product.selected_or_first_available_variant -%}
+                    <label class="db-addon-option{% unless addon_variant.available %} is-unavailable{% endunless %}">
+                      <input type="checkbox" value="{{ addon_variant.id }}" data-addon-variant {% unless addon_variant.available %}disabled{% endunless %}>
+                      <span class="db-addon-option__media">
+                        {%- assign addon_image = addon_variant.featured_image | default: related_product.featured_image -%}
+                        {%- if addon_image != blank -%}
+                          {{ addon_image | image_url: width: 360 | image_tag: widths: '180,280,360', sizes: '(min-width: 750px) 150px, 38vw', loading: 'lazy', alt: related_product.title }}
+                        {%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}
+                      </span>
+                      <span class="db-addon-option__copy">
+                        <strong>{{ related_product.title | escape }}</strong>
+                        {%- unless related_product.has_only_default_variant -%}<small>{{ addon_variant.title | escape }}</small>{%- endunless -%}
+                        {% if section.settings.related_products_show_prices %}<small>{{ addon_variant.price | money }}</small>{% endif %}
+                        {%- unless addon_variant.available -%}<small>{{ section.settings.related_products_sold_out | escape }}</small>{%- endunless -%}
+                      </span>
+                    </label>
+                    {%- assign extras_shown = extras_shown | plus: 1 -%}
+                    {%- if extras_shown >= section.settings.related_products_limit -%}{%- break -%}{%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endif -%}
+          </db-product-recommendations>
         {%- endif -%}
-        {%- if section.settings.vase_collection != blank -%}{%- render 'product-addon-picker', collection: section.settings.vase_collection, step: step_number, heading: section.settings.vase_heading -%}{%- assign step_number = step_number | plus: 1 -%}{%- endif -%}
-        {%- assign gift_addons = section.settings.gift_collection | default: collections['plants-others'] -%}
-        {%- render 'product-addon-picker', collection: gift_addons, step: step_number, heading: section.settings.gift_heading -%}
-        <div class="db-product__purchase"><div><label for="Quantity-{{ section.id }}">Quantity</label><div class="db-quantity" data-quantity><button type="button" data-quantity-change="-1" aria-label="Decrease quantity">−</button><input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1"><button type="button" data-quantity-change="1" aria-label="Increase quantity">+</button></div></div><button class="db-button" type="submit" data-product-submit {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}{{ section.settings.add_to_cart_label }}{% else %}Sold out{% endif %}</button></div>
-        <p class="db-form-error" data-product-error hidden></p>{%- if section.settings.show_dynamic_checkout -%}{{ form | payment_button }}{%- endif -%}
+        {%- assign addon_blocks = section.blocks | where: 'type', 'addon_slider' -%}
+        {%- if extra_products_count > 0 -%}{%- assign step_number = step_number | plus: 1 -%}{%- endif -%}
+        {%- for block in addon_blocks -%}
+          {%- render 'product-addon-slider', block: block, product: product, section: section, step: step_number -%}
+          {%- if block.settings.products != blank -%}{%- assign step_number = step_number | plus: 1 -%}{%- endif -%}
+        {%- endfor -%}
+        <div class="db-product__purchase"><div><label for="Quantity-{{ section.id }}">Quantity</label><div class="db-quantity" data-quantity><button type="button" data-quantity-change="-1" aria-label="Decrease quantity">−</button><input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1" step="1" inputmode="numeric" required><button type="button" data-quantity-change="1" aria-label="Increase quantity">+</button></div></div><button class="db-button" type="submit" data-product-submit data-add-to-cart-label="{{ section.settings.add_to_cart_label | escape }}" {% unless current_variant.available %}disabled{% endunless %}>{% if current_variant.available %}{{ section.settings.add_to_cart_label }}{% else %}Sold out{% endif %}</button></div>
+        <p class="db-form-error" data-product-error role="alert" hidden></p>{%- if section.settings.show_dynamic_checkout and section.settings.show_related_products == false and addon_blocks.size == 0 -%}{{ form | payment_button }}{%- endif -%}
       {%- endform -%}
     </div>
-    {%- if section.blocks.size > 0 -%}<div class="db-product__promises">{%- for block in section.blocks -%}<p {{ block.shopify_attributes }}><span>{{ block.settings.icon }}</span>{{ block.settings.text }}</p>{%- endfor -%}</div>{%- endif -%}
-    {%- if section.settings.delivery_content != blank -%}<details class="db-accordion"><summary>{{ section.settings.delivery_heading }}</summary><div class="db-accordion__content db-rte">{{ section.settings.delivery_content }}</div></details>{%- endif -%}
+    {%- assign promise_blocks = section.blocks | where: 'type', 'promise' -%}
+    {%- if promise_blocks.size > 0 -%}<div class="db-product__promises">{%- for block in promise_blocks -%}<p {{ block.shopify_attributes }}><span>{{ block.settings.icon }}</span>{{ block.settings.text }}</p>{%- endfor -%}</div>{%- endif -%}
     {%- if section.settings.care_content != blank -%}<details class="db-accordion"><summary>{{ section.settings.care_heading }}</summary><div class="db-accordion__content db-rte">{{ section.settings.care_content }}</div></details>{%- endif -%}
   </div>
 </section>
 {% schema %}
-{"name":"Editorial product","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Made fresh to order"},{"type":"text","id":"subtitle","label":"Fallback subtitle","default":"A florist-made arrangement for meaningful moments"},{"type":"checkbox","id":"show_vendor","label":"Show product vendor","default":false},{"type":"checkbox","id":"show_dynamic_checkout","label":"Show dynamic checkout","default":false},{"type":"text","id":"option_heading","label":"Option heading","default":"Choose your bouquet"},{"type":"checkbox","id":"show_delivery_fields","label":"Collect suburb and delivery date","default":true},{"type":"text","id":"delivery_step_heading","label":"Delivery step heading","default":"Delivery details"},{"type":"text","id":"delivery_note","label":"Delivery note","default":"We will confirm availability for your selected area and date."},{"type":"collection","id":"vase_collection","label":"Vase add-ons"},{"type":"text","id":"vase_heading","label":"Vase heading","default":"Add a vase"},{"type":"collection","id":"gift_collection","label":"Gift add-ons"},{"type":"text","id":"gift_heading","label":"Gift heading","default":"Make it extra special"},{"type":"text","id":"add_to_cart_label","label":"Add to cart label","default":"Add to cart"},{"type":"text","id":"delivery_heading","label":"Delivery heading","default":"Delivery information"},{"type":"richtext","id":"delivery_content","label":"Delivery content","default":"<p>Choose your preferred delivery date during checkout. Cut-off times and availability vary by delivery area.</p>"},{"type":"text","id":"care_heading","label":"Care heading","default":"Flower care"},{"type":"richtext","id":"care_content","label":"Care content","default":"<p>Trim the stems, refresh the water regularly and keep your flowers away from direct heat.</p>"}],"blocks":[{"type":"promise","name":"Service promise","settings":[{"type":"text","id":"icon","label":"Icon or symbol","default":"✓"},{"type":"text","id":"text","label":"Text","default":"Arranged fresh by local florists"}]}],"presets":[{"name":"Editorial product","blocks":[{"type":"promise"},{"type":"promise"},{"type":"promise"}]}]}
+{
+  "name": "Editorial product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Made fresh to order"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Fallback subtitle",
+      "default": "A florist-made arrangement for meaningful moments"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "option_heading",
+      "label": "Option heading",
+      "default": "Choose your bouquet"
+    },
+    {
+      "type": "header",
+      "content": "Variant appearance"
+    },
+    {
+      "type": "paragraph",
+      "content": "Choose a style for each option in the product option order. Images use the assigned variant photo or Shopify swatch; values without an image use buttons. Add Variant image blocks to override individual thumbnails."
+    },
+    {
+      "type": "select",
+      "id": "option_1_display",
+      "label": "Option 1 display",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatic (color images)"
+        },
+        {
+          "value": "images",
+          "label": "Image tiles"
+        },
+        {
+          "value": "buttons",
+          "label": "Text buttons"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "option_2_display",
+      "label": "Option 2 display",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatic (color images)"
+        },
+        {
+          "value": "images",
+          "label": "Image tiles"
+        },
+        {
+          "value": "buttons",
+          "label": "Text buttons"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "option_3_display",
+      "label": "Option 3 display",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatic (color images)"
+        },
+        {
+          "value": "images",
+          "label": "Image tiles"
+        },
+        {
+          "value": "buttons",
+          "label": "Text buttons"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "header",
+      "content": "Make it extra special"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_products",
+      "label": "Show extra special recommendations",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "related_products_heading",
+      "label": "Extra special heading",
+      "default": "Make it extra special"
+    },
+    {
+      "type": "richtext",
+      "id": "related_products_text",
+      "label": "Extra special text",
+      "default": "<p>Select a little extra to add with your bouquet.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "related_products_show_step",
+      "label": "Show numbered step",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "related_products_show_prices",
+      "label": "Show extra prices",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "related_products_sold_out",
+      "label": "Sold out text",
+      "default": "Sold out"
+    },
+    {
+      "type": "range",
+      "id": "related_products_columns",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "related_products_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "related_products_limit",
+      "label": "Complementary products to show",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "product_list",
+      "id": "complementary_fallback_products",
+      "label": "Fallback complementary products",
+      "limit": 6,
+      "info": "Shown when Shopify has no available complementary products, or recommendations cannot load. Sold-out products and the current product are excluded."
+    },
+    {
+      "type": "paragraph",
+      "content": "Manage complementary products in Shopify Search & Discovery. If none are available, your fallback products are shown. This area stays hidden when neither list has available products."
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Add to cart label",
+      "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "care_heading",
+      "label": "Care heading",
+      "default": "Flower care"
+    },
+    {
+      "type": "richtext",
+      "id": "care_content",
+      "label": "Care content",
+      "default": "<p>Trim the stems, refresh the water regularly and keep your flowers away from direct heat.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promise",
+      "name": "Service promise",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon or symbol",
+          "default": "✓"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Arranged fresh by local florists"
+        }
+      ]
+    },
+    {
+      "type": "variant_image",
+      "name": "Variant image",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Override an image tile for an option value. Applies to products using this template with the same option name and value. Set that option display to Image tiles."
+        },
+        {
+          "type": "text",
+          "id": "option_name",
+          "label": "Option name",
+          "info": "For example: Colour, Size or Style."
+        },
+        {
+          "type": "text",
+          "id": "option_value",
+          "label": "Option value",
+          "info": "For example: Pink, Large or Classic."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Option image"
+        }
+      ]
+    },
+    {
+      "type": "addon_slider",
+      "name": "Custom add-on slider",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Add a little extra"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Choose an optional extra to add with each bouquet.</p>"
+        },
+        {
+          "type": "product_list",
+          "id": "products",
+          "label": "Add-on products",
+          "limit": 12,
+          "info": "Choose individual products and arrange their order. Customers can select an available variant. The current main product is excluded."
+        },
+        {
+          "type": "select",
+          "id": "selection_mode",
+          "label": "Selection",
+          "options": [
+            {
+              "value": "single",
+              "label": "One optional extra"
+            },
+            {
+              "value": "multiple",
+              "label": "Multiple extras"
+            }
+          ],
+          "default": "multiple"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_step",
+          "label": "Show numbered step",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "columns",
+          "label": "Desktop visible products",
+          "min": 2,
+          "max": 4,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "type": "range",
+          "id": "image_radius",
+          "label": "Image corner radius",
+          "min": 0,
+          "max": 24,
+          "step": 2,
+          "unit": "px",
+          "default": 12
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial product",
+      "blocks": [
+        {
+          "type": "addon_slider",
+          "settings": {
+            "heading": "Add a vase",
+            "selection_mode": "single"
+          }
+        },
+        {
+          "type": "addon_slider",
+          "settings": {
+            "heading": "Choose an extra gift",
+            "selection_mode": "multiple"
+          }
+        },
+        {
+          "type": "promise"
+        },
+        {
+          "type": "promise"
+        },
+        {
+          "type": "promise"
+        }
+      ]
+    }
+  ]
+}
 {% endschema %}

@@ -1,11 +1,17 @@
 {% render 'os-section-style', section: section %}
+{%- liquid
+  assign heading_tag = 'h1'
+  if request.page_type == 'index'
+    assign heading_tag = 'h2'
+  endif
+-%}
 <section class="os-faq-page full-width db-section-layout" style="--os-faq-bg:{{ section.settings.background }};--os-faq-color:{{ section.settings.text_color }};--os-faq-line:{{ section.settings.line_color }};--os-faq-heading-size:{{ section.settings.heading_size }}px;--os-faq-heading-mobile-size:{{ section.settings.mobile_heading_size }}px;--os-faq-columns:{{ section.settings.question_columns }}">
   {% render 'os-section-background', section: section %}
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
-    <os-faq class="os-faq-page__inner os-faq-page__inner--{{ section.settings.layout }}" data-accordion-mode="{{ section.settings.accordion_behavior }}">
-      <header class="os-faq-page__head os-faq-page__head--{{ section.settings.heading_alignment }}">
+    <os-faq class="os-faq-page__inner os-faq-page__inner--{{ section.settings.layout }}{% if section.settings.sticky_heading %} os-faq-page__inner--sticky{% endif %}" data-accordion-mode="{{ section.settings.accordion_behavior }}">
+      <header class="os-faq-page__head os-faq-page__head--{{ section.settings.heading_alignment }}{% if section.settings.sticky_heading %} os-faq-page__head--sticky{% endif %}">
         {%- if section.settings.eyebrow != blank -%}<p class="db-kicker">{{ section.settings.eyebrow }}</p>{%- endif -%}
-        <h1>{{ section.settings.heading | default: page.title | default: "Frequently asked questions" }}</h1>
+        <{{ heading_tag }}>{{ section.settings.heading | default: page.title | default: "Frequently asked questions" }}</{{ heading_tag }}>
         {%- if section.settings.copy != blank -%}<div class="os-faq-page__copy db-rte">{{ section.settings.copy }}</div>{%- endif -%}
       </header>
       <div class="os-faq-page__list">
@@ -19,6 +25,30 @@
     </os-faq>
   </div>
 </section>
+{%- capture faq_schema -%}
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- assign has_faq = false -%}
+    {%- for block in section.blocks -%}
+      {%- if block.settings.question != blank and block.settings.answer != blank -%}
+        {%- if has_faq %},{% endif -%}
+        {%- assign has_faq = true -%}
+        {
+          "@type": "Question",
+          "name": {{ block.settings.question | json }},
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": {{ block.settings.answer | strip_html | strip | json }}
+          }
+        }
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+{%- endcapture -%}
+<script type="application/ld+json">{{ faq_schema }}</script>
 {% schema %}
 {
   "name": "OS FAQ page",
@@ -33,6 +63,7 @@
     { "type": "header", "content": "FAQ layout" },
     { "type": "select", "id": "layout", "label": "Layout", "default": "split", "options": [{ "value": "split", "label": "Heading beside questions" }, { "value": "stacked", "label": "Heading above questions" }, { "value": "centered", "label": "Centered heading above questions" }] },
     { "type": "select", "id": "question_columns", "label": "Desktop question columns", "default": "1", "options": [{ "value": "1", "label": "One column" }, { "value": "2", "label": "Two columns" }] },
+    { "type": "checkbox", "id": "sticky_heading", "label": "Sticky heading on scroll (desktop split layout)", "default": true },
     { "type": "select", "id": "accordion_behavior", "label": "Question behaviour", "default": "multiple", "options": [{ "value": "multiple", "label": "Allow multiple open" }, { "value": "single", "label": "Keep one question open" }] },
     { "type": "checkbox", "id": "open_first", "label": "Open first question", "default": false },
     { "type": "header", "content": "Section style" },

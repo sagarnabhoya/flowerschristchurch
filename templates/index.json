@@ -32,7 +32,7 @@
         "image_alt": "Seasonal flowers arranged by hand",
         "show_content": true,
         "eyebrow": "Florist in Christchurch",
-        "heading": "Fresh flowers delivered with care",
+        "heading": "Fresh Flowers Delivered With Care",
         "copy": "<p>Thoughtful seasonal blooms, handcrafted by local florists and delivered with care.</p>",
         "show_copy_mobile": true,
         "heading_size": 72,
@@ -57,7 +57,7 @@
         "button2_link": "",
         "button2_style": "outline",
         "show_badge": true,
-        "badge": "Free Someday Flower Delivery",
+        "badge": "Free Same Day Flower Delivery",
         "badge_position": "top-right",
         "show_badge_mobile": false,
         "badge_position_mobile": "bottom-right",
@@ -73,7 +73,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "Freshest Flower delivery across Christchurch"
+            "text": "Freshest Flower Delivery Across Christchurch"
           }
         },
         "timeout": {
@@ -82,7 +82,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "Same-day delivery available"
+            "text": "Same-day Delivery Available"
           }
         },
         "urban": {
@@ -91,7 +91,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "Freshness guaranteed"
+            "text": "Freshness Guaranteed"
           }
         },
         "nine": {
@@ -224,6 +224,7 @@
           "settings": {
             "product": "",
             "collection": "sympathy-flowers",
+            "image": "shopify://shop_images/1D1F45CC-BA4E-4848-86D3-D0C3E269D4D7_165ddfef-148e-4847-b955-819f1174a2a2.png",
             "title": "",
             "button_label": "",
             "link": ""
@@ -234,6 +235,7 @@
           "settings": {
             "product": "",
             "collection": "thank-you-flowers",
+            "image": "shopify://shop_images/3FB1BFA8-55D4-4A13-B829-3C68959862B0_235da430-ad4a-407b-a6ac-d4b454d4e8b0.png",
             "title": "",
             "button_label": "",
             "link": ""
@@ -244,6 +246,7 @@
           "settings": {
             "product": "",
             "collection": "get-well-soon",
+            "image": "shopify://shop_images/C112C45D-8764-4208-BE7A-E11576EC54CB.webp",
             "title": "",
             "button_label": "",
             "link": ""
@@ -254,6 +257,7 @@
           "settings": {
             "product": "",
             "collection": "new-baby-flowers",
+            "image": "shopify://shop_images/ADA8AA3D-EB58-483E-88FE-D096533CEEDA.webp",
             "title": "",
             "button_label": "",
             "link": ""
@@ -274,6 +278,7 @@
           "settings": {
             "product": "",
             "collection": "just-for-you-collection-1",
+            "image": "shopify://shop_images/41B5CF11-5C39-4729-B6AE-152AF29B1ED1.webp",
             "title": "",
             "button_label": "",
             "link": ""
@@ -284,6 +289,7 @@
           "settings": {
             "product": "",
             "collection": "mothers-day-collection",
+            "image": "shopify://shop_images/C8C6E87E-990F-4F15-B73D-97D9DC8C233E.webp",
             "title": "",
             "button_label": "",
             "link": ""
@@ -923,6 +929,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "Fresh flowers and thoughtful gifting.",
+            "post_url": "",
             "date": ""
           }
         },
@@ -932,6 +939,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "Made locally and delivered with care.",
+            "post_url": "",
             "date": ""
           }
         },
@@ -941,6 +949,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "A little everyday delight.",
+            "post_url": "",
             "date": ""
           }
         },
@@ -950,6 +959,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "Seasonal blooms from our florists.",
+            "post_url": "",
             "date": ""
           }
         },
@@ -959,6 +969,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "Thoughtful moments that matter.",
+            "post_url": "",
             "date": ""
           }
         },
@@ -968,6 +979,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "Flowers made for meaningful moments.",
+            "post_url": "",
             "date": ""
           }
         },
@@ -977,6 +989,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "Behind the scenes with our local florists.",
+            "post_url": "",
             "date": ""
           }
         },
@@ -986,6 +999,7 @@
             "media_fit": "cover",
             "account": "flowersacrosschristchurch",
             "caption": "Fresh flowers across Christchurch.",
+            "post_url": "",
             "date": ""
           }
         }
@@ -1001,6 +1015,10 @@
         "post8"
       ],
       "settings": {
+        "feed_source": "manual",
+        "feed_url": "",
+        "feed_account": "flowersacrosschristchurch",
+        "feed_limit": 8,
         "heading": "A daily dose of fresh blooms, gifting inspiration and everyday joy @flowersacrosschristchurch",
         "desktop_columns": 8,
         "mobile_columns": 3,
@@ -1049,46 +1067,95 @@
     "os_faq_page_rKPVP9": {
       "type": "os-faq-page",
       "blocks": {
-        "question_FtUQ6U": {
+        "question_free_delivery": {
           "type": "question",
           "settings": {
-            "question": "How can we help?",
-            "answer": ""
+            "question": "Do you offer FREE Flower Delivery in Christchurch?",
+            "answer": "<p>Yes. Flower Across Christchurch proudly offers FREE Flower Delivery in Christchurch to most Christchurch suburbs.</p>"
           }
         },
-        "question_eDbcLU": {
+        "question_same_day": {
           "type": "question",
           "settings": {
-            "question": "How can we help?",
-            "answer": ""
+            "question": "Do you offer same-day flower delivery?",
+            "answer": "<p>Yes. We offer same-day flower delivery to eligible Christchurch suburbs when you place your order before our daily cut-off time.</p>"
           }
         },
-        "question_yAhJJz": {
+        "question_areas": {
           "type": "question",
           "settings": {
-            "question": "How can we help?",
-            "answer": ""
+            "question": "Which areas in Christchurch do you deliver to?",
+            "answer": "<p>We deliver citywide! Our reliable delivery network covers all major Christchurch suburbs, including Riccarton, Merivale, St Albans, Papanui, Fendalton, Bryndwr, Avonhead, Sumner, New Brighton, Halswell, and surrounding Canterbury areas.</p>"
+          }
+        },
+        "question_message_gift": {
+          "type": "question",
+          "settings": {
+            "question": "Can I add a personal message or gift to my order?",
+            "answer": "<p>Yes! Every flower delivery includes a complimentary boutique message card with your personal note. At checkout, you can also easily add thoughtful gift extras like premium chocolates, teddy bears, or elegant glass vases.</p>"
+          }
+        },
+        "question_delivery_date": {
+          "type": "question",
+          "settings": {
+            "question": "Can I choose a delivery date?",
+            "answer": "<p>Yes. You can select your preferred delivery date during checkout, making it easy to organise flowers for birthdays, anniversaries, special occasions, and future celebrations.</p>"
+          }
+        },
+        "question_hospitals": {
+          "type": "question",
+          "settings": {
+            "question": "Do you deliver to hospitals, workplaces, and retirement villages?",
+            "answer": "<p>Yes. We deliver flowers to homes, workplaces, hospitals, retirement villages, schools, and other locations throughout Christchurch.</p>"
+          }
+        },
+        "question_not_home": {
+          "type": "question",
+          "settings": {
+            "question": "What if the recipient isn't home?",
+            "answer": "<p>If the recipient isn't available, our delivery team will follow any delivery instructions provided with your order or leave the flowers in a safe location whenever appropriate.</p>"
+          }
+        },
+        "question_fresh": {
+          "type": "question",
+          "settings": {
+            "question": "Are your flowers fresh and locally sourced?",
+            "answer": "<p>Absolutely. We source our blooms daily from the local Christchurch flower market to ensure maximum freshness, vibrancy, and longevity. Every arrangement is handcrafted with care by our team of expert local florists.</p>"
+          }
+        },
+        "question_sympathy": {
+          "type": "question",
+          "settings": {
+            "question": "Do you provide sympathy and funeral flowers in Christchurch?",
+            "answer": "<p>Yes, we understand the importance of these moments. We offer a respectful, dignified range of sympathy bouquets, standing sprays, and funeral tributes, with prompt and reliable delivery to family homes, churches, or funeral parlours across Christchurch.</p>"
           }
         }
       },
       "block_order": [
-        "question_FtUQ6U",
-        "question_eDbcLU",
-        "question_yAhJJz"
+        "question_free_delivery",
+        "question_same_day",
+        "question_areas",
+        "question_message_gift",
+        "question_delivery_date",
+        "question_hospitals",
+        "question_not_home",
+        "question_fresh",
+        "question_sympathy"
       ],
       "name": "OS FAQ page",
       "settings": {
         "eyebrow": "",
-        "heading": "",
+        "heading": "Frequently Asked Questions",
         "copy": "",
         "heading_size": 56,
         "mobile_heading_size": 36,
         "heading_alignment": "left",
         "layout": "split",
         "question_columns": "1",
+        "sticky_heading": true,
         "accordion_behavior": "multiple",
         "open_first": true,
-        "background": "#FFFAF3",
+        "background": "#fffaf3",
         "text_color": "#314116",
         "line_color": "#80353a",
         "content_width": "contained",

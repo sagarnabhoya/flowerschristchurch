@@ -103,13 +103,9 @@ class OsFaq extends HTMLElement {
 }
 if (!customElements.get('os-faq')) customElements.define('os-faq', OsFaq);
 
-document.querySelectorAll('[data-delivery-date]').forEach((input) => {
-  const today = new Date();
-  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-  input.min = today.toISOString().slice(0, 10);
-});
-
-document.querySelectorAll('[data-product-gallery]').forEach((gallery) => {
+function initializeProductGallery(gallery) {
+  if (gallery.dataset.galleryReady === 'true') return;
+  gallery.dataset.galleryReady = 'true';
   const section = gallery.closest('[data-product-section]');
   const slides = [...gallery.querySelectorAll('[data-media-id], .db-product__media')];
   const current = section?.querySelector('[data-gallery-current]');
@@ -123,6 +119,15 @@ document.querySelectorAll('[data-product-gallery]').forEach((gallery) => {
   gallery.addEventListener('scroll', () => {
     if (current) current.textContent = Math.min(Math.round(gallery.scrollLeft / Math.max(gallery.clientWidth, 1)) + 1, slides.length);
   }, { passive: true });
+  const initialImage = slides.find((slide) => slide.dataset.mediaId === section?.dataset.initialMediaId);
+  if (initialImage) window.requestAnimationFrame(() => {
+    gallery.scrollLeft = initialImage.offsetLeft - slides[0].offsetLeft;
+    if (current) current.textContent = slides.indexOf(initialImage) + 1;
+  });
+}
+document.querySelectorAll('[data-product-gallery]').forEach(initializeProductGallery);
+document.addEventListener('shopify:section:load', (event) => {
+  event.target.querySelectorAll('[data-product-gallery]').forEach(initializeProductGallery);
 });
 
 const editorialHeader = document.querySelector('.db-header');
@@ -205,7 +210,7 @@ async function refreshCartDrawer() {
   const items = cart.items.map((item) => {
     const image = item.featured_image?.url || item.image;
     const resizedImage = image ? `${image}${image.includes('?') ? '&' : '?'}width=180` : '';
-    return `<div class="db-drawer-item">${image ? `<img src="${escapeHtml(resizedImage)}" alt="${escapeHtml(item.product_title)}" width="90" height="90">` : ''}<div><a href="${escapeHtml(item.url)}">${escapeHtml(item.product_title)}</a><p>${item.quantity} &times; ${formatCartMoney(item.final_price, cart.currency)}</p><button class="db-text-link" type="button" data-cart-remove="${escapeHtml(item.key)}">Remove</button></div></div>`;
+    return `<div class="db-drawer-item${item.parent_relationship ? ' db-drawer-item--extra' : ''}">${image ? `<img src="${escapeHtml(resizedImage)}" alt="${escapeHtml(item.product_title)}" width="90" height="90">` : ''}<div><a href="${escapeHtml(item.url)}">${escapeHtml(item.product_title)}</a><p>${item.quantity} &times; ${formatCartMoney(item.final_price, cart.currency)}</p><button class="db-text-link" type="button" data-cart-remove="${escapeHtml(item.key)}">Remove</button></div></div>`;
   }).join('');
   target.innerHTML = `<div class="db-cart-drawer__items">${items}</div><div class="db-cart-drawer__footer"><p class="db-cart-drawer__total"><span>Subtotal</span><span>${formatCartMoney(cart.total_price, cart.currency)}</span></p><p class="db-cart-drawer__note">Delivery and your personal message are confirmed in the next step.</p><a class="db-button" href="${window.Shopify.routes.root}cart">Continue to delivery</a><button class="db-cart-drawer__continue" type="button" data-dialog-close>Continue shopping</button></div>`;
   return cart;
@@ -217,6 +222,13 @@ function openCartDrawer() {
   if (!drawer.open) drawer.showModal();
   document.body.classList.add('no-scroll');
   return true;
+}
+
+function updateProductStepNumbers(form) {
+  let step = 0;
+  form?.querySelectorAll('.db-product-options > legend > span, .db-addon-picker > legend > span').forEach((number) => {
+    if (!number.closest('[hidden]')) number.textContent = ++step;
+  });
 }
 
 function updateProductVariant(form, variant) {
@@ -232,14 +244,35 @@ function updateProductVariant(form, variant) {
   const price = form.closest('.db-product')?.querySelector('[data-product-price]') || document.querySelector('[data-product-price]');
   if (selectedVariant) selectedVariant.value = variant.id || variant.value;
   if (price) price.textContent = variant.price !== undefined ? formatCartMoney(variant.price, window.Shopify?.currency?.active || document.documentElement.dataset.currency || 'NZD') : variant.dataset?.price;
-  if (submit) { submit.disabled = !available; submit.textContent = available ? 'Add to cart' : 'Sold out'; }
+  if (submit && submit.dataset.requestPending !== 'true') { submit.disabled = !available; submit.textContent = available ? (submit.dataset.addToCartLabel || 'Add to cart') : 'Sold out'; }
   const imageId = variant.featured_image?.id || variant.featured_media?.id || variant.dataset?.imageId;
-  if (imageId) document.querySelector(`[data-media-id="${CSS.escape(String(imageId))}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (imageId) form.closest('[data-product-section]')?.querySelector(`[data-media-id="${CSS.escape(String(imageId))}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
   const variantId = variant.id || variant.value;
   if (variantId) { const url = new URL(window.location.href); url.searchParams.set('variant', variantId); window.history.replaceState({}, '', url); }
 }
 
 document.addEventListener('change', (event) => {
+  const addonSelect = event.target.closest('[data-addon-select]');
+  if (addonSelect) {
+    const card = addonSelect.closest('[data-addon-card]');
+    const option = addonSelect.selectedOptions[0];
+    const checkbox = card?.querySelector('[data-addon-variant]');
+    if (!checkbox || !option) return;
+    checkbox.value = option.value;
+    checkbox.disabled = option.disabled;
+    if (checkbox.disabled) checkbox.checked = false;
+    card.classList.toggle('is-unavailable', checkbox.disabled);
+    const price = card.querySelector('[data-addon-price]');
+    if (price) price.textContent = option.dataset.price;
+    const image = card.querySelector('img');
+    if (image && option.dataset.image) { image.src = option.dataset.image; image.removeAttribute('srcset'); }
+    return;
+  }
+  const addonCheckbox = event.target.closest('[data-addon-variant]');
+  if (addonCheckbox?.checked) {
+    const picker = addonCheckbox.closest('[data-addon-picker]');
+    if (picker?.dataset.selectionMode === 'single') picker.querySelectorAll('[data-addon-variant]').forEach((input) => { if (input !== addonCheckbox) input.checked = false; });
+  }
   const optionInput = event.target.closest('[data-product-option]');
   if (optionInput) {
     const form = optionInput.closest('[data-product-builder-form]');
@@ -256,33 +289,60 @@ document.addEventListener('change', (event) => {
   updateProductVariant(select.closest('[data-product-builder-form]'), option);
 });
 
+// Shopify native nested lines keep extras attached to this specific bouquet.
+function buildProductBundleItems(formData, selectedExtras, properties) {
+  const parentId = Number(formData.get('id'));
+  const quantity = Number(formData.get('quantity'));
+  if (!Number.isSafeInteger(parentId) || parentId <= 0 || !Number.isSafeInteger(quantity) || quantity < 1) throw new Error('Please select an available product and a whole quantity of at least 1.');
+  const bundleId = `bloom-${crypto.randomUUID()}`;
+  const items = [{ id: parentId, quantity, properties: { ...properties, _Bundle: bundleId } }];
+  const included = new Set([parentId]);
+  selectedExtras.forEach((input) => {
+    const id = Number(input.value);
+    if (input.disabled || !Number.isSafeInteger(id) || id <= 0 || included.has(id)) return;
+    included.add(id);
+    items.push({ id, quantity, parent_id: parentId, properties: { _Bundle: bundleId, _Add_on: 'true' } });
+  });
+  return items;
+}
+
 document.addEventListener('submit', async (event) => {
   const builderForm = event.target.closest('[data-product-builder-form]');
   if (builderForm && window.fetch) {
     event.preventDefault();
+    if (builderForm.dataset.requestPending === 'true' || !builderForm.reportValidity()) return;
     const button = event.submitter || builderForm.querySelector('[type="submit"]');
-    const originalLabel = button?.textContent;
+    if (button?.disabled) return;
+    builderForm.dataset.requestPending = 'true';
+    builderForm.setAttribute('aria-busy', 'true');
     const formData = new FormData(builderForm);
     const properties = {};
     formData.forEach((value, key) => {
       const match = key.match(/^properties\[(.+)\]$/);
       if (match && value) properties[match[1]] = value;
     });
-    const bundleId = `bloom-${Date.now()}`;
-    properties._Bundle = bundleId;
-    const items = [{ id: Number(formData.get('id')), quantity: Number(formData.get('quantity') || 1), properties }];
-    builderForm.querySelectorAll('[data-addon-variant]:checked').forEach((input) => items.push({ id: Number(input.value), quantity: 1, properties: { _Bundle: bundleId, _Add_on: 'true' } }));
     const errorBox = builderForm.querySelector('[data-product-error]');
     if (errorBox) errorBox.hidden = true;
     beginPending(button, 'Adding your selections…');
     try {
+      const items = buildProductBundleItems(formData, builderForm.querySelectorAll('[data-addon-variant]:checked'), properties);
       const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
       if (!response.ok) { const detail = await response.json().catch(() => ({})); throw new Error(detail.description || 'One of these selections is no longer available.'); }
-      await refreshCartDrawer(); if (!openCartDrawer()) { window.location.assign(`${window.Shopify.routes.root}cart`); return; }
-      if (button) { endPending(button); button.textContent = 'Added to cart'; setTimeout(() => { button.textContent = originalLabel; }, 1800); }
+      try { await refreshCartDrawer(); } catch (_) { window.location.assign(`${window.Shopify.routes.root}cart`); return; }
+      if (!openCartDrawer()) { window.location.assign(`${window.Shopify.routes.root}cart`); return; }
+      endPending(button);
     } catch (error) {
       if (errorBox) { errorBox.textContent = error.message; errorBox.hidden = false; } else alert(error.message);
       endPending(button);
+    } finally {
+      delete builderForm.dataset.requestPending;
+      builderForm.removeAttribute('aria-busy');
+      const variantData = builderForm.querySelector('[data-product-variants]');
+      if (variantData) {
+        const selectedOptions = [...builderForm.querySelectorAll('[data-product-option]:checked')].map((input) => input.value);
+        const variants = JSON.parse(variantData.textContent || '[]');
+        updateProductVariant(builderForm, variants.find((variant) => variant.options?.every((value, index) => value === selectedOptions[index])));
+      }
     }
     return;
   }
@@ -322,10 +382,18 @@ document.addEventListener('click', async (event) => {
   const quantityButton = event.target.closest('[data-quantity-change]');
   if (quantityButton) {
     const input = quantityButton.closest('[data-quantity]')?.querySelector('input[type="number"]');
-    if (input) { input.value = Math.max(Number(input.min || 1), Number(input.value || 1) + Number(quantityButton.dataset.quantityChange)); input.dispatchEvent(new Event('change', { bubbles: true })); }
+    if (input) {
+      const minimum = Number(input.min || 1);
+      const maximum = input.max ? Number(input.max) : Number.MAX_SAFE_INTEGER;
+      const current = input.value === '' || !Number.isFinite(Number(input.value)) ? minimum : Math.trunc(Number(input.value));
+      input.value = Math.min(maximum, Math.max(minimum, current + Number(quantityButton.dataset.quantityChange)));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
     return;
   }
 
+  // The cart page owns its requests and saves delivery details before updating.
+  if (event.target.closest('os-cart-page')) return;
   const removeButton = event.target.closest('[data-cart-remove]');
   if (removeButton) {
     beginPending(removeButton);
@@ -589,7 +657,36 @@ class OsSocialGallery extends HTMLElement {
     this.cards = [...this.querySelectorAll('[data-social-card]')];
     this.modal = this.querySelector('[data-social-modal]');
     this.modalSlides = [...this.querySelectorAll('[data-social-modal-slide]')];
-    if (!this.track || !this.cards.length || !this.modal) return;
+    if (!this.track || !this.modal) return;
+    this.galleryAbort = new AbortController();
+    this.fallbackCards = this.cards.map((card) => card.cloneNode(true));
+    this.fallbackSlides = this.modalSlides.map((slide) => slide.cloneNode(true));
+    this.startCarousel();
+    const listenerOptions = { signal: this.galleryAbort.signal };
+    this.querySelector('[data-social-gallery-prev]')?.addEventListener('click', () => this.flickity?.previous(), listenerOptions);
+    this.querySelector('[data-social-gallery-next]')?.addEventListener('click', () => this.flickity?.next(), listenerOptions);
+    this.track.addEventListener('click', (event) => {
+      const card = event.target.closest('[data-social-card]');
+      if (card) this.openPost(Number(card.dataset.socialIndex) || 0);
+    }, listenerOptions);
+    this.querySelector('[data-social-modal-close]')?.addEventListener('click', () => this.modal.close(), listenerOptions);
+    this.querySelector('[data-social-modal-prev]')?.addEventListener('click', () => this.openPost(this.currentIndex - 1), listenerOptions);
+    this.querySelector('[data-social-modal-next]')?.addEventListener('click', () => this.openPost(this.currentIndex + 1), listenerOptions);
+    this.modal.addEventListener('click', (event) => { if (event.target === this.modal) this.modal.close(); }, listenerOptions);
+    this.modal.addEventListener('close', () => this.closePost(), listenerOptions);
+    this.addEventListener('shopify:block:select', (event) => {
+      if (this.dataset.feedState === 'instagram') this.restoreFallback();
+      const card = this.querySelector(`[data-social-card][data-social-index="${event.target.closest('[data-social-card]')?.dataset.socialIndex}"]`);
+      if (card) this.flickity?.selectCell(card);
+    }, listenerOptions);
+    if (this.dataset.feedSource === 'instagram' && this.dataset.feedUrl && !window.Shopify?.designMode) this.loadInstagram();
+  }
+
+  startCarousel() {
+    this.cards = [...this.track.querySelectorAll('[data-social-card]')];
+    this.modalSlides = [...this.querySelectorAll('[data-social-modal-slide]')];
+    this.querySelectorAll('[data-social-gallery-prev], [data-social-gallery-next], [data-social-modal-prev], [data-social-modal-next]').forEach((button) => { button.hidden = this.cards.length < 2; });
+    if (!this.cards.length) return;
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.flickity = new Flickity(this.track, {
       cellSelector: '[data-social-card]',
@@ -603,18 +700,112 @@ class OsSocialGallery extends HTMLElement {
       pauseAutoPlayOnHover: true,
       accessibility: true
     });
-    this.querySelector('[data-social-gallery-prev]')?.addEventListener('click', () => this.flickity.previous());
-    this.querySelector('[data-social-gallery-next]')?.addEventListener('click', () => this.flickity.next());
-    this.cards.forEach((card) => card.addEventListener('click', () => this.openPost(Number(card.dataset.socialIndex) || 0)));
-    this.querySelector('[data-social-modal-close]')?.addEventListener('click', () => this.modal.close());
-    this.querySelector('[data-social-modal-prev]')?.addEventListener('click', () => this.openPost(this.currentIndex - 1));
-    this.querySelector('[data-social-modal-next]')?.addEventListener('click', () => this.openPost(this.currentIndex + 1));
-    this.modal.addEventListener('click', (event) => { if (event.target === this.modal) this.modal.close(); });
-    this.modal.addEventListener('close', () => this.closePost());
-    this.addEventListener('shopify:block:select', (event) => {
-      const card = event.target.closest('[data-social-card]');
-      if (card) this.flickity.selectCell(card);
+  }
+
+  replacePosts(cards, slides) {
+    if (this.modal.open) this.modal.close();
+    this.closePost();
+    this.flickity?.destroy();
+    this.flickity = null;
+    this.track.replaceChildren(...cards);
+    this.querySelector('.os-social-modal__panel').replaceChildren(...slides);
+    this.startCarousel();
+  }
+
+  restoreFallback() {
+    this.dataset.feedState = 'fallback';
+    this.replacePosts(this.fallbackCards.map((card) => card.cloneNode(true)), this.fallbackSlides.map((slide) => slide.cloneNode(true)));
+  }
+
+  async loadInstagram() {
+    const signal = this.galleryAbort.signal;
+    // A fetch timeout must not disable gallery controls.
+    const requestAbort = new AbortController();
+    signal.addEventListener('abort', () => requestAbort.abort(), { once: true });
+    const timeout = setTimeout(() => requestAbort.abort(), 8000);
+    try {
+      const endpoint = new URL(this.dataset.feedUrl, location.origin);
+      if (endpoint.protocol !== 'https:' || endpoint.username || endpoint.password || /access_token|token|secret/i.test(endpoint.search)) return;
+      const response = await fetch(endpoint, { signal: requestAbort.signal, credentials: 'omit', referrerPolicy: 'no-referrer' });
+      if (!response.ok) throw new Error('Feed unavailable');
+      const feed = await response.json();
+      if (!Array.isArray(feed.data)) throw new Error('Invalid feed');
+      const limit = Math.min(24, Math.max(1, Number(this.dataset.feedLimit) || 8));
+      const posts = feed.data.filter((post) => ['IMAGE', 'VIDEO', 'CAROUSEL_ALBUM'].includes(post.media_type)).slice(0, limit);
+      const results = await Promise.all(posts.map((post) => this.buildInstagramPost(post)));
+      const valid = results.filter(Boolean);
+      if (!valid.length || signal.aborted || !this.isConnected) return;
+      this.dataset.feedState = 'instagram';
+      this.replacePosts(valid.map((post, index) => { post.card.dataset.socialIndex = index; return post.card; }), valid.map((post) => post.slide));
+    } catch (_) {
+      // Server-rendered manual posts remain usable on network, auth or data errors.
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async buildInstagramPost(post) {
+    const safeUrl = (value) => {
+      try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password ? url.href : ''; } catch (_) { return ''; }
+    };
+    const media = post.media_type === 'CAROUSEL_ALBUM' ? post.children?.data?.[0] : post;
+    if (!media || !['IMAGE', 'VIDEO'].includes(media.media_type)) return null;
+    const mediaUrl = safeUrl(media.media_url);
+    const thumbnail = safeUrl(media.media_type === 'VIDEO' ? media.thumbnail_url : media.media_url);
+    if (!mediaUrl || !thumbnail) return null;
+    const image = new Image();
+    image.src = thumbnail;
+    image.alt = String(post.caption || 'Instagram post').slice(0, 300);
+    image.decoding = 'async';
+    const loaded = await new Promise((resolve) => {
+      const timer = setTimeout(() => resolve(false), 5000);
+      const done = (result) => { clearTimeout(timer); resolve(result); };
+      image.onload = () => done(true);
+      image.onerror = () => done(false);
+      if (image.complete) done(image.naturalWidth > 0);
     });
+    if (!loaded) return null;
+    const element = (tag, className, text) => {
+      const node = document.createElement(tag); node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    };
+    const account = this.dataset.feedAccount || 'Instagram';
+    const card = element('button', 'os-social-card');
+    card.type = 'button'; card.dataset.socialCard = '';
+    card.setAttribute('aria-label', `Open Instagram post by ${account}`);
+    card.append(image);
+    const overlay = element('span', `os-social-card__overlay os-social-card__overlay--${media.media_type === 'VIDEO' ? 'video' : 'post'}`);
+    overlay.setAttribute('aria-hidden', 'true');
+    // Static icons only; API text is always assigned with textContent.
+    overlay.innerHTML = media.media_type === 'VIDEO'
+      ? '<svg class="os-social-card__media-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14"/><path d="m13 10 9 6-9 6z"/></svg>'
+      : '<svg class="os-social-card__media-icon" viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="7"/><circle cx="16" cy="16" r="6"/></svg>';
+    card.append(overlay);
+    const slide = element('article', 'os-social-modal__slide');
+    slide.dataset.socialModalSlide = ''; slide.hidden = true;
+    slide.style.setProperty('--os-social-media-fit', 'contain');
+    const container = element('div', 'os-social-modal__media');
+    const fullMedia = media.media_type === 'VIDEO' ? document.createElement('video') : image.cloneNode();
+    if (media.media_type === 'VIDEO') {
+      fullMedia.src = mediaUrl; fullMedia.poster = thumbnail;
+      fullMedia.controls = true; fullMedia.playsInline = true; fullMedia.preload = 'none';
+      fullMedia.addEventListener('error', () => { if (this.dataset.feedState === 'instagram') this.restoreFallback(); }, { once: true });
+    }
+    container.append(fullMedia);
+    const copy = element('div', 'os-social-modal__copy');
+    const header = document.createElement('header');
+    header.append(element('span', 'os-social-modal__avatar', account.slice(0, 1).toUpperCase()), element('strong', '', account));
+    copy.append(header, element('div', 'os-social-modal__caption os-social-modal__caption--api', String(post.caption || '')));
+    const permalink = safeUrl(post.permalink);
+    if (permalink && ['instagram.com', 'www.instagram.com'].includes(new URL(permalink).hostname)) {
+      const link = element('a', 'os-social-modal__post-link', 'View on Instagram');
+      link.href = permalink; link.target = '_blank'; link.rel = 'noopener noreferrer'; copy.append(link);
+    }
+    const date = new Date(post.timestamp);
+    if (!Number.isNaN(date.getTime())) copy.append(element('p', 'os-social-modal__date', date.toLocaleDateString(document.documentElement.lang || 'en', { year: 'numeric', month: 'short', day: 'numeric' })));
+    slide.append(container, copy);
+    return { card, slide };
   }
 
   openPost(index) {
@@ -635,13 +826,15 @@ class OsSocialGallery extends HTMLElement {
 
   closePost() {
     document.body.classList.remove('no-scroll');
-    this.modal.querySelectorAll('video').forEach((video) => video.pause());
+    this.modal?.querySelectorAll('video').forEach((video) => video.pause());
   }
 
   disconnectedCallback() {
+    this.galleryAbort?.abort();
     this.flickity?.destroy();
     this.flickity = null;
     this.closePost();
+    this.initialized = false;
   }
 }
 
@@ -649,16 +842,54 @@ if (!customElements.get('os-social-gallery')) customElements.define('os-social-g
 
 class OsCartCarousel extends HTMLElement {
   connectedCallback() {
-    if (this.flickity || !window.Flickity) return;
-    const track = this.querySelector('[data-cart-carousel-track]');
-    const cells = this.querySelectorAll('[data-cart-carousel-cell]');
-    if (!track || !cells.length) return;
-    this.flickity = new Flickity(track, { cellSelector: '[data-cart-carousel-cell]', cellAlign: 'left', contain: true, draggable: cells.length > 1, prevNextButtons: false, pageDots: false, groupCells: false, accessibility: true });
-    this.querySelector('[data-cart-carousel-prev]')?.addEventListener('click', () => this.flickity.previous());
-    this.querySelector('[data-cart-carousel-next]')?.addEventListener('click', () => this.flickity.next());
-    this.querySelectorAll('img').forEach((image) => { if (!image.complete) image.addEventListener('load', () => this.flickity?.resize(), { once: true }); });
+    if (this.controller) return;
+    this.track = this.querySelector('[data-cart-carousel-track]');
+    if (!this.track) return;
+    this.controller = new AbortController();
+    const options = { signal: this.controller.signal };
+    this.querySelector('[data-cart-carousel-prev]')?.addEventListener('click', () => this.move(-1), options);
+    this.querySelector('[data-cart-carousel-next]')?.addEventListener('click', () => this.move(1), options);
+    this.track.addEventListener('scroll', () => this.updateNavigation(), { ...options, passive: true });
+    const resetTarget = () => { this.scrollTarget = null; };
+    this.track.addEventListener('scrollend', resetTarget, options);
+    this.track.addEventListener('pointerdown', resetTarget, options);
+    this.track.addEventListener('wheel', resetTarget, { ...options, passive: true });
+    this.track.addEventListener('keydown', (event) => {
+      if (event.target !== this.track || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      event.preventDefault();
+      this.move(event.key === 'ArrowRight' ? 1 : -1);
+    }, options);
+    this.resizeObserver = new ResizeObserver(() => { resetTarget(); this.updateNavigation(); });
+    this.resizeObserver.observe(this.track);
+    this.querySelectorAll('[data-cart-carousel-cell]').forEach((cell) => this.resizeObserver.observe(cell));
+    this.updateNavigation();
   }
-  disconnectedCallback() { this.flickity?.destroy(); this.flickity = null; }
+  move(direction) {
+    const cell = this.querySelector('[data-cart-carousel-cell]');
+    if (!cell) return;
+    const style = getComputedStyle(this.track);
+    const gap = parseFloat(style.columnGap) || 0;
+    const maximum = Math.max(0, this.track.scrollWidth - this.track.clientWidth);
+    const position = this.scrollTarget ?? Math.abs(this.track.scrollLeft);
+    this.scrollTarget = Math.min(maximum, Math.max(0, position + direction * (cell.getBoundingClientRect().width + gap)));
+    this.track.scrollTo({ left: style.direction === 'rtl' ? -this.scrollTarget : this.scrollTarget, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }
+  updateNavigation() {
+    if (!this.track) return;
+    const maximum = this.track.scrollWidth - this.track.clientWidth;
+    const position = Math.abs(this.track.scrollLeft);
+    const previous = this.querySelector('[data-cart-carousel-prev]');
+    const next = this.querySelector('[data-cart-carousel-next]');
+    const navigation = this.querySelector('[data-cart-carousel-navigation]');
+    if (navigation) navigation.hidden = maximum <= 1;
+    if (previous) { previous.hidden = maximum <= 1; previous.disabled = position <= 1; }
+    if (next) { next.hidden = maximum <= 1; next.disabled = position >= maximum - 1; }
+  }
+  disconnectedCallback() {
+    this.controller?.abort();
+    this.controller = null;
+    this.resizeObserver?.disconnect();
+  }
 }
 if (!customElements.get('os-cart-carousel')) customElements.define('os-cart-carousel', OsCartCarousel);
 
@@ -722,10 +953,20 @@ class OsCartPage extends HTMLElement {
     this.ready = true;
     this.form = this.querySelector('[data-cart-form]');
     this.status = this.querySelector('[data-cart-status]');
-    this.addEventListener('click', (event) => this.onClick(event));
-    this.addEventListener('change', (event) => this.onChange(event));
+    const reportError = (error) => {
+      if (this.status) this.status.textContent = error.message || 'Unable to update your cart.';
+      this.querySelectorAll('[data-request-pending="true"]').forEach(endPending);
+    };
+    this.addEventListener('click', (event) => this.onClick(event).catch(reportError));
+    this.addEventListener('change', (event) => this.onChange(event).catch(reportError));
     this.message = this.querySelector('[data-message-input]');
     this.message?.addEventListener('input', () => this.updateMessage());
+    this.messageCreator = this.querySelector('[data-message-creator]');
+    this.messageDraft = this.querySelector('[data-message-draft]');
+    this.messageDraft?.addEventListener('input', () => this.updateDraftCount());
+    this.messageCreator?.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') { event.preventDefault(); this.closeMessageCreator(); }
+    });
     this.updateMessage();
   }
   async request(path, body) {
@@ -743,11 +984,12 @@ class OsCartPage extends HTMLElement {
     if (!this.form) return {};
     const data = new FormData(this.form), attributes = {};
     for (const [name, value] of data.entries()) if (name.startsWith('attributes[')) attributes[name.slice(11, -1)] = value;
-    return { attributes, note: data.get('note') || '' };
+    return { attributes, ...(data.has('note') ? { note: data.get('note') } : {}) };
   }
   async persistDetails() {
     if (!this.form) return;
-    await fetch(`${window.Shopify.routes.root}cart/update.js`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(this.cartAttributes()) });
+    const response = await fetch(`${window.Shopify.routes.root}cart/update.js`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(this.cartAttributes()) });
+    if (!response.ok) throw new Error('Unable to save your delivery details. Please try again.');
   }
   async onClick(event) {
     const quantity = event.target.closest('[data-cart-quantity]');
@@ -759,10 +1001,71 @@ class OsCartPage extends HTMLElement {
     const remove = event.target.closest('[data-cart-remove]');
     if (remove) { const item = remove.closest('[data-cart-line]'); if (item) { await this.persistDetails(); await this.request('cart/change.js', { line: Number(item.dataset.cartLine), quantity: 0 }); } return; }
     const addon = event.target.closest('button[data-cart-addon]');
-    if (addon) { beginPending(addon); await this.persistDetails(); await this.request('cart/add.js', { items: [{ id: Number(addon.dataset.cartAddon), quantity: 1 }] }); return; }
+    if (addon) {
+      if (addon.disabled || addon.dataset.requestPending === 'true') return;
+      beginPending(addon, 'Adding…');
+      try {
+        await this.persistDetails();
+        await this.request('cart/add.js', { items: [{ id: Number(addon.dataset.cartAddon), quantity: 1 }] });
+      } catch (error) {
+        if (this.status) this.status.textContent = error.message;
+      } finally { endPending(addon); }
+      return;
+    }
     const emoji = event.target.closest('[data-message-emoji]');
     if (emoji && this.message) { const start = this.message.selectionStart, end = this.message.selectionEnd; this.message.setRangeText(emoji.dataset.messageEmoji, start, end, 'end'); this.message.dispatchEvent(new Event('input')); this.message.focus(); return; }
-    if (event.target.closest('[data-message-helper]')) { this.message?.focus(); this.message?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    if (event.target.closest('[data-message-helper]') && this.messageCreator && this.messageDraft && this.message) {
+      if (!this.messageCreator.hidden) { this.closeMessageCreator(); return; }
+      this.messageDraft.value = this.message.value;
+      if (!this.messageDraft.value) this.suggestMessage();
+      this.updateDraftCount();
+      this.messageCreator.hidden = false;
+      this.querySelector('[data-message-helper]').setAttribute('aria-expanded', 'true');
+      this.messageCreator.querySelector('[data-message-creator-close]')?.focus();
+    }
+    if (event.target.closest('[data-message-creator-close]')) this.closeMessageCreator();
+    const occasion = event.target.closest('button[data-message-occasion]');
+    if (occasion) {
+      this.messageOccasion = occasion.dataset.messageOccasion;
+      this.querySelectorAll('button[data-message-occasion]').forEach((button) => button.setAttribute('aria-pressed', String(button === occasion)));
+      this.suggestMessage();
+    }
+    if (event.target.closest('[data-message-suggest]')) this.suggestMessage();
+    if (event.target.closest('[data-message-use]') && this.message && this.messageDraft) {
+      this.message.value = this.messageDraft.value.slice(0, this.message.maxLength);
+      this.message.dispatchEvent(new Event('input', { bubbles: true }));
+      this.closeMessageCreator();
+      this.message.focus();
+    }
+  }
+  closeMessageCreator() {
+    if (this.messageCreator) this.messageCreator.hidden = true;
+    const helper = this.querySelector('[data-message-helper]');
+    helper?.setAttribute('aria-expanded', 'false');
+    helper?.focus();
+  }
+  suggestMessage() {
+    if (!this.messageDraft) return;
+    const messages = {
+      birthday: ['Happy birthday! Wishing you a day full of love, laughter and joy.', 'Wishing you a wonderful birthday and a year filled with beautiful moments.', 'Here is to you! May your birthday be as lovely and special as you are.'],
+      love: ['Just a little reminder of how much I love you. You make every day brighter.', 'You are my favourite person. Sending all my love, today and always.', 'Life is sweeter with you in it. I love you more than words can say.'],
+      congratulations: ['Congratulations! So happy for you and everything you have achieved.', 'You did it! Wishing you every happiness as you begin this exciting chapter.', 'Celebrating you and this wonderful milestone. Congratulations!'],
+      thanks: ['Thank you for everything. Your kindness means so much to me.', 'A little something to say a big thank you. You are truly appreciated.', 'Your thoughtfulness made all the difference. Thank you from the bottom of my heart.'],
+      baby: ['A new baby brings new joys! Wishing your family all the best during this wonderful time.', 'Welcome to the world, little one! Sending love to your growing family.', 'Congratulations on your beautiful new arrival. Wishing you endless cuddles and happiness.'],
+      sorry: ['I am sorry. Sending these flowers with love and the hope of making things a little brighter.', 'Please accept these flowers and my heartfelt apology. You mean so much to me.', 'I wish I could find the perfect words. For now, please know how sorry I am.'],
+      mothers: ['Happy Mother’s Day! Thank you for your endless love, care and kindness.', 'For everything you do and all the love you give, thank you. Happy Mother’s Day!', 'Sending love to a wonderful mum. May your day be full of the happiness you bring to others.']
+    };
+    const occasion = this.messageOccasion || 'birthday';
+    const suggestions = messages[occasion] || messages.birthday;
+    this.messageSuggestionIndexes ||= {};
+    const index = this.messageSuggestionIndexes[occasion] || 0;
+    this.messageDraft.value = suggestions[index % suggestions.length].slice(0, this.messageDraft.maxLength);
+    this.messageSuggestionIndexes[occasion] = index + 1;
+    this.updateDraftCount();
+  }
+  updateDraftCount() {
+    const count = this.querySelector('[data-message-draft-count]');
+    if (count) count.textContent = this.messageDraft?.value.length || 0;
   }
   async onChange(event) {
     const checkbox = event.target.closest('input[data-cart-addon]');
@@ -895,3 +1198,40 @@ function initializeReferenceHomepage(root = document) {
 
 initializeReferenceHomepage();
 document.addEventListener('shopify:section:load', (event) => initializeReferenceHomepage(event.target));
+
+class DbProductRecommendations extends HTMLElement {
+  showFallback() {
+    if (!this.isConnected || !this.querySelector('[data-addon-variant]:not(:disabled)')) return;
+    this.hidden = false;
+    this.loaded = true;
+    updateProductStepNumbers(this.closest('form'));
+  }
+
+  connectedCallback() {
+    if (this.loading || this.loaded || !this.dataset.url) return;
+    this.loading = true;
+    fetch(this.dataset.url)
+      .then((response) => {
+        if (!response.ok) throw new Error('Unable to load recommendations');
+        return response.text();
+      })
+      .then((html) => {
+        if (!this.isConnected) return;
+        const document = new DOMParser().parseFromString(html, 'text/html');
+        const recommendations = document.querySelector('db-product-recommendations');
+        if (!recommendations?.querySelector('[data-addon-variant], .db-product-card')) {
+          this.showFallback();
+          return;
+        }
+        this.innerHTML = recommendations.innerHTML;
+        this.hidden = false;
+        this.loaded = true;
+        updateProductStepNumbers(this.closest('form'));
+      })
+      .catch(() => { this.showFallback(); })
+      .finally(() => { this.loading = false; });
+  }
+}
+if (!customElements.get('db-product-recommendations')) customElements.define('db-product-recommendations', DbProductRecommendations);
+document.querySelectorAll('[data-product-builder-form]').forEach(updateProductStepNumbers);
+document.addEventListener('shopify:section:load', (event) => event.target.querySelectorAll('[data-product-builder-form]').forEach(updateProductStepNumbers));

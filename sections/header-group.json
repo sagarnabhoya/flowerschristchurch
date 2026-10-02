@@ -17,12 +17,18 @@
         "announcement": "Most suburbs free delivery — limited time, don’t miss out 💐",
         "logo_text": "Flowers Across Christchurch",
         "menu": "header-menu",
+        "menu_font_size": 16,
+        "submenu_font_size": 18,
+        "logo_case": "none",
+        "utility_case": "none",
+        "menu_case": "none",
+        "submenu_case": "none",
         "phone_label": "Call Us",
         "phone": "03 9300145",
         "contact_link": "shopify://pages/contact",
         "utility_link_label": "Delivery info",
         "utility_link": "shopify://pages/delivery-informations",
-        "delivery_text": "Same-day local delivery when you order before 2pm"
+        "delivery_text": "<strong>Same-day local delivery when you order before 2pm Weekdays ( SAT 12 pm. SUN 10 am)</strong>"
       }
     }
   },

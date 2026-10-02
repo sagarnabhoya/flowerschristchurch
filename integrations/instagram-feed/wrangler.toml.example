@@ -1,0 +1,16 @@
+name = "flowers-instagram-feed"
+main = "worker.mjs"
+compatibility_date = "2026-10-02"
+
+[vars]
+INSTAGRAM_USER_ID = "REPLACE_WITH_INSTAGRAM_USER_ID"
+INSTAGRAM_API_VERSION = "REPLACE_WITH_SUPPORTED_VERSION"
+INSTAGRAM_TOKEN_ISSUED_AT = "REPLACE_WITH_TOKEN_ISSUE_TIME_IN_ISO_8601"
+ALLOWED_ORIGINS = "https://REPLACE_WITH_STOREFRONT_DOMAIN,https://REPLACE_WITH_STORE.myshopify.com"
+
+[[kv_namespaces]]
+binding = "INSTAGRAM_STATE"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[triggers]
+crons = ["0 * * * *"]

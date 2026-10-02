@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -46,15 +55,7 @@
         "show_promises": true,
         "show_toolbar": false,
         "desktop_columns": "5",
-        "products_per_page": 20,
-        "show_description": true,
-        "show_quick_add": false,
-        "show_secondary_image": true,
-        "show_badges": true,
-        "show_auto_new": true,
-        "new_product_days": 185,
-        "new_badge_label": "New!",
-        "badge_color": "#ef5a59"
+        "products_per_page": 20
       }
     }
   },

@@ -1,0 +1,49 @@
+{%- liquid
+  assign selectable_count = 0
+  for addon_product in block.settings.products
+    unless addon_product.id == product.id
+      assign selectable_count = selectable_count | plus: 1
+    endunless
+  endfor
+-%}
+{%- if selectable_count > 0 -%}
+  <fieldset class="db-addon-picker db-addon-slider-picker" data-addon-picker data-selection-mode="{{ block.settings.selection_mode }}" style="--db-addon-columns:{{ block.settings.columns }};--db-addon-radius:{{ block.settings.image_radius }}px" {{ block.shopify_attributes }}>
+    <legend>{% if block.settings.show_step %}<span>{{ step }}</span>{% endif %}{{ block.settings.heading | escape }}</legend>
+    {%- if block.settings.text != blank -%}<div class="db-product-step__note db-rte">{{ block.settings.text }}</div>{%- endif -%}
+    <os-cart-carousel class="db-addon-slider">
+      <div class="db-addon-slider__track" data-cart-carousel-track tabindex="0" role="region" aria-label="{{ block.settings.heading | escape }}">
+        {%- for addon_product in block.settings.products -%}
+          {%- if addon_product.id == product.id -%}{%- continue -%}{%- endif -%}
+          {%- assign addon_variant = addon_product.selected_or_first_available_variant -%}
+          {%- assign addon_image = addon_variant.featured_image | default: addon_product.featured_image -%}
+          {%- assign choice_id = 'Addon-' | append: section.id | append: '-' | append: block.id | append: '-' | append: addon_product.id -%}
+          <article class="db-addon-slider__item{% unless addon_variant.available %} is-unavailable{% endunless %}" data-cart-carousel-cell data-addon-card>
+            <label class="db-addon-option" for="{{ choice_id }}">
+              <input id="{{ choice_id }}" type="checkbox" value="{{ addon_variant.id }}" data-addon-variant {% unless addon_variant.available %}disabled{% endunless %}>
+              <span class="db-addon-option__media">
+                {%- if addon_image != blank -%}{{ addon_image | image_url: width: 360 | image_tag: widths: '180,280,360', sizes: '(min-width: 750px) 150px, 38vw', loading: 'lazy', alt: addon_product.title }}{%- else -%}{{ 'product-1' | placeholder_svg_tag }}{%- endif -%}
+                <span class="db-addon-slider__check" aria-hidden="true">✓</span>
+              </span>
+              <span class="db-addon-option__copy"><strong>{{ addon_product.title | escape }}</strong><small data-addon-price>{{ addon_variant.price | money }}</small>{% unless addon_variant.available %}<small>Sold out</small>{% endunless %}</span>
+            </label>
+            {%- unless addon_product.has_only_default_variant -%}
+              <label class="db-addon-slider__variant" for="{{ choice_id }}-variant">Option</label>
+              <select id="{{ choice_id }}-variant" data-addon-select aria-label="{{ addon_product.title | escape }} option" {% unless addon_product.available %}disabled{% endunless %}>
+                {%- for variant in addon_product.variants -%}
+                  {%- assign variant_image = variant.featured_image | default: addon_product.featured_image -%}
+                  <option value="{{ variant.id }}" data-price="{{ variant.price | money | escape }}" data-image="{% if variant_image %}{{ variant_image | image_url: width: 360 }}{% endif %}" {% if variant.id == addon_variant.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>{{ variant.title | escape }}{% unless variant.available %} — Sold out{% endunless %}</option>
+                {%- endfor -%}
+              </select>
+            {%- endunless -%}
+          </article>
+        {%- endfor -%}
+      </div>
+      <div class="db-addon-slider__navigation">
+        <button type="button" data-cart-carousel-prev hidden aria-label="Previous {{ block.settings.heading | escape }}">&larr;</button>
+        <button type="button" data-cart-carousel-next hidden aria-label="Next {{ block.settings.heading | escape }}">&rarr;</button>
+      </div>
+    </os-cart-carousel>
+  </fieldset>
+{%- elsif request.design_mode -%}
+  <div class="db-addon-slider-empty" {{ block.shopify_attributes }}><strong>{{ block.settings.heading | escape }}</strong><p>Select add-on products in this block to display the slider.</p></div>
+{%- endif -%}

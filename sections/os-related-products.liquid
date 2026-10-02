@@ -1,23 +1,20 @@
-{%- assign source_collection = product.collections.first -%}
-{%- if source_collection != blank -%}
+<db-product-recommendations class="db-related-recommendations" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&amp;product_id={{ product.id }}&amp;limit={{ section.settings.products_to_show }}&amp;intent=related" hidden>
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
   {% render 'os-section-style', section: section %}
   <section class="db-section full-width db-section-layout" style="background:{{ section.settings.background }};padding-block:0">
     {% render 'os-section-background', section: section %}
     <div class="db-section-shell db-section-shell--{{ section.settings.content_width }}">
       <div class="db-section-head"><div><p class="db-kicker">{{ section.settings.eyebrow }}</p><h2 class="db-title">{{ section.settings.heading }}</h2></div><div class="db-section-head__aside db-copy">{{ section.settings.copy }}</div></div>
       <ul class="db-product-grid" role="list">
-        {%- assign shown = 0 -%}
-        {%- for related_product in source_collection.products -%}
-          {%- unless related_product.id == product.id -%}
+        {%- for related_product in recommendations.products -%}
             <li>{% render 'product-card', product: related_product %}</li>
-            {%- assign shown = shown | plus: 1 -%}
-            {%- if shown >= section.settings.products_to_show -%}{%- break -%}{%- endif -%}
-          {%- endunless -%}
+
         {%- endfor -%}
       </ul>
     </div>
   </section>
 {%- endif -%}
+</db-product-recommendations>
 {% schema %}
 {
   "name": "Related blooms",

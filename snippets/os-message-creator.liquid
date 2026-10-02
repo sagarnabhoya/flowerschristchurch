@@ -1,0 +1,22 @@
+<section id="MessageCreator-{{ section.id }}" class="os-message-creator" data-message-creator aria-label="Choose an occasion and create a message" hidden>
+  <button class="os-message-creator__close" type="button" data-message-creator-close aria-label="Close message creator">&times;</button>
+  <div class="os-message-creator__inner">
+    <h2>Choose an Occasion</h2>
+    <p>Choose an occasion and create a message</p>
+    <div class="os-message-creator__occasions" role="group" aria-label="Occasion">
+      <button type="button" data-message-occasion="birthday" aria-pressed="true">Happy Birthday</button>
+      <button type="button" data-message-occasion="love" aria-pressed="false">I Love You</button>
+      <button type="button" data-message-occasion="congratulations" aria-pressed="false">Congratulations</button>
+      <button type="button" data-message-occasion="thanks" aria-pressed="false">Thank You</button>
+      <button type="button" data-message-occasion="baby" aria-pressed="false">New Baby</button>
+      <button type="button" data-message-occasion="sorry" aria-pressed="false">I'm Sorry</button>
+      <button type="button" data-message-occasion="mothers" aria-pressed="false">Mother's Day</button>
+    </div>
+    <button type="button" class="os-message-creator__suggest" data-message-suggest>Create Another</button>
+    <div class="os-message-creator__card">
+      <textarea aria-label="Suggested message, edit to personalize" rows="3" maxlength="{{ message_limit }}" data-message-draft></textarea>
+      <button type="button" data-message-use>Use Message</button>
+    </div>
+    <span class="visually-hidden" role="status" aria-live="polite"><span data-message-draft-count>0</span>/{{ message_limit }} characters</span>
+  </div>
+</section>

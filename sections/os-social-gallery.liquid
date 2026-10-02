@@ -4,7 +4,7 @@
 <section id="os-social-gallery-{{ section.id }}" class="os-social-section full-width db-section-layout" style="background:{{ section.settings.background }};color:{{ section.settings.text_color }}">
   {% render 'os-section-background', section: section %}
   <div class="db-section-shell db-section-shell--{{ section.settings.content_width | default: 'full' }}">
-    <os-social-gallery class="os-social-gallery{% if section.settings.show_mobile_arrows %} os-social-gallery--mobile-arrows{% endif %}" style="--os-social-card-width:calc((100% - {{ social_desktop_gap_total }}px)/{{ section.settings.desktop_columns }});--os-social-mobile-card-width:calc((100% - {{ social_mobile_gap_total }}px)/{{ section.settings.mobile_columns }});--os-social-gap:{{ section.settings.desktop_gap }}px;--os-social-mobile-gap:{{ section.settings.mobile_gap }}px;--os-social-modal-width:{{ section.settings.modal_width }}px;--os-social-modal-height:{{ section.settings.modal_height }}vh" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}" data-autoplay-video="{{ section.settings.autoplay_video }}">
+    <os-social-gallery class="os-social-gallery{% if section.settings.show_mobile_arrows %} os-social-gallery--mobile-arrows{% endif %}" style="--os-social-card-width:calc((100% - {{ social_desktop_gap_total }}px)/{{ section.settings.desktop_columns }});--os-social-mobile-card-width:calc((100% - {{ social_mobile_gap_total }}px)/{{ section.settings.mobile_columns }});--os-social-gap:{{ section.settings.desktop_gap }}px;--os-social-mobile-gap:{{ section.settings.mobile_gap }}px;--os-social-modal-width:{{ section.settings.modal_width }}px;--os-social-modal-height:{{ section.settings.modal_height }}vh" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.interval | times: 1000 }}" data-autoplay-video="{{ section.settings.autoplay_video }}" data-feed-source="{{ section.settings.feed_source | default: 'manual' }}" data-feed-url="{{ section.settings.feed_url | escape }}" data-feed-limit="{{ section.settings.feed_limit | default: 8 }}" data-feed-account="{{ section.settings.feed_account | escape }}">
       {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
       <div class="os-social-gallery__viewport">
         <div class="os-social-gallery__track" data-social-gallery-track>
@@ -23,12 +23,12 @@
             </button>
           {%- endfor -%}
         </div>
-        {%- if section.settings.show_arrows and section.blocks.size > 1 -%}<button class="os-social-gallery__arrow os-social-gallery__arrow--prev" type="button" data-social-gallery-prev aria-label="Previous posts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><button class="os-social-gallery__arrow os-social-gallery__arrow--next" type="button" data-social-gallery-next aria-label="Next posts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>{%- endif -%}
+        {%- if section.settings.show_arrows -%}<button class="os-social-gallery__arrow os-social-gallery__arrow--prev" type="button" data-social-gallery-prev aria-label="Previous posts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button><button class="os-social-gallery__arrow os-social-gallery__arrow--next" type="button" data-social-gallery-next aria-label="Next posts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>{%- endif -%}
       </div>
 
       <dialog class="os-social-modal" data-social-modal aria-label="Social post viewer">
         <button class="os-social-modal__close" type="button" data-social-modal-close aria-label="Close social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
-        {%- if section.blocks.size > 1 -%}<button class="os-social-modal__nav os-social-modal__nav--prev" type="button" data-social-modal-prev aria-label="Previous social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>{%- endif -%}
+        {%- if section.blocks.size > 1 or section.settings.feed_source == 'instagram' -%}<button class="os-social-modal__nav os-social-modal__nav--prev" type="button" data-social-modal-prev aria-label="Previous social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>{%- endif -%}
         <div class="os-social-modal__panel">
           {%- for block in section.blocks -%}
             {%- assign fallback_modal_image = collections.all.products[forloop.index0].featured_image | default: collections.all.products.first.featured_image -%}
@@ -42,12 +42,13 @@
               <div class="os-social-modal__copy">
                 <header>{%- if block.settings.avatar != blank -%}{{ block.settings.avatar | image_url: width: 96 | image_tag: width: 48, height: 48, loading: 'lazy', alt: '' }}{%- else -%}<span class="os-social-modal__avatar">{{ block.settings.account | slice: 0 | upcase }}</span>{%- endif -%}<strong>{{ block.settings.account }}</strong></header>
                 {%- if block.settings.caption != blank -%}<div class="os-social-modal__caption">{{ block.settings.caption | newline_to_br }}</div>{%- endif -%}
+                {%- if block.settings.post_url != blank -%}<a class="os-social-modal__post-link" href="{{ block.settings.post_url | escape }}" target="_blank" rel="noopener noreferrer">View on Instagram<span class="visually-hidden"> (opens in a new tab)</span></a>{%- endif -%}
                 {%- if block.settings.date != blank -%}<p class="os-social-modal__date">{{ block.settings.date }}</p>{%- endif -%}
               </div>
             </article>
           {%- endfor -%}
         </div>
-        {%- if section.blocks.size > 1 -%}<button class="os-social-modal__nav os-social-modal__nav--next" type="button" data-social-modal-next aria-label="Next social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>{%- endif -%}
+        {%- if section.blocks.size > 1 or section.settings.feed_source == 'instagram' -%}<button class="os-social-modal__nav os-social-modal__nav--next" type="button" data-social-modal-next aria-label="Next social post"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>{%- endif -%}
       </dialog>
     </os-social-gallery>
   </div>
@@ -55,6 +56,7 @@
 
 {% stylesheet %}
 .os-social-gallery { display: block; }
+.os-social-gallery [hidden] { display: none !important; }
 .os-social-gallery h2 { font-family: var(--db-display); font-size: clamp(20px,2vw,29px); font-weight: 400; margin: 0 auto 28px; padding-inline: var(--db-gutter); text-align: center; }
 .os-social-gallery__viewport { overflow: hidden; position: relative; }
 .os-social-gallery__track:not(.flickity-enabled) { display: flex; gap: var(--os-social-gap); overflow: hidden; }
@@ -82,6 +84,10 @@
 .os-social-modal__copy header { align-items: center; border-bottom: 1px solid #eee; display: flex; gap: 12px; min-height: 70px; padding: 12px 24px; }
 .os-social-modal__copy header img, .os-social-modal__avatar { align-items: center; background: #f7cdd1; border-radius: 50%; color: #ef493e; display: flex; height: 44px; justify-content: center; object-fit: cover; width: 44px; }
 .os-social-modal__caption { color: #666; font-size: 14px; line-height: 1.35; padding: 28px 26px; white-space: normal; }
+.os-social-modal__caption:empty { display: none; }
+.os-social-modal__caption { overflow-wrap: anywhere; }
+.os-social-modal__caption--api { white-space: pre-line; }
+.os-social-modal__post-link { align-self: flex-start; color: #41511d; font-size: 14px; margin: 0 26px 24px; text-decoration: underline; text-underline-offset: 3px; }
 .os-social-modal__date { border-top: 1px solid #eee; color: #777; font-size: 10px; margin-top: auto; padding: 10px 24px; text-align: center; }
 .os-social-modal__close { background: transparent; border: 0; color: #fff; cursor: pointer; height: 42px; padding: 0; position: fixed; right: 14px; top: 10px; width: 42px; z-index: 5; }
 .os-social-modal__close svg { height: 26px; width: 26px; }
@@ -106,6 +112,12 @@
 {
   "name": "Social gallery",
   "settings": [
+    { "type": "header", "content": "Instagram feed" },
+    { "type": "select", "id": "feed_source", "label": "Post source", "default": "manual", "options": [{ "value": "manual", "label": "Manual posts" }, { "value": "instagram", "label": "Instagram API with manual fallback" }] },
+    { "type": "url", "id": "feed_url", "label": "Instagram feed URL", "info": "Public HTTPS feed service URL. Never enter an access token. Manual posts display if the feed is unavailable." },
+    { "type": "text", "id": "feed_account", "label": "Instagram account name", "default": "flowersacrosschristchurch" },
+    { "type": "range", "id": "feed_limit", "label": "Instagram posts", "min": 1, "max": 24, "step": 1, "default": 8 },
+    { "type": "paragraph", "content": "The theme editor shows manual fallback posts. Carousel posts show their first image or video; View on Instagram opens the full post." },
     { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "A daily dose of fresh blooms, gifting inspiration and everyday joy @flowersacrosschristchurch" },
     { "type": "range", "id": "desktop_columns", "label": "Desktop cards", "min": 5, "max": 10, "step": 1, "default": 8 },
     { "type": "range", "id": "mobile_columns", "label": "Mobile cards", "min": 2, "max": 4, "step": 1, "default": 3 },
@@ -137,6 +149,7 @@
       { "type": "image_picker", "id": "avatar", "label": "Account avatar" },
       { "type": "text", "id": "account", "label": "Account name", "default": "flowersacrosschristchurch" },
       { "type": "textarea", "id": "caption", "label": "Caption", "default": "Fresh flowers and thoughtful gifting." },
+      { "type": "url", "id": "post_url", "label": "Instagram post URL", "info": "Adds a View on Instagram link to the popup." },
       { "type": "text", "id": "date", "label": "Date" }
     ]
   }],
