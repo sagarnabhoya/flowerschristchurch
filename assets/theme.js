@@ -17,6 +17,7 @@ function endPending(control) {
 }
 
 function resetTransientUi() {
+  document.querySelectorAll('os-cart-page').forEach((page) => page.restoreCartControls?.());
   document.querySelectorAll('[data-request-pending="true"]').forEach(endPending);
   document.querySelectorAll('.is-loading').forEach((element) => element.classList.remove('is-loading'));
   document.body.classList.remove('no-scroll');
@@ -882,6 +883,8 @@ class OsCartCarousel extends HTMLElement {
     const next = this.querySelector('[data-cart-carousel-next]');
     const navigation = this.querySelector('[data-cart-carousel-navigation]');
     if (navigation) navigation.hidden = maximum <= 1;
+    const media = this.querySelector('.os-cart-addon__media');
+    if (media) this.style.setProperty('--os-cart-navigation-top', `${media.getBoundingClientRect().height / 2}px`);
     if (previous) { previous.hidden = maximum <= 1; previous.disabled = position <= 1; }
     if (next) { next.hidden = maximum <= 1; next.disabled = position >= maximum - 1; }
   }
@@ -959,6 +962,12 @@ class OsCartPage extends HTMLElement {
     };
     this.addEventListener('click', (event) => this.onClick(event).catch(reportError));
     this.addEventListener('change', (event) => this.onChange(event).catch(reportError));
+    this.addEventListener('input', (event) => {
+      if (event.target.matches('input[name="updates[]"]')) event.target.setCustomValidity('');
+    });
+    this.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && event.target.matches('input[name="updates[]"]')) { event.preventDefault(); event.target.blur(); }
+    });
     this.message = this.querySelector('[data-message-input]');
     this.message?.addEventListener('input', () => this.updateMessage());
     this.messageCreator = this.querySelector('[data-message-creator]');
@@ -970,15 +979,55 @@ class OsCartPage extends HTMLElement {
     this.updateMessage();
   }
   async request(path, body) {
+    const response = await fetch(`${window.Shopify.routes.root}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
+    if (!response.ok) throw new Error((await response.json()).description || 'Unable to update your cart.');
+    window.location.reload();
+  }
+  async updateCart(control, operation, label = 'Updating...') {
+    if (this.updating) return;
+    this.updating = true;
     this.classList.add('is-loading');
+    this.setAttribute('aria-busy', 'true');
+    const row = control.closest('[data-cart-line]');
+    const feedback = row?.querySelector('[data-quantity-status]');
+    const controls = Array.from(this.querySelectorAll('[data-cart-quantity], input[name="updates[]"], [data-cart-remove], [data-cart-addon], button[name="checkout"]'));
+    const disabled = controls.map((element) => element.disabled);
+    this.pendingControls = controls.map((element, index) => [element, disabled[index]]);
+    beginPending(control, control.matches('button[data-cart-addon]') ? 'Adding...' : undefined);
+    controls.forEach((element) => { element.disabled = true; });
+    if (feedback) feedback.textContent = label;
+    if (this.status) this.status.textContent = label;
     try {
-      const response = await fetch(`${window.Shopify.routes.root}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
-      if (!response.ok) throw new Error((await response.json()).description || 'Unable to update your cart.');
-      window.location.reload();
+      await this.persistDetails();
+      await operation();
     } catch (error) {
-      if (this.status) this.status.textContent = error.message;
-      this.classList.remove('is-loading');
+      this.restoreCartControls();
+      if (feedback) feedback.textContent = 'Please try again.';
+      if (this.status) this.status.textContent = error.message || 'Unable to update your cart.';
+
     }
+  }
+  restoreCartControls() {
+    if (!this.pendingControls) return;
+    this.querySelectorAll('[data-request-pending="true"]').forEach(endPending);
+    this.pendingControls.forEach(([element, disabled]) => { element.disabled = disabled; });
+    this.pendingControls = null;
+    this.updating = false;
+    this.classList.remove('is-loading');
+    this.removeAttribute('aria-busy');
+    this.querySelectorAll('[data-quantity-status]').forEach((element) => { element.textContent = ''; });
+  }
+  async updateQuantity(control, value) {
+    const row = control.closest('[data-cart-line]');
+    const input = row?.querySelector('input[name="updates[]"]');
+    if (!input || this.updating) return;
+    if (!Number.isSafeInteger(value) || value < 0) {
+      input.setCustomValidity('Enter a whole number of 0 or more.');
+      input.reportValidity();
+      return;
+    }
+    input.setCustomValidity('');
+    await this.updateCart(control, () => this.request('cart/change.js', { line: Number(row.dataset.cartLine), quantity: value }), value === 0 ? 'Removing...' : 'Updating...');
   }
   cartAttributes() {
     if (!this.form) return {};
@@ -994,22 +1043,18 @@ class OsCartPage extends HTMLElement {
   async onClick(event) {
     const quantity = event.target.closest('[data-cart-quantity]');
     if (quantity) {
-      const item = quantity.closest('[data-cart-line]'), input = item?.querySelector('input[name="updates[]"]');
-      if (item && input) { await this.persistDetails(); await this.request('cart/change.js', { line: Number(item.dataset.cartLine), quantity: Math.max(0, Number(input.value) + Number(quantity.dataset.cartQuantity)) }); }
+      const input = quantity.closest('[data-cart-line]')?.querySelector('input[name="updates[]"]');
+      if (input) await this.updateQuantity(quantity, Math.max(0, Number(input.value) + Number(quantity.dataset.cartQuantity)));
       return;
     }
     const remove = event.target.closest('[data-cart-remove]');
-    if (remove) { const item = remove.closest('[data-cart-line]'); if (item) { await this.persistDetails(); await this.request('cart/change.js', { line: Number(item.dataset.cartLine), quantity: 0 }); } return; }
+    if (remove) {
+      await this.updateQuantity(remove, 0);
+      return;
+    }
     const addon = event.target.closest('button[data-cart-addon]');
     if (addon) {
-      if (addon.disabled || addon.dataset.requestPending === 'true') return;
-      beginPending(addon, 'Adding…');
-      try {
-        await this.persistDetails();
-        await this.request('cart/add.js', { items: [{ id: Number(addon.dataset.cartAddon), quantity: 1 }] });
-      } catch (error) {
-        if (this.status) this.status.textContent = error.message;
-      } finally { endPending(addon); }
+      if (!addon.disabled) await this.updateCart(addon, () => this.request('cart/add.js', { items: [{ id: Number(addon.dataset.cartAddon), quantity: 1 }] }), 'Adding...');
       return;
     }
     const emoji = event.target.closest('[data-message-emoji]');
@@ -1068,18 +1113,24 @@ class OsCartPage extends HTMLElement {
     if (count) count.textContent = this.messageDraft?.value.length || 0;
   }
   async onChange(event) {
-    const checkbox = event.target.closest('input[data-cart-addon]');
-    if (!checkbox) return;
-    beginPending(checkbox);
-    await this.persistDetails();
-    if (checkbox.checked) await this.request('cart/add.js', { items: [{ id: Number(checkbox.dataset.cartAddon), quantity: 1 }] });
-    else {
-      try {
-        const cart = await fetch(`${window.Shopify.routes.root}cart.js`).then((response) => response.json());
-        const item = cart.items.find((entry) => entry.variant_id === Number(checkbox.dataset.cartAddon));
-        if (item) await this.request('cart/change.js', { id: item.key, quantity: 0 }); else endPending(checkbox);
-      } catch (error) { if (this.status) this.status.textContent = 'Unable to update your cart.'; endPending(checkbox); }
+    const input = event.target.closest('input[name="updates[]"]');
+    if (input) {
+      await this.updateQuantity(input, input.value.trim() === '' ? NaN : Number(input.value));
+      return;
     }
+    const checkbox = event.target.closest('input[data-cart-addon]');
+    if (!checkbox || this.updating) return;
+    await this.updateCart(checkbox, async () => {
+      if (checkbox.checked) await this.request('cart/add.js', { items: [{ id: Number(checkbox.dataset.cartAddon), quantity: 1 }] });
+      else {
+        const response = await fetch(`${window.Shopify.routes.root}cart.js`);
+        if (!response.ok) throw new Error('Unable to update your cart.');
+        const cart = await response.json();
+        const item = cart.items.find((entry) => entry.variant_id === Number(checkbox.dataset.cartAddon));
+        if (item) await this.request('cart/change.js', { id: item.key, quantity: 0 });
+        else window.location.reload();
+      }
+    });
   }
   updateMessage() {
     if (!this.message) return;
