@@ -12,6 +12,7 @@
     "logo": "shopify://shop_images/Logo_Light_Pink_1.svg",
     "logo_width": 320,
     "brand_tagline": "Independent Christchurch florists creating fresh, expressive arrangements for every kind of moment.",
+    "card_price_size": 15,
     "content_for_index": [],
     "blocks": {
       "14060646107696862457": {

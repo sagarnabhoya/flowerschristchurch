@@ -31,7 +31,7 @@
         "overlay_color": "#000000",
         "image_alt": "Seasonal flowers arranged by hand",
         "show_content": true,
-        "eyebrow": "best Florist in Christchurch",
+        "eyebrow": "Best Florist in Christchurch",
         "heading": "Fresh Flowers Delivered With Care",
         "copy": "<h4>Thoughtful seasonal blooms, handcrafted by your local florists&nbsp;</h4>",
         "show_copy_mobile": true,
@@ -82,7 +82,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "Premium  floral desi"
+            "text": "Premium floral design"
           }
         },
         "urban": {
@@ -109,7 +109,7 @@
             "image_width": 120,
             "font_size": 16,
             "wordmark_style": "sans",
-            "text": "Thoughtful Handcrafted"
+            "text": "Flowers can say what words sometimes can’t SAY"
           }
         },
         "trusted": {
@@ -313,8 +313,8 @@
         "eyebrow": "Shop by Occasion",
         "heading": "<strong>Fresh Flowers for Life’s Every Moment</strong>",
         "copy": "",
-        "heading_size": 56,
-        "mobile_heading_size": 36,
+        "heading_size": 54,
+        "mobile_heading_size": 30,
         "heading_font": "display",
         "heading_alignment": "center",
         "heading_layout": "stacked",
@@ -439,17 +439,30 @@
             "button_label": "See All",
             "link": ""
           }
+        },
+        "slide_CWqdcX": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "collection": "most-popular",
+            "title": "",
+            "description": "",
+            "price": "",
+            "button_label": "",
+            "link": ""
+          }
         }
       },
       "block_order": [
         "slide_KwkiDc",
         "slide_fE3dE9",
-        "slide_Kj8GWm"
+        "slide_Kj8GWm",
+        "slide_CWqdcX"
       ],
       "settings": {
         "eyebrow": " Shop by Collection / Style",
-        "heading": "Beautiful Flowers for Every Style",
-        "copy": "",
+        "heading": "Beautiful Flowers Style",
+        "copy": "<h3>Fresh flowers delivered to Christchurch&nbsp;</h3>",
         "heading_size": 56,
         "mobile_heading_size": 36,
         "heading_font": "display",
@@ -841,10 +854,10 @@
         "eyebrow": "Flower Shop Christchurch",
         "heading": "Flowers across Christchurch.",
         "intro": "<p>Handmade locally and delivered with care throughout Christchurch and nearby suburbs.</p>",
-        "location_count": "23",
-        "count_label": "suburbs delivered",
-        "delivery_note": "Same-day FREE delivery is available in most areas when ordered within the daily cut-off.",
-        "directory_heading": "Where we deliver",
+        "location_count": "all",
+        "count_label": "Chch suburbs deliver freshest flowers",
+        "delivery_note": "Same-day delivery is available in most areas for orders placed before the daily cut-off.",
+        "directory_heading": "fresh flowers Chch Citywide  to surrounding rural areas",
         "directory_label": "Choose your suburb",
         "menu": "",
         "button_label": "Shop all flowers",
@@ -1068,6 +1081,7 @@
       "blocks": {
         "question_free_delivery": {
           "type": "question",
+          "disabled": true,
           "settings": {
             "question": "Do you offer FREE Flower Delivery in Christchurch?",
             "answer": "<p>Yes. Flower Across Christchurch proudly offers FREE Flower Delivery in Christchurch to most Christchurch suburbs.</p>"
@@ -1085,6 +1099,13 @@
           "settings": {
             "question": "Which areas in Christchurch do you deliver to?",
             "answer": "<p>We deliver citywide! Our reliable delivery network covers all major Christchurch suburbs, including Riccarton, Merivale, St Albans, Papanui, Fendalton, Bryndwr, Avonhead, Sumner, New Brighton, Halswell, and surrounding Canterbury areas.</p>"
+          }
+        },
+        "question_d9MKYE": {
+          "type": "question",
+          "settings": {
+            "question": "Christchurch Hospital Flowers delivery",
+            "answer": "<p><strong>The following wards do not accept fresh flowers in the Christchurch Public Hospital:</strong></p><p>Wards 10, 11, 17, 18, 20, 24, 25, A3, A4, A5, A8, B3, B4, B8, AMAU, BMTU, CHOC, CICU, DOSA, DSU, ICU, PHDU and UU.</p><p>Christchurch Women’s Hospital will only accept flowers for the Gynaecology ward.</p><p>Flowers and potted plants are NOT ALLOWED in any wards in Christchurch Women’s Hospital (Gyno ONLY). This includes Maternity Wards and Birthing Suites as well as Community Maternity Units such as Rangiora, Lincoln, Ashburton, Kaikoura and Darfield.</p><p>Burwood Hospital – Flowers and potted plants are NOT ALLOWED in the following wards and units: Admitting Unit, PACU, Progressive Care Unit – please check with ward staff re: Ward FG (Spinal Unit) and Ward CG (Brain Injury)</p><p><strong>Note:</strong>&nbsp;An alternative could be a care package or gift basket for which you can contact our store phone number or email</p>"
           }
         },
         "question_message_gift": {
@@ -1134,6 +1155,7 @@
         "question_free_delivery",
         "question_same_day",
         "question_areas",
+        "question_d9MKYE",
         "question_message_gift",
         "question_delivery_date",
         "question_hospitals",

@@ -50,12 +50,19 @@
       "settings": {
         "eyebrow": "Freshly curated",
         "show_image": true,
+        "image_position": "center center",
+        "mobile_image_position": "center center",
+        "hero_height": 530,
+        "mobile_hero_height": 180,
+        "overlay_opacity": 45,
+        "hero_text_color": "#ffffff",
+        "hero_background": "#efc9c5",
         "show_collection_description": true,
         "description_words": 50,
         "show_promises": true,
         "show_toolbar": false,
         "desktop_columns": "5",
-        "products_per_page": 20
+        "products_per_page": 25
       }
     }
   },

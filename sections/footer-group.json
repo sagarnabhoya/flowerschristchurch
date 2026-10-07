@@ -13,18 +13,40 @@
   "sections": {
     "footer": {
       "type": "footer",
+      "blocks": {
+        "facebook": {
+          "type": "social",
+          "settings": {
+            "label": "Facebook",
+            "link": "https://www.facebook.com/flowersacrosschristchurch/"
+          }
+        },
+        "instagram": {
+          "type": "social",
+          "settings": {
+            "label": "Instagram",
+            "link": "https://www.instagram.com/flowers_across_christchurch/"
+          }
+        }
+      },
+      "block_order": [
+        "facebook",
+        "instagram"
+      ],
       "settings": {
         "logo_text": "Flowers Across Christchurch",
         "about": "Bringing beauty to every doorstep across Christchurch. Our locally handcrafted arrangements are made fresh daily and delivered with care.",
         "about_secondary": "Whether it’s a birthday, anniversary, or heartfelt gesture, we help you share life’s moments through flowers that speak beautifully.",
         "phone": "03 9300145",
-        "acknowledgement": "Visit our florist at 555 Colombo Street, Christchurch Central City, Christchurch 8011.",
+        "acknowledgement": "Visit our florist store in Christchurch Central City at 555 Colombo Street, Christchurch Central City, Christchurch 8011",
+        "show_menu_headings": false,
         "menu_one_heading": "Customer care",
         "menu_one": "footer",
         "menu_two_heading": "Discover",
         "menu_two": "main-menu",
         "newsletter_heading": "Fresh Christchurch flowers, thoughtful gifts and seasonal news for your inbox.",
         "newsletter_form_mode": "shopify",
+        "newsletter_embed": "",
         "newsletter_intro": "Sign up for flower inspiration and store updates.",
         "email_placeholder": "Your email address",
         "submit_label": "Sign Me Up!",
@@ -34,20 +56,12 @@
         "background": "#fff4f5",
         "text_color": "#41511d",
         "content_width": "fluid",
-        "custom_width": 1760,
+        "custom_width": 1740,
         "padding_top": 80,
         "padding_bottom": 32,
         "mobile_padding_top": 40,
         "mobile_padding_bottom": 32
-      },
-      "blocks": {
-        "instagram": { "type": "social", "settings": { "label": "Instagram", "link": "https://www.instagram.com/flowers_across_christchurch/" } },
-        "facebook": { "type": "social", "settings": { "label": "Facebook", "link": "https://www.facebook.com/flowersacrosschristchurch/" } },
-        "pinterest": { "type": "social", "settings": { "label": "Pinterest" } },
-        "youtube": { "type": "social", "settings": { "label": "YouTube" } },
-        "tiktok": { "type": "social", "settings": { "label": "TikTok" } }
-      },
-      "block_order": ["facebook", "instagram"]
+      }
     }
   },
   "order": [

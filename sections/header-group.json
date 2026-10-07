@@ -13,6 +13,21 @@
   "sections": {
     "header": {
       "type": "header",
+      "blocks": {
+        "mega_menu_MNJwjX": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "",
+            "eyebrow": "",
+            "heading": "Seasonal flowers",
+            "link_label": "Shop now",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_MNJwjX"
+      ],
       "settings": {
         "announcement": "Most suburbs free delivery — limited time, don’t miss out 💐",
         "logo_text": "Flowers Across Christchurch",
