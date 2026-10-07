@@ -949,6 +949,8 @@ class OsWhySlider extends HTMLElement {
   connectedCallback() {
     if (this.ready) return;
     this.ready = true;
+    this.controller = new AbortController();
+    const listenerOptions = { signal: this.controller.signal };
     this.track = this.querySelector('[data-why-track]');
     this.slides = [...this.querySelectorAll('.os-why__item')];
     this.current = this.querySelector('[data-why-current]');
@@ -957,21 +959,21 @@ class OsWhySlider extends HTMLElement {
     this.nextButton = this.querySelector('[data-why-next]');
     this.media = matchMedia('(max-width: 749px)');
     this.style.setProperty('--os-why-slides', this.slides.length || 1);
-    this.querySelector('[data-why-prev]')?.addEventListener('click', () => this.flickity?.previous());
-    this.querySelector('[data-why-next]')?.addEventListener('click', () => this.flickity?.next());
+    this.previousButton?.addEventListener('click', () => this.flickity?.previous(), listenerOptions);
+    this.nextButton?.addEventListener('click', () => this.flickity?.next(), listenerOptions);
     this.onMediaChange = () => this.media.matches ? this.mount() : this.unmount();
     this.media.addEventListener?.('change', this.onMediaChange);
     this.onMediaChange();
     this.addEventListener('shopify:block:select', (event) => {
       const slide = event.target.closest('.os-why__item');
       if (slide && this.flickity) this.flickity.selectCell(slide);
-    });
+    }, listenerOptions);
   }
 
   mount() {
     if (this.flickity || !this.track || !this.slides.length || !window.Flickity) return;
     this.flickity = new Flickity(this.track, {
-      cellSelector: '.os-why__item', cellAlign: 'left', contain: false,
+      cellSelector: '.os-why__item', cellAlign: 'left', contain: true,
       draggable: this.slides.length > 1, wrapAround: false,
       prevNextButtons: false, pageDots: false, accessibility: true
     });
@@ -995,8 +997,10 @@ class OsWhySlider extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.controller?.abort();
     this.media?.removeEventListener?.('change', this.onMediaChange);
     this.unmount();
+    this.ready = false;
   }
 }
 if (!customElements.get('os-why-slider')) customElements.define('os-why-slider', OsWhySlider);
